@@ -98,6 +98,19 @@
     #installPromptBtn:active, #installPromptBtn:hover {
       background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
+    #mobileInstallInstructions {
+      display: none;
+      margin-left: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #1a2233;
+      color: var(--accent2);
+      font-size: .93em;
+      font-style: italic;
+      box-shadow: 0 2px 8px #222c3d22;
+      max-width: 310px;
+      line-height: 1.45;
+    }
     .main-content {
       display: flex;
       flex-direction: column;
@@ -438,6 +451,7 @@
       .prod-card {padding: 12px 7px;}
       #detailModal .prod-detail-photo { width: 74px; height: 74px; }
       .modal {padding: 14vw 3vw 7vw 3vw; min-width:unset;}
+      #mobileInstallInstructions {max-width: 94vw; font-size: 0.96em;}
     }
     ::selection {background: var(--accent2); color: #fff;}
     a {color: var(--accent);}
@@ -568,6 +582,7 @@
           <span class="app-title">Local Dealer App</span>
         </div>
         <button id="installPromptBtn" title="Install as App">📲 Install App</button>
+        <span id="mobileInstallInstructions"></span>
       </header>
       <div class="main-content">
         <section class="card" style="animation-delay:.06s">
@@ -645,14 +660,25 @@
       }, 180);
     });
 
-    // --- PWA Install Prompt ---
+    // --- PWA Install Prompt with Mobile Chrome fallback ---
     let deferredPrompt;
     const installBtn = document.getElementById('installPromptBtn');
+    const mobileInstall = document.getElementById('mobileInstallInstructions');
+
+    // User-Agent test for Android Chrome mobile (loosely)
+    function isMobileChromeStandaloneCapable() {
+      const ua = navigator.userAgent || '';
+      // Chrome for Android (not iOS)
+      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches;
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       installBtn.style.display = 'inline-block';
+      mobileInstall.style.display = 'none';
     });
+
     installBtn && (installBtn.onclick = async function() {
       installBtn.disabled = true;
       if (deferredPrompt) {
@@ -663,9 +689,29 @@
         installBtn.disabled = false;
       }
     });
+
     window.addEventListener('appinstalled', ()=>{
       installBtn.style.display='none';
       deferredPrompt = null;
+      mobileInstall.style.display='none';
+    });
+
+    // If beforeinstallprompt never fires, guide the user!
+    window.addEventListener('DOMContentLoaded', function() {
+      // Only show hint if not already installed, not in desktop
+      setTimeout(() => {
+        if (!window.matchMedia('(display-mode: standalone)').matches &&
+            !window.matchMedia('(display-mode: fullscreen)').matches &&
+            isMobileChromeStandaloneCapable()
+        ) {
+          // Only show if installBtn is still hidden (meaning beforeinstallprompt didn't fire)
+          if (installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") {
+            mobileInstall.innerHTML =
+              "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>.";
+            mobileInstall.style.display = "inline-block";
+          }
+        }
+      }, 1100);
     });
 
     // --- Service worker registration ---
