@@ -128,6 +128,86 @@
       max-width: 310px;
       line-height: 1.45;
     }
+    /* -------- Custom styles for install prompt popup -------- */
+    .install-popup-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 10000;
+      background: rgba(22, 27, 34, 0.89);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .2s;
+    }
+    .install-popup-backdrop.hide {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    .install-popup {
+      background: var(--bg2, #161B22);
+      border-radius: 16px;
+      box-shadow: 0 6px 36px rgba(30,45,70,0.24);
+      padding: 36px 26px 30px 26px;
+      min-width: 282px;
+      max-width: 95vw;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      position: relative;
+      animation: fadeUp .35s;
+      z-index: 10001;
+    }
+    .install-popup h3 {
+      font-size: 1.22em;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      color: var(--accent2, #06B6D4);
+      text-align: center;
+    }
+    .install-popup .install-desc {
+      font-size: 1em;
+      color: var(--text-muted, #B0B9C6);
+      margin-bottom: 17px;
+      text-align: center;
+    }
+    .install-popup-btnbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+      margin-top: 18px;
+    }
+    .install-popup button {
+      font-size: 1em;
+      padding: 9px 21px;
+      border-radius: 8px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(93deg, var(--accent2, #06B6D4), var(--accent, #2563EB));
+      color: #fff;
+      transition: background 0.16s;
+      box-shadow: 0 1px 11px #2e5fad23;
+    }
+    .install-popup button:active, .install-popup button:hover {
+      background: linear-gradient(91deg, var(--accent, #2563EB), var(--accent2, #06B6D4));
+    }
+    .install-popup .close-popup {
+      position: absolute;
+      top: 10px;
+      right: 13px;
+      background: none;
+      border: none;
+      color: var(--accent2, #06B6D4);
+      font-size: 1.3em;
+      cursor: pointer;
+      font-weight: bold;
+      outline: none;
+    }
+    /* ---- END custom install popup styles ---- */
     .main-content {
       display: flex;
       flex-direction: column;
@@ -469,6 +549,7 @@
       #detailModal .prod-detail-photo { width: 74px; height: 74px; }
       .modal {padding: 14vw 3vw 7vw 3vw; min-width:unset;}
       #mobileInstallInstructions {max-width: 94vw; font-size: 0.96em;}
+      .install-popup {padding: 10vw 4vw 7vw 4vw; min-width:unset;}
     }
     ::selection {background: var(--accent2); color: #fff;}
     a {color: var(--accent);}
@@ -598,9 +679,7 @@
           <div class="app-logo" title="Local Dealer App">🏷️</div>
           <span class="app-title">Local Dealer App</span>
         </div>
-        <button id="installPromptBtn" title="Install as App">📲 Install App</button>
-        <button id="installAsAppBtn" title="Force Install App">🛠️ Install as App</button>
-        <span id="mobileInstallInstructions"></span>
+        <span id="chromeInstallInstructions" style="margin-left:12px; font-size:.99em; padding:8px 17px; border-radius:8px; background:linear-gradient(91deg, var(--accent2), var(--accent)); color:#fff; font-weight:700; display:none; box-shadow:0 1px 11px #2e5fad23;">📲 Install this app via Chrome menu</span>
       </header>
       <div class="main-content">
         <section class="card" style="animation-delay:.06s">
@@ -678,80 +757,35 @@
       }, 180);
     });
 
-    // --- PWA Install Prompt with Explicit "Install as App" Button ---
-    let deferredPrompt;
-    const installBtn = document.getElementById('installPromptBtn');
-    const installAsAppBtn = document.getElementById('installAsAppBtn');
-    const mobileInstall = document.getElementById('mobileInstallInstructions');
+    // --- Native Chrome App Install Handling (No custom JS install button) ---
+    // Simply recommend Chrome's own feature for both mobile/desktop.
+    // Remove all PWA install prompt custom buttons/scripts for simplicity.
 
-    // User-Agent test for Android Chrome mobile (loosely)
-    function isMobileChromeStandaloneCapable() {
+    // Show guidance for Chrome users to use native "Install App" or "Add to Home screen"
+    function isChromeOnAndroid() {
       const ua = navigator.userAgent || '';
-      // Chrome for Android (not iOS)
-      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches;
+      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua);
+    }
+    function isChromeOnDesktop() {
+      // Test for Chrome (excluding Edge etc.) on Windows/Mac/Linux
+      const ua = navigator.userAgent || '';
+      return /Chrome\/[.0-9]*\s/.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua) && !/Android/.test(ua);
     }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-block';
-      installAsAppBtn.style.display = 'inline-block';
-      mobileInstall.style.display = 'none';
-    });
-
-    installBtn && (installBtn.onclick = async function() {
-      installBtn.disabled = true;
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-        installAsAppBtn.style.display = 'none';
-        installBtn.disabled = false;
-      }
-    });
-
-    // Explicit "Install as App" for users who want to force install
-    installAsAppBtn && (installAsAppBtn.onclick = async function() {
-      installAsAppBtn.disabled = true;
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-        installAsAppBtn.style.display = 'none';
-        installAsAppBtn.disabled = false;
-      } else {
-        alert("Install prompt not available at the moment. Try refreshing or using Chrome browser.");
-        installAsAppBtn.disabled = false;
-      }
-    });
-
-    window.addEventListener('appinstalled', ()=>{
-      installBtn.style.display='none';
-      installAsAppBtn.style.display='none';
-      deferredPrompt = null;
-      mobileInstall.style.display='none';
-    });
-
-    // If beforeinstallprompt never fires, guide the user!
     window.addEventListener('DOMContentLoaded', function() {
-      // Only show hint if not already installed, not in desktop
-      setTimeout(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches &&
-            !window.matchMedia('(display-mode: fullscreen)').matches &&
-            isMobileChromeStandaloneCapable()
-        ) {
-          // Only show if installBtn is still hidden (meaning beforeinstallprompt didn't fire)
-          if ((installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") &&
-              (installAsAppBtn.style.display === "none" || getComputedStyle(installAsAppBtn).display === "none"))
-          {
-            mobileInstall.innerHTML =
-              "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>.";
-            mobileInstall.style.display = "inline-block";
-          }
+      const installGuide = document.getElementById('chromeInstallInstructions');
+      // If not installed (not standalone)
+      if (!window.matchMedia('(display-mode: standalone)').matches &&
+          !window.matchMedia('(display-mode: fullscreen)').matches
+      ) {
+        if (isChromeOnAndroid()) {
+          installGuide.innerHTML = "To install: Tap <b><span style='font-size:1.22em;'>⋮</span></b> at top-right in Chrome, then select <b>Add to Home screen</b>.";
+          installGuide.style.display = "inline-block";
+        } else if (isChromeOnDesktop()) {
+          installGuide.innerHTML = "To install: Click the <b>install icon <span style='font-size:1.2em;'>📥</span></b> in Chrome's address bar.";
+          installGuide.style.display = "inline-block";
         }
-      }, 1100);
+      }
     });
 
     // --- Service worker registration ---
