@@ -98,6 +98,23 @@
     #installPromptBtn:active, #installPromptBtn:hover {
       background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
+    #installAsAppBtn {
+      display: none;
+      margin-left: 12px;
+      font-size: .99em;
+      padding: 8px 17px;
+      border-radius: 8px;
+      background: linear-gradient(91deg, var(--accent2), var(--accent));
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 1px 11px #2e5fad23;
+      transition: background .17s;
+    }
+    #installAsAppBtn:active, #installAsAppBtn:hover {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
     #mobileInstallInstructions {
       display: none;
       margin-left: 10px;
@@ -582,6 +599,7 @@
           <span class="app-title">Local Dealer App</span>
         </div>
         <button id="installPromptBtn" title="Install as App">📲 Install App</button>
+        <button id="installAsAppBtn" title="Force Install App">🛠️ Install as App</button>
         <span id="mobileInstallInstructions"></span>
       </header>
       <div class="main-content">
@@ -660,9 +678,10 @@
       }, 180);
     });
 
-    // --- PWA Install Prompt with Mobile Chrome fallback ---
+    // --- PWA Install Prompt with Explicit "Install as App" Button ---
     let deferredPrompt;
     const installBtn = document.getElementById('installPromptBtn');
+    const installAsAppBtn = document.getElementById('installAsAppBtn');
     const mobileInstall = document.getElementById('mobileInstallInstructions');
 
     // User-Agent test for Android Chrome mobile (loosely)
@@ -676,6 +695,7 @@
       e.preventDefault();
       deferredPrompt = e;
       installBtn.style.display = 'inline-block';
+      installAsAppBtn.style.display = 'inline-block';
       mobileInstall.style.display = 'none';
     });
 
@@ -686,12 +706,30 @@
         await deferredPrompt.userChoice;
         deferredPrompt = null;
         installBtn.style.display = 'none';
+        installAsAppBtn.style.display = 'none';
         installBtn.disabled = false;
+      }
+    });
+
+    // Explicit "Install as App" for users who want to force install
+    installAsAppBtn && (installAsAppBtn.onclick = async function() {
+      installAsAppBtn.disabled = true;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+        installAsAppBtn.style.display = 'none';
+        installAsAppBtn.disabled = false;
+      } else {
+        alert("Install prompt not available at the moment. Try refreshing or using Chrome browser.");
+        installAsAppBtn.disabled = false;
       }
     });
 
     window.addEventListener('appinstalled', ()=>{
       installBtn.style.display='none';
+      installAsAppBtn.style.display='none';
       deferredPrompt = null;
       mobileInstall.style.display='none';
     });
@@ -705,7 +743,9 @@
             isMobileChromeStandaloneCapable()
         ) {
           // Only show if installBtn is still hidden (meaning beforeinstallprompt didn't fire)
-          if (installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") {
+          if ((installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") &&
+              (installAsAppBtn.style.display === "none" || getComputedStyle(installAsAppBtn).display === "none"))
+          {
             mobileInstall.innerHTML =
               "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>.";
             mobileInstall.style.display = "inline-block";
