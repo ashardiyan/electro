@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local Dealer App – Offline Product Manager</title>
+  <style>
+    :root {
+      --bg1: #0C1220;
+      --bg2: #161B22;
+      --bg3: #212936;
+      --accent: #3B82F6;
+      --accent2: #06B6D4;
+      --gray: #AEB9C7;
+      --text: #EAF2FF;
+      --text-muted: #99AABF;
+      --radius: 18px;
+      --radius-card: 16px;
+      --shadow: 0 8px 32px 0 rgba(59,130,246,.18);
+      --shadow-soft: 0 2px 8px rgba(59,130,246,.10);
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    html, body {
+      padding: 0;
+      margin: 0;
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 36px 16px 64px 16px;
+      box-sizing: border-box;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      margin-bottom: 32px;
+    }
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .app-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.3rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .app-title {
+      font-weight: 800;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .tagline {
+      font-size: 1.06rem;
+      color: var(--text-muted);
+      margin-left: 7px;
+      margin-top: 2px;
+    }
+    .main-content {
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .cards-stack {
+      flex: 2;
+      min-width: 330px;
+      max-width: 680px;
+    }
+    .card {
+      background: var(--bg2);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+      padding: 2.1rem 2rem 2.2rem 2rem;
+      animation: fadeUp 0.7s cubic-bezier(.43,.8,.52,1.18);
+      opacity: 0;
+      transform: translateY(45px);
+      animation-fill-mode: forwards;
+    }
+    .card.show { opacity: 1; transform: translateY(0);}
+    .card:nth-child(1) { animation-delay: 0.03s;}
+    .card:nth-child(2) { animation-delay: 0.12s;}
+    .card:nth-child(3) { animation-delay: 0.22s;}
+    .card:nth-child(4) { animation-delay: 0.32s;}
+    .card:nth-child(5) { animation-delay: 0.42s;}
+    .card:last-child { margin-bottom: 0; }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(45px);}
+      65% { opacity: .6;}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    .card h2, .card h3 {
+      margin: 0 0 15px 0;
+      letter-spacing: -.2px;
+      font-weight: 700;
+    }
+    .icon-title {
+      display: flex;
+      align-items: center;
+      gap: 0.60em;
+      font-size: 1.3em;
+    }
+    .features-list, .privacy-list, .ux-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .features-list li,
+    .privacy-list li,
+    .ux-list li{
+      margin-bottom: 11px;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+    }
+    .features-list li:last-child,
+    .privacy-list li:last-child,
+    .ux-list li:last-child {margin-bottom: 0;}
+    .features-list strong {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: var(--bg3);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      font-size: 1.02rem;
+      margin-bottom: 2px;
+      box-shadow: var(--shadow-soft);
+    }
+    th, td {
+      border-bottom: 1px solid #22314b;
+      padding: 12px 10px;
+      text-align: left;
+    }
+    th {
+      background: var(--bg2);
+      color: var(--accent2);
+      font-weight: bold;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-size: 0.98em;
+    }
+    tr:last-child td {border-bottom: none;}
+    .mockup-col {
+      flex: 1 1 260px;
+      align-self: stretch;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-width: 245px;
+      margin-top: 10px;
+    }
+    .phone-mockup {
+      width: 256px;
+      height: 495px;
+      border-radius: 2.12em;
+      background: linear-gradient(135deg, var(--bg2) 60%, var(--accent));
+      box-shadow: 0 8px 32px rgba(59,130,246,.17), 0 1.5px 0 0 #151e2e;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      margin: 0 auto;
+      animation: fadeUp 1.3s cubic-bezier(.43,.8,.52,1.18) 0.7s backwards;
+    }
+    .phone-notch {
+      height: 25px; width: 90px; background: #232b36;
+      border-radius: 0 0 18px 18px; position: absolute; left: 50%; top: 0;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 10px #1117;
+      z-index: 2;
+    }
+    .phone-screen {
+      flex: 1;
+      width: 93%;
+      margin: 35px auto 18px auto;
+      border-radius: 1.4em;
+      background: linear-gradient(135deg, var(--bg1) 60%, var(--bg3));
+      box-shadow: 0 2px 8px #12182633;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 17px 8px 14px 8px;
+      overflow-y: auto;
+    }
+    .screen-app-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: -.01em;
+      text-align: center;
+      margin-bottom: 7px;
+      margin-top: 8px;
+      line-height: 1.1;
+    }
+    .screen-sub {
+      font-size: .93rem;
+      color: var(--gray);
+      text-align: center;
+      max-width: 172px;
+      margin-bottom: 10px;
+      margin-top: 0;
+    }
+    .screen-product {
+      background: var(--bg3);
+      border-radius: 10px;
+      padding: 7px 12px;
+      margin-top: 8px;
+      box-shadow: 0 1.5px 6px #222c391a;
+      width: 95%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .95em;
+      min-height: 44px;
+      position: relative;
+    }
+    .screen-product-img {
+      width: 29px;
+      height: 29px;
+      border-radius: 7px;
+      background: #232b36;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent2);
+      font-size: 1.18em;
+    }
+    .screen-product-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      font-size: 1.17em;
+      transition: color 0.15s;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+    .action-btn:hover {
+      color: var(--accent);
+      background: #263450;
+    }
+    .action-btn.delete:hover {
+      color: var(--danger);
+    }
+    .screen-tiny {
+      font-size: .81em;
+      color: var(--text-muted);
+      margin-top: 7px;
+      text-align: center;
+      letter-spacing: .01em;
+    }
+    .divider {
+      border: none;
+      border-top: 1.5px solid #212d3e;
+      margin: 24px 0 18px 0;
+    }
+    /* Pseudo login modal */
+    #login-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(23, 30, 41, 0.87);
+      z-index: 2999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .2s;
+      visibility: visible;
+      opacity: 1;
+    }
+    #login-modal.hide {
+      opacity: 0; pointer-events: none; visibility: hidden;
+    }
+    .login-dialog {
+      background: var(--bg3);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      padding: 32px 22px 24px 22px;
+      min-width: 345px;
+      max-width: 97vw;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      animation: fadeUp .45s;
+    }
+    .login-dialog h2 {
+      margin: 0 0 18px 0;
+      font-size: 1.29em;
+      color: var(--accent2);
+      font-weight: 700;
+      letter-spacing: -.2px;
+      text-align: center;
+    }
+    .login-dialog label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: .96em;
+      color: var(--text-muted);
+    }
+    .login-dialog input[type=password], .login-dialog input[type=text] {
+      margin-bottom: 15px;
+      border-radius: 7px;
+      border: 1.5px solid #253048;
+      background: var(--bg2);
+      color: var(--text);
+      font-size: 1rem;
+      padding: 10px 11px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border 0.13s;
+    }
+    .login-dialog input:focus {
+      border-color: var(--accent);
+    }
+    .login-dialog button {
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color: #fff;
+      padding: 11px 0 10px 0;
+      font-size: 1em;
+      border: none;
+      border-radius: 7px;
+      font-weight: 700;
+      box-shadow: 0 2px 10px #1b314e2b;
+      cursor: pointer;
+      margin: 7px 0 3px 0;
+      transition: background .17s;
+    }
+    .login-dialog button:active {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .login-dialog small {
+      color: var(--text-muted);
+      font-size: .97em;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .login-dialog .input-error {
+      font-size: .92em;
+      color: var(--danger);
+      margin-bottom: 10px;
+      min-height: 18px;
+      text-align: left;
+    }
+    .login-dialog .success {
+      font-size: 1em;
+      color: var(--success);
+      margin-bottom: 10px;
+    }
+    #dealerApp {
+      display: none;
+    }
+    #dealerApp.active {
+      display: block;
+    }
+    .products-top-actions {
+      display: flex; align-items: center; gap: 13px; margin-bottom: 17px;
+      flex-wrap: wrap;
+    }
+    .products-top-actions input[type=search] {
+      border-radius: 7px;
+      border: 1.5px solid #253048;
+      background: var(--bg2);
+      color: var(--text);
+      font-size: 1em;
+      padding: 7px 11px;
+      min-width: 140px;
+      outline: none;
+      transition: border 0.13s;
+    }
+    .products-top-actions input:focus {border-color: var(--accent);}
+    .products-top-actions button {
+      border: none;
+      border-radius: 7px;
+      font-size: .98em;
+      color: #fff !important;
+      font-weight: 700;
+      padding: 8px 17px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      margin: 0 2px;
+      box-shadow: 0 1px 6px #35455a21;
+      cursor: pointer;
+      transition: background .17s;
+    }
+    .products-top-actions button:active {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .product-list {
+      margin: 0; padding: 0; list-style: none;
+    }
+    .product-list .prod-card {
+      background: var(--bg3);
+      border-radius: 11px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px #2c345122;
+      display: flex;
+      gap: 17px;
+      align-items: center;
+      padding: 13px 15px;
+      position: relative;
+      animation: fadeUp .35s cubic-bezier(.43,.8,.52,1.18);
+      opacity: 0; transform: translateY(25px);
+      animation-fill-mode: forwards;
+    }
+    .product-list .prod-card.show {opacity: 1;transform: none;}
+    .product-list .prod-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #232b36;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent2);
+      font-size: 1.37em;
+      overflow: hidden;
+    }
+    .prod-main-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .prod-name { font-weight: 700; font-size: 1.08em;}
+    .prod-details {
+      color: var(--gray);
+      font-size: .98em;
+      margin-top: 2px;
+    }
+    .prod-cat {
+      border-radius: 8px;
+      padding: 2px 9px;
+      font-size: .94em;
+      background: #202958;
+      color: var(--accent);
+      margin-left: 7px;
+    }
+    .prod-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .prod-actions button {
+      background: none;
+      border: none;
+      color: var(--accent2);
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: color 0.13s;
+      border-radius: 4px;
+      padding: 1px 4px;
+    }
+    .prod-actions button.edit:hover { color: var(--accent);}
+    .prod-actions button.delete:hover { color: var(--danger);}
+    .prod-actions button:active {transform: scale(.96);}
+    .no-products {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.09em;
+      margin: 28px 0 12px 0;
+    }
+    .prod-photo-thumb {
+      max-width: 38px; max-height: 38px; border-radius: 7px; object-fit: cover;
+      background: #232b36;
+      display: block;
+    }
+    /* Modal general */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(18, 23, 32, 0.93);
+      z-index: 4999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .20s;
+    }
+    .modal-backdrop.hide { opacity: 0; visibility: hidden; pointer-events: none;}
+    .modal {
+      min-width: 320px;
+      max-width: 97vw;
+      background: var(--bg2);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      z-index: 6000;
+      padding: 26px 18px 18px 18px;
+      animation: fadeUp .42s;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      position: relative;
+    }
+    .modal h3 {
+      margin: 0 0 18px 0;
+      color: var(--accent2);
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2em;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: none; border: none;
+      color: var(--accent2);
+      font-size: 1.24em;
+      cursor: pointer;
+    }
+    .modal label {
+      font-weight: 600;
+      font-size: .96em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .modal input[type=text],
+    .modal input[type=number],
+    .modal input[type=file],
+    .modal textarea {
+      border-radius: 7px;
+      border: 1.5px solid #253048;
+      background: var(--bg3);
+      color: var(--text);
+      font-size: 1em;
+      padding: 7px 11px;
+      margin-bottom: 13px;
+      margin-top: 2px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border 0.13s;
+    }
+    .modal input:focus, .modal textarea:focus { border-color: var(--accent);}
+    .modal textarea {
+      min-height: 52px;
+      resize: vertical;
+    }
+    .modal input[type=file] {
+      border: none;
+      background: none;
+      padding: 0;
+    }
+    .modal-btnbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 11px;
+      margin-top: 6px;
+    }
+    .modal button[type=submit] {
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color: #fff;
+      padding: 9px 18px 9px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 7px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 7px #1b314e22;
+      margin: 6px 0;
+      transition: background .14s;
+    }
+    .modal button[type=submit]:active {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .modal .error {
+      font-size: .98em;
+      color: var(--danger);
+      margin-bottom: 7px;
+      min-height: 18px;
+      text-align: left;
+    }
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .main-content { flex-direction: column; gap: 0;}
+      .mockup-col {margin-top: 32px;}
+    }
+    @media (max-width: 600px) {
+      .container {padding: 21px 2vw 38px 2vw;}
+      .card {padding: 1.3rem 1rem 1.38rem 1rem;}
+      .app-title {font-size: 1.38rem;}
+      .mockup-col {min-width: 0; width: 100%;}
+      .phone-mockup {width: 98vw; max-width: 340px; height: 380px;}
+      .login-dialog {min-width: 0;}
+    }
+    ::selection {background: var(--accent2); color: #fff;}
+    a {color: var(--accent);}
+  </style>
+</head>
+<body>
+  <div id="login-modal">
+    <form class="login-dialog" id="loginForm" autocomplete="off">
+      <h2>🔐 Dealer Login</h2>
+      <div class="input-error" id="login-error"></div>
+      <label id="pinLabel" for="loginPIN">Create a secure PIN/Password:</label>
+      <input type="password" id="loginPIN" minlength="4" maxlength="32" required autofocus autocomplete="new-password" placeholder="Enter PIN or password"/>
+      <button type="submit" id="loginBtn">Set PIN</button>
+      <small>
+        Tip: This is stored securely (hashed), and cannot be recovered.<br>
+        Stay private – the app works 100% offline!
+      </small>
+    </form>
+  </div>
+  <div id="dealerApp">
+  <div class="container">
+    <header>
+      <div class="logo-wrap">
+        <div class="app-logo" title="Local Dealer App">🏷️</div>
+        <div>
+          <span class="app-title">
+            Local Dealer App <br><span class="tagline">(Offline Product Manager)</span>
+          </span>
+        </div>
+      </div>
+    </header>
+    <div class="main-content">
+      <div class="cards-stack">
+        <!-- 1. Overview -->
+        <section class="card" style="animation-delay:.03s">
+          <h2 class="icon-title">💡 Overview</h2>
+          <p>
+            <strong>Local Dealer App</strong> is a fully offline mobile/web application for dealers to manage and track their product stock locally.
+            <br>
+            <span style="color:var(--accent2);font-weight:500">Your data stays on your device – no internet required, no external tracking.</span>
+            <br>
+            Designed for <strong>privacy</strong> and a <strong>simple, modern UI</strong>.
+          </p>
+        </section>
+        <!-- 2. Core Features -->
+        <section class="card" style="animation-delay:.12s">
+          <h2 class="icon-title">⚙️ Core Features</h2>
+          <ul class="features-list">
+            <li>🔐 <strong>Local login</strong> using PIN/password (stored <i>hashed</i>)</li>
+            <li>📦 <strong>Product management:</strong> add/edit/delete (name, MRP, cost, qty, category, notes, photo)</li>
+            <li>💾 <strong>All data saved</strong> in local storage (<span style="color:var(--accent)">your device</span>)</li>
+            <li>📤 <strong>Export/backup:</strong> as JSON file</li>
+            <li>📥 <strong>Import:</strong> from backup file on another device</li>
+            <li>🖥️ <strong>Modern dashboard</strong> view</li>
+            <li>📲 <strong>Install as PWA</strong> (Add to Home via Chrome)</li>
+          </ul>
+        </section>
+        <!-- 3. Tech Stack Table -->
+        <section class="card" style="animation-delay:.22s">
+          <h2 class="icon-title">🧱 Recommended Tech Stack</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Technology</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Framework</td>
+                  <td>React Native (Expo)</td>
+                  <td>Cross-platform mobile framework</td>
+                </tr>
+                <tr>
+                  <td>Database</td>
+                  <td>SQLite (expo-sqlite)</td>
+                  <td>Local database</td>
+                </tr>
+                <tr>
+                  <td>File System</td>
+                  <td>expo-file-system</td>
+                  <td>Backup and restore</td>
+                </tr>
+                <tr>
+                  <td>Encryption</td>
+                  <td>crypto-js (AES)</td>
+                  <td>Optional backup encryption</td>
+                </tr>
+                <tr>
+                  <td>Auth</td>
+                  <td>bcryptjs / PBKDF2</td>
+                  <td>Secure password hashing</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <!-- 4. Security & Privacy -->
+        <section class="card" style="animation-delay:.32s">
+          <h2 class="icon-title">🔐 Security &amp; Privacy</h2>
+          <ul class="privacy-list">
+            <li>🔒 <strong>No external network calls</strong></li>
+            <li>🔑 <strong>PIN/password hashed for safety</strong></li>
+            <li>📴 <strong>Works 100% offline</strong></li>
+          </ul>
+        </section>
+        <!-- 5. User Experience -->
+        <section class="card" style="animation-delay:.42s">
+          <h2 class="icon-title">🧭 User Experience</h2>
+          <ul class="ux-list">
+            <li>🆕 <strong>First-time setup</strong> with PIN</li>
+            <li>📊 <strong>Dashboard</strong> for managing products</li>
+            <li>🔍 <strong>Quick search/filter</strong> for products</li>
+            <li>✔️ <strong>Confirmation</strong> before deletes</li>
+          </ul>
+        </section>
+        <!-- ---------------- DEALER APP PRODUCT MANAGEMENT CARD #---------------- -->
+        <section class="card" style="animation-delay:.53s">
+          <h2 class="icon-title">📦 Products Dashboard</h2>
+          <div class="products-top-actions">
+            <input type="search" placeholder="Search products..." id="productSearch" />
+            <button type="button" id="addProductBtn">+ Add Product</button>
+            <button type="button" id="exportBtn">📤 Export</button>
+            <button type="button" id="importBtn">📥 Import</button>
+            <input type="file" id="importFile" accept="application/json" style="display:none"/>
+          </div>
+          <ul class="product-list" id="productList"></ul>
+          <div class="no-products" id="noProducts" style="display:none">No products yet. Click <b>+ Add Product</b> to get started!</div>
+        </section>
+      </div>
+      <aside class="mockup-col">
+        <!-- Phone mockup showing dashboard -->
+        <div class="phone-mockup" aria-label="App mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-app-title">
+              🏷️<br>Local Dealer App
+            </div>
+            <div class="screen-sub">All your products, one tap.<br>No internet needed.</div>
+            <div class="screen-product">
+              <div class="screen-product-img">📦</div>
+              <div>
+                <strong id="demo-prd-title-1">Tata Salt 1kg</strong><br>
+                <span style="color:var(--text-muted);font-size:.97em;" id="demo-prd-det-1">Stock: 32 • ₹28</span>
+              </div>
+              <div class="screen-product-actions">
+                <button class="action-btn" title="Edit"><span>✏️</span></button>
+                <button class="action-btn delete" title="Delete"><span>🗑️</span></button>
+              </div>
+            </div>
+            <div class="screen-product">
+              <div class="screen-product-img">🥤</div>
+              <div>
+                <strong id="demo-prd-title-2">Bisleri 2L</strong><br>
+                <span style="color:var(--text-muted);font-size:.97em;" id="demo-prd-det-2">Stock: 14 • ₹30</span>
+              </div>
+              <div class="screen-product-actions">
+                <button class="action-btn" title="Edit"><span>✏️</span></button>
+                <button class="action-btn delete" title="Delete"><span>🗑️</span></button>
+              </div>
+            </div>
+            <div class="screen-tiny">
+              Example Dashboard View
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+  </div>
+  <!-- Add/Edit Product Modal -->
+  <div class="modal-backdrop hide" id="productModalBackdrop">
+    <form class="modal" id="productModal" autocomplete="off">
+      <button class="modal-close" type="button" id="closeModalBtn" title="Close">✖</button>
+      <h3 id="modalTitle">Add Product</h3>
+      <div class="error" id="modalError"></div>
+      <label for="prodName">Name</label>
+      <input type="text" id="prodName" required maxlength="64" />
+      <label for="prodMrp">MRP (₹)</label>
+      <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
+      <label for="prodCost">Cost Price (₹)</label>
+      <input type="number" id="prodCost" min="0" max="100000" step="0.01"/>
+      <label for="prodQty">Quantity</label>
+      <input type="number" id="prodQty" min="0" max="100000" required />
+      <label for="prodCategory">Category</label>
+      <input type="text" id="prodCategory" maxlength="32" />
+      <label for="prodNotes">Notes</label>
+      <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
+      <label for="prodPhoto">Photo</label>
+      <input type="file" id="prodPhoto" accept="image/*" />
+      <div class="modal-btnbar">
+        <button type="submit" id="saveProductBtn">Save</button>
+      </div>
+    </form>
+  </div>
+  <!-- Delete confirmation modal -->
+  <div class="modal-backdrop hide" id="deleteModalBackdrop">
+    <form class="modal" id="deleteModal">
+      <button class="modal-close" type="button" id="closeDeleteBtn" title="Close">✖</button>
+      <h3>Delete Product</h3>
+      <div style="margin:11px 0 17px 0">Are you sure you want to delete <b id="deleteName"></b>?</div>
+      <div class="modal-btnbar">
+        <button type="button" id="cancelDeleteBtn">Cancel</button>
+        <button type="submit" style="background:var(--danger)">Yes, Delete</button>
+      </div>
+    </form>
+  </div>
+  <input type="file" id="hiddenImport" accept="application/json" style="display:none">
+  <script>
+    // --- FADES ON LOAD (cards and product cards) ---
+    window.addEventListener('DOMContentLoaded', function(){
+      setTimeout(function() {
+        document.querySelectorAll(".card").forEach((el,i)=> {
+          setTimeout(()=>{ el.classList.add('show') }, 160+60*i);
+        });
+      }, 180);
+    });
+
+    // === SIMPLE HASH (PBKDF2 emulation with window.crypto.subtle) ===
+    async function hashPIN(pin) {
+      const encoder = new TextEncoder();
+      const salt = window.localStorage.getItem('dealer-app-salt') 
+        || (window.crypto.getRandomValues(new Uint8Array(16)), Array.from(window.crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2,'0')).join(''));
+      window.localStorage.setItem('dealer-app-salt', salt);
+
+      const baseKey = await window.crypto.subtle.importKey(
+        'raw',
+        encoder.encode(pin),
+        'PBKDF2',
+        false, ['deriveKey']
+      );
+      const key = await window.crypto.subtle.deriveKey(
+        {name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" },
+        baseKey,
+        { name: "AES-GCM", length: 256 },
+        true,
+        ["encrypt", "decrypt"]
+      );
+      const rawKey = await window.crypto.subtle.exportKey('raw', key);
+      const hashArr = new Uint8Array(rawKey);
+      return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    // Login / PIN logic
+    const loginModal = document.getElementById('login-modal');
+    const loginForm = document.getElementById('loginForm');
+    const loginPIN = document.getElementById('loginPIN');
+    const loginError = document.getElementById('login-error');
+    const loginBtn = document.getElementById('loginBtn');
+    const pinLabel = document.getElementById('pinLabel');
+    let hasPIN = !!window.localStorage.getItem('dealer-hash');
+    if (hasPIN) {
+      loginBtn.textContent = "Unlock";
+      pinLabel.textContent = "Enter your PIN/Password:";
+    } else {
+      loginBtn.textContent = "Set PIN";
+      pinLabel.textContent = "Create a secure PIN/Password:";
+    }
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault();
+      loginError.textContent = '';
+      let pinVal = loginPIN.value.trim();
+      if (!pinVal || pinVal.length < 4) {
+        loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
+        return;
+      }
+      loginBtn.disabled = true;
+      const hash = await hashPIN(pinVal);
+      if (!hasPIN) {
+        window.localStorage.setItem('dealer-hash', hash);
+        hasPIN = true;
+        pinLabel.textContent = "Enter your PIN/Password:";
+        loginBtn.textContent = "Unlock";
+        loginPIN.value = "";
+        loginError.className = "success";
+        loginError.textContent = "PIN set! Please login.";
+        setTimeout(()=>{ loginError.textContent=''; loginError.className='input-error'; }, 1000);
+        return;
+      }
+      if (window.localStorage.getItem('dealer-hash') === hash) {
+        loginModal.classList.add('hide');
+        document.getElementById('dealerApp').classList.add('active');
+        setTimeout(()=>{loginModal.style.display='none'},260);
+        setTimeout(refreshProductList, 340);
+      } else {
+        loginError.textContent = "Incorrect PIN/Password.";
+      }
+      loginBtn.disabled = false;
+    };
+
+    // Product data structure in localStorage: 'dealer-products' JSON array
+    // {id, name, mrp, cost, qty, category, notes, photo (base64)}
+
+    const productListElem = document.getElementById('productList');
+    const noProductsElem = document.getElementById('noProducts');
+    let products = [];
+
+    function saveProducts() {
+      window.localStorage.setItem('dealer-products', JSON.stringify(products));
+      refreshProductList();
+    }
+    function loadProducts() {
+      products = [];
+      try {
+        const str = window.localStorage.getItem('dealer-products');
+        if (str) {
+          products = JSON.parse(str);
+        }
+      } catch {}
+    }
+
+    function createProductCard(product, idx) {
+      const li = document.createElement('li');
+      li.className = 'prod-card';
+      setTimeout(()=>li.classList.add('show'), 121 + idx*80);
+
+      // Photo: show emoji if no photo, else img
+      let imgHTML = product.photo ? `<img src="${product.photo}" class="prod-photo-thumb" alt="Product Photo">`
+          : `<span>${getEmojiForProduct(product)}</span>`;
+      li.innerHTML = `
+        <div class="prod-img">${imgHTML}</div>
+        <div class="prod-main-details">
+          <div class="prod-name">${escapeHTML(product.name)} ${product.category ? `<span class="prod-cat">${escapeHTML(product.category)}</span>` : ''}</div>
+          <div class="prod-details">Stock: ${product.qty} • ₹${Number(product.mrp).toLocaleString(undefined, {maximumFractionDigits:2})}</div>
+          <div class="prod-details">${product.notes ? escapeHTML(product.notes) : ''}</div>
+        </div>
+        <div class="prod-actions">
+          <button title="Edit" class="edit" data-id="${product.id}">✏️</button>
+          <button title="Delete" class="delete" data-id="${product.id}">🗑️</button>
+        </div>
+      `;
+      // Attach event handlers
+      li.querySelector('.edit').onclick = () => showProductModal('edit', product);
+      li.querySelector('.delete').onclick = () => showDeleteModal(product);
+      return li;
+    }
+
+    function escapeHTML(v) {
+      return v.replace(/[&<>'"]/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'
+      }[c]) );
+    }
+
+    function getEmojiForProduct(prod) {
+      const key = prod.category===undefined ? prod.name : ((prod.category||'').toLocaleLowerCase());
+      if (key.includes('beverage') || key.includes('cold drink') || key.includes('water')) return "🥤";
+      if (key.includes('rice')) return "🍚";
+      if (key.includes('salt')) return "🧂";
+      if (key.includes('biscuit')) return "🍪";
+      if (key.includes('milk')) return "🥛";
+      if (key.includes('oil')) return "🛢️";
+      if (key.includes('soap')) return "🧼";
+      if (prod.name && prod.name.length <= 1) return "📦";
+      return "📦";
+    }
+
+    function refreshProductList() {
+      loadProducts();
+      productListElem.innerHTML = '';
+      let q = document.getElementById('productSearch').value;
+      let filtered = !q ? products : products.filter(prod =>
+        (prod.name+prod.category+prod.notes).toLowerCase().includes(q.toLowerCase())
+      );
+      if (!filtered.length) {
+        noProductsElem.style.display = "";
+        return;
+      }
+      noProductsElem.style.display = "none";
+      filtered.forEach((prod,i) => {
+        productListElem.appendChild(createProductCard(prod,i));
+      });
+    }
+
+    document.getElementById('productSearch').oninput = refreshProductList;
+
+    // Add/Edit Product Modal
+    let productEditing = null;
+    const productModalBackdrop = document.getElementById('productModalBackdrop');
+    const productModal = document.getElementById('productModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalError = document.getElementById('modalError');
+    function showProductModal(mode, product) {
+      productModal.reset();
+      modalError.textContent = '';
+      if (mode==='add') {
+        modalTitle.textContent = "Add Product";
+        productEditing = null;
+        productModal.prodName.value = "";
+        productModal.prodMrp.value = "";
+        productModal.prodCost.value = "";
+        productModal.prodQty.value = "";
+        productModal.prodCategory.value = "";
+        productModal.prodNotes.value = "";
+        productModal.prodPhoto.value = "";
+      } else {
+        modalTitle.textContent = "Edit Product";
+        productEditing = product;
+        productModal.prodName.value = product.name;
+        productModal.prodMrp.value = product.mrp;
+        productModal.prodCost.value = product.cost||"";
+        productModal.prodQty.value = product.qty;
+        productModal.prodCategory.value = product.category||"";
+        productModal.prodNotes.value = product.notes||"";
+        productModal.prodPhoto.value = "";
+      }
+      productModalBackdrop.classList.remove('hide');
+    }
+    document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
+    document.getElementById('closeModalBtn').onclick = ()=>productModalBackdrop.classList.add('hide');
+
+    productModal.onsubmit = async function(e) {
+      e.preventDefault();
+      modalError.textContent = "";
+      let name = productModal.prodName.value.trim();
+      let mrp = productModal.prodMrp.value.trim();
+      let cost = productModal.prodCost.value.trim();
+      let qty = Number(productModal.prodQty.value.trim());
+      let category = productModal.prodCategory.value.trim();
+      let notes = productModal.prodNotes.value.trim();
+      let photo = null;
+      if (!name) {modalError.textContent="Name required."; return;}
+      if (!mrp || isNaN(mrp)) {modalError.textContent="MRP required."; return;}
+      if (qty<0 || isNaN(qty)) {modalError.textContent="Quantity required."; return;}
+      let fileInput = productModal.prodPhoto;
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        photo = await readFileAsDataURL(fileInput.files[0]);
+      } else if (productEditing && productEditing.photo) {
+        photo = productEditing.photo;
+      }
+      if (!productEditing) {
+        // Add
+        products.push({
+          id: genID(),
+          name, mrp, cost, qty, category, notes, photo
+        });
+      } else {
+        // Edit
+        Object.assign(productEditing, {name, mrp, cost, qty, category, notes, photo});
+      }
+      saveProducts();
+      productModalBackdrop.classList.add('hide');
+    };
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e=>resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Delete modal logic
+    const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteName = document.getElementById('deleteName');
+    let productToDelete = null;
+    function showDeleteModal(product) {
+      deleteModalBackdrop.classList.remove('hide');
+      deleteName.textContent = product.name;
+      productToDelete = product;
+    }
+    document.getElementById('closeDeleteBtn').onclick =
+      document.getElementById('cancelDeleteBtn').onclick =()=>{
+      deleteModalBackdrop.classList.add('hide');
+      productToDelete = null;
+    };
+    deleteModal.onsubmit = function(e) {
+      e.preventDefault();
+      if (!productToDelete) return;
+      products = products.filter(p=>p.id!==productToDelete.id);
+      saveProducts();
+      deleteModalBackdrop.classList.add('hide');
+      productToDelete = null;
+    };
+
+    function genID() {
+      return 'p'+(Date.now()+(''+Math.random()).slice(2,6));
+    }
+
+    // Export/import
+    document.getElementById('exportBtn').onclick = function() {
+      const dataStr = JSON.stringify(products, null, 2);
+      const blob = new Blob([dataStr], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'dealer-products-backup.json';
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      setTimeout(()=>{document.body.removeChild(a)},200);
+    };
+    document.getElementById('importBtn').onclick = ()=>document.getElementById('importFile').click();
+    document.getElementById('importFile').onchange = function(evt) {
+      let file = evt.target.files[0];
+      if (!file) return;
+      let reader = new FileReader();
+      reader.onload = function(e){
+        try {
+          let arr = JSON.parse(e.target.result);
+          if (Array.isArray(arr)) {
+            arr.forEach(prod=>{
+              if (!prod.id) prod.id = genID();
+            });
+            products = arr;
+            saveProducts();
+          } else throw new Error();
+        } catch{ alert("Invalid file"); }
+      };
+      reader.readAsText(file);
+      evt.target.value = '';
+    };
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (hasPIN) loginModal.classList.remove('hide');
+    });
+
+    // -- DEMO PHONESYNC --
+    function syncDemoCard() {
+      // Update mockup with first 2 products if available
+      let prds = products.slice(0,2);
+      if (prds.length) {
+        for (let i=0; i<2; ++i) {
+          let el1=document.getElementById('demo-prd-title-'+(i+1));
+          let el2=document.getElementById('demo-prd-det-'+(i+1));
+          if (prds[i]) {
+            el1.textContent = prds[i].name;
+            el2.textContent = `Stock: ${prds[i].qty} • ₹${prds[i].mrp}`;
+          } else {
+            el1.textContent = "";
+            el2.textContent = "";
+          }
+        }
+      }
+    }
+    setInterval(syncDemoCard,1000);
+  </script>
+</body>
+</html>
+
