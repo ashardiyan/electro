@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Local Dealer App – Offline Product Manager</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#161B22" />
   <style>
     :root {
       --bg1: #0C1220;
@@ -143,6 +145,12 @@
     .features-list strong {
       color: var(--accent2);
       font-weight: 600;
+    }
+    #installPromptBtn {
+      display: none;
+      margin-left: 14px;
+      font-size: .99em;
+      padding: 8px 17px;
     }
     .table-wrap {
       overflow-x: auto;
@@ -421,7 +429,7 @@
       cursor: pointer;
       transition: background .17s;
     }
-    .products-top-actions button:active {
+    #installPromptBtn:active {
       background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
     .product-list {
@@ -651,6 +659,7 @@
             Local Dealer App <br><span class="tagline">(Offline Product Manager)</span>
           </span>
         </div>
+        <button id="installPromptBtn" title="Install as App">📲 Install App</button>
       </div>
     </header>
     <div class="main-content">
@@ -676,7 +685,7 @@
             <li>📤 <strong>Export/backup:</strong> as JSON file</li>
             <li>📥 <strong>Import:</strong> from backup file on another device</li>
             <li>🖥️ <strong>Modern dashboard</strong> view</li>
-            <li>📲 <strong>Install as PWA</strong> (Add to Home via Chrome)</li>
+            <li>📲 <strong>Install as PWA</strong> (Add to Home via Chrome or tap Install App)</li>
           </ul>
         </section>
         <!-- 3. Tech Stack Table -->
@@ -740,7 +749,7 @@
             <li>✔️ <strong>Confirmation</strong> before deletes</li>
           </ul>
         </section>
-        <!-- ---------------- DEALER APP PRODUCT MANAGEMENT CARD #---------------- -->
+        <!-- Products Dashboard -->
         <section class="card" style="animation-delay:.53s">
           <h2 class="icon-title">📦 Products Dashboard</h2>
           <div class="products-top-actions">
@@ -842,28 +851,69 @@
       }, 180);
     });
 
-    // === SIMPLE HASH (PBKDF2 emulation with window.crypto.subtle) ===
-    async function hashPIN(pin) {
-      const encoder = new TextEncoder();
-      const salt = window.localStorage.getItem('dealer-app-salt') 
-        || (window.crypto.getRandomValues(new Uint8Array(16)), Array.from(window.crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2,'0')).join(''));
-      window.localStorage.setItem('dealer-app-salt', salt);
+    // --- PWA Install Prompt ---
+    let deferredPrompt; // Save event for later
+    const installBtn = document.getElementById('installPromptBtn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+    installBtn && (installBtn.onclick = async function() {
+      installBtn.disabled = true;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const res = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+        installBtn.disabled = false;
+      }
+    });
+    window.addEventListener('appinstalled', ()=>{
+      installBtn.style.display='none';
+      deferredPrompt = null;
+    });
 
+    // --- Service worker registration for PWA ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+      });
+    }
+
+    // === FIXED: Hash and PIN/PASSWORD logic for reliability ===
+    async function hashPIN(pin) {
+      // -- Always preserve the salt from first set, never overwrite on login
+      let salt = window.localStorage.getItem('dealer-app-salt');
+      if (!salt) {
+        // Generate once and save
+        const arr = new Uint8Array(16);
+        window.crypto.getRandomValues(arr);
+        salt = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+        window.localStorage.setItem('dealer-app-salt', salt);
+      }
+      const encoder = new TextEncoder();
       const baseKey = await window.crypto.subtle.importKey(
         'raw',
         encoder.encode(pin),
         'PBKDF2',
-        false, ['deriveKey']
+        false, ['deriveBits']
       );
-      const key = await window.crypto.subtle.deriveKey(
-        {name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" },
-        baseKey,
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-      );
-      const rawKey = await window.crypto.subtle.exportKey('raw', key);
-      const hashArr = new Uint8Array(rawKey);
+      // Derive 256 bits (32 bytes). If importKey fails due to browser, fallback to SHA-256 hash.
+      let rawBits;
+      try {
+        rawBits = await window.crypto.subtle.deriveBits(
+          { name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" },
+          baseKey,
+          256
+        );
+      } catch (e) {
+        // Fallback: just hash PIN+salt (weak fallback, should not be reached in modern browser)
+        const data = encoder.encode(pin + salt);
+        const arrBuf = await window.crypto.subtle.digest('SHA-256', data);
+        rawBits = arrBuf;
+      }
+      const hashArr = new Uint8Array(rawBits);
       return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
     }
     // Login / PIN logic
@@ -873,18 +923,29 @@
     const loginError = document.getElementById('login-error');
     const loginBtn = document.getElementById('loginBtn');
     const pinLabel = document.getElementById('pinLabel');
-    let hasPIN = !!window.localStorage.getItem('dealer-hash');
-    if (hasPIN) {
-      loginBtn.textContent = "Unlock";
-      pinLabel.textContent = "Enter your PIN/Password:";
-    } else {
-      loginBtn.textContent = "Set PIN";
-      pinLabel.textContent = "Create a secure PIN/Password:";
+    function updatePINUI(hasPIN) {
+      if (hasPIN) {
+        loginBtn.textContent = "Unlock";
+        pinLabel.textContent = "Enter your PIN/Password:";
+        loginPIN.value = "";
+        loginPIN.placeholder = "Enter PIN or password";
+        loginPIN.autocomplete = "current-password";
+      } else {
+        loginBtn.textContent = "Set PIN";
+        pinLabel.textContent = "Create a secure PIN/Password:";
+        loginPIN.value = "";
+        loginPIN.placeholder = "Set PIN or password";
+        loginPIN.autocomplete = "new-password";
+      }
     }
+    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
+    updatePINUI(getHasPIN());
     loginForm.onsubmit = async function(e) {
       e.preventDefault();
       loginError.textContent = '';
-      let pinVal = loginPIN.value.trim();
+      loginError.className = "input-error";
+      const pinVal = loginPIN.value.trim();
+      let hasPIN = getHasPIN();
       if (!pinVal || pinVal.length < 4) {
         loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
         return;
@@ -893,24 +954,30 @@
       const hash = await hashPIN(pinVal);
       if (!hasPIN) {
         window.localStorage.setItem('dealer-hash', hash);
-        hasPIN = true;
-        pinLabel.textContent = "Enter your PIN/Password:";
-        loginBtn.textContent = "Unlock";
-        loginPIN.value = "";
+        // Critical: salt saved only if not present (handled in hashPIN),
+        // so don't overwrite after initial set.
+        updatePINUI(true);
         loginError.className = "success";
         loginError.textContent = "PIN set! Please login.";
-        setTimeout(()=>{ loginError.textContent=''; loginError.className='input-error'; }, 1000);
+        setTimeout(()=>{
+          loginError.textContent = '';
+          loginError.className = "input-error";
+        }, 1000);
+        loginBtn.disabled = false;
+        loginPIN.value = "";
         return;
       }
-      if (window.localStorage.getItem('dealer-hash') === hash) {
+      // Only compare to the user hash, salt must be unchanged for same user
+      const userHash = window.localStorage.getItem('dealer-hash');
+      if (userHash === hash) {
         loginModal.classList.add('hide');
         document.getElementById('dealerApp').classList.add('active');
         setTimeout(()=>{loginModal.style.display='none'},260);
         setTimeout(refreshProductList, 340);
       } else {
         loginError.textContent = "Incorrect PIN/Password.";
+        loginBtn.disabled = false;
       }
-      loginBtn.disabled = false;
     };
 
     // Product data structure in localStorage: 'dealer-products' JSON array
@@ -1085,7 +1152,7 @@
       productToDelete = product;
     }
     document.getElementById('closeDeleteBtn').onclick =
-      document.getElementById('cancelDeleteBtn').onclick =()=>{
+      document.getElementById('cancelDeleteBtn').onclick = () => {
       deleteModalBackdrop.classList.add('hide');
       productToDelete = null;
     };
@@ -1099,7 +1166,7 @@
     };
 
     function genID() {
-      return 'p'+(Date.now()+(''+Math.random()).slice(2,6));
+      return 'p'+(Date.now()+(''+Math.random()).slice(2, 6));
     }
 
     // Export/import
@@ -1138,7 +1205,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', ()=>{
-      if (hasPIN) loginModal.classList.remove('hide');
+      if (getHasPIN()) loginModal.classList.remove('hide');
     });
 
     // -- DEMO PHONESYNC --
