@@ -625,7 +625,7 @@
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
           <div class="prod-name">${nameSafe}${cat}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
+          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
           ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
