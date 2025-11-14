@@ -25,6 +25,9 @@
       --shadow-soft: 0 2px 8px rgba(40,98,180,.11);
       --danger: #ef4444;
       --success: #10b981;
+      --rounded-btn: 10px;
+      --button-skyblue: #06B6D4;
+      --button-gradient: linear-gradient(90deg, #06B6D4 40%, #2563EB 100%);
     }
     html, body {
       padding: 0;
@@ -35,325 +38,125 @@
       color: var(--text);
       min-height: 100vh;
     }
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .container {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 34px 12px 54px 12px;
-      box-sizing: border-box;
-      width: 100%;
-    }
-    header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-    .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .app-logo {
-      width: 50px;
-      height: 50px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2) 75%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.11rem;
-      box-shadow: var(--shadow-soft);
-      color: #fff;
-      font-weight: 700;
-    }
-    .app-title {
-      font-weight: 900;
-      font-size: 1.7rem;
-      line-height: 1.13;
-      letter-spacing: -1px;
-      color: var(--text);
-      margin-left: 2px;
-    }
-    #installPromptBtn, #installAsAppBtn {
-      display: none;
-      margin-left: 12px;
-      font-size: .99em;
-      padding: 8px 17px;
-      border-radius: 8px;
-      background: linear-gradient(91deg, var(--accent2), var(--accent));
-      color: #fff;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 1px 11px #2e5fad23;
-      transition: background .17s;
-    }
-    #installPromptBtn:active, #installPromptBtn:hover,
-    #installAsAppBtn:active, #installAsAppBtn:hover {
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    #mobileInstallInstructions {
-      display: none;
-      margin-left: 10px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: #1a2233;
-      color: var(--accent2);
-      font-size: .93em;
-      font-style: italic;
-      box-shadow: 0 2px 8px #222c3d22;
-      max-width: 310px;
-      line-height: 1.45;
-    }
+    body { display:flex; flex-direction:column; min-height:100vh; }
+    .container { max-width:640px; margin:0 auto; padding:34px 12px 54px; width:100%; box-sizing:border-box; }
+    header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; gap:10px; }
+    .logo-wrap { display:flex; align-items:center; gap:14px; }
+    .app-logo { width:50px; height:50px; border-radius:18px; background:linear-gradient(135deg,var(--accent),var(--accent2)75%); display:flex; align-items:center; justify-content:center; font-size:2.11rem; box-shadow:var(--shadow-soft); color:#fff; font-weight:700; }
+    .app-title { font-weight:900; font-size:1.7rem; line-height:1.13; letter-spacing:-1px; color:var(--text); margin-left:2px; }
+    .top-controls { display:flex; align-items:center; gap:10px; }
+    button.icon-btn { background:none; border:none; color:var(--accent2); font-size:1.23rem; padding:8px 10px; border-radius:9px; cursor:pointer; outline:none; }
+    button#settingsBtn { font-size:1.33rem; color:var(--text); background:#1b2430; padding:8px 11px; border-radius:9px; box-shadow:0 1px 6px #0008; }
+    #installPromptBtn, #installAsAppBtn { display:none; margin-left:12px; font-size:.99em; padding:8px 14px; border-radius:8px; background:linear-gradient(91deg,var(--accent2),var(--accent)); color:#fff; font-weight:700; border:none; cursor:pointer; box-shadow:0 1px 11px #2e5fad23; }
+    #mobileInstallInstructions { display:none; margin-left:10px; padding:8px 10px; border-radius:8px; background:#1a2233; color:var(--accent2); font-size:.93em; font-style:italic; box-shadow:0 2px 8px #222c3d22; max-width:310px; line-height:1.45; }
 
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      align-items: stretch;
-      justify-content: flex-start;
-      width: 100%;
-    }
-    .card {
-      background: var(--bg2);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow);
-      margin-bottom: 32px;
-      padding: 1.6rem 1.6rem 1.3rem 1.6rem;
-      animation: fadeUp 0.7s cubic-bezier(.43,.8,.52,1.18);
-      opacity: 0;
-      transform: translateY(36px);
-      animation-fill-mode: forwards;
+    .main-content { display:flex; flex-direction:column; gap:0; align-items:stretch; width:100%; }
+    .card { background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); margin-bottom:32px; padding:1.6rem 1.6rem 1.3rem; animation:fadeUp .7s cubic-bezier(.43,.8,.52,1.18); opacity:0; transform:translateY(36px); animation-fill-mode:forwards; border:none; transition:box-shadow .15s, background .16s; }
+    .card.show { opacity:1; transform:none; }
+    @keyframes fadeUp { 0%{opacity:0;transform:translateY(45px);}65%{opacity:.6;}100%{opacity:1;transform:translateY(0);} }
+    .products-top-actions { display:flex; align-items:flex-end; gap:11px; margin-bottom:17px; flex-wrap:wrap; }
+    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; }
+    #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 38px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
+    #productSearch:focus { border-color:var(--accent); }
+    .search-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
+    .product-list { margin:0; padding:0; list-style:none; }
+
+    /* Stylish Skyblue Buttons (for add/export/import/cancel) */
+    .rounded-sky-btn {
+      background: var(--button-gradient);
+      color: #fff;
       border: none;
-      transition: box-shadow 0.15s, background 0.16s;
-    }
-    .card.show { opacity: 1; transform: translateY(0);}
-    .card:focus-within, .card:hover {
-      box-shadow: 0 4px 30px #348ee966,0 2px 6px #18346009;
-      background: #232d3d;
-    }
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(45px);}
-      65% { opacity: .6;}
-      100% {opacity: 1; transform: translateY(0);}
-    }
-    .products-top-actions {
-      display: flex;
-      align-items: flex-end;
-      gap: 11px;
-      margin-bottom: 17px;
-      flex-wrap: wrap;
-    }
-    .product-search-wrap {
-      position: relative;
-      flex: 1 1 192px;
-      max-width: 370px;
-      margin-bottom: 0;
-    }
-    #productSearch {
-      width: 100%;
-      border-radius: 8px;
-      border: none;
-      background: var(--bg3);
-      color: var(--text);
-      font-size: 1.06em;
-      padding: 9px 38px 9px 15px;
-      outline: none;
-      box-shadow: 0 1.5px 6px #35455a23;
-      transition: border 0.13s, box-shadow .13s;
-      border: 1.5px solid #23314a;
-      margin: 0;
-    }
-    #productSearch:focus {border-color: var(--accent);}
-    .search-icon {
-      position: absolute;
-      right: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--accent2);
-      font-size: 1.15em;
-      opacity: 0.7;
-      pointer-events: none;
-    }
-    .products-top-actions button {
-      border: none;
-      border-radius: 8px;
-      font-size: .99em;
-      color: #fff !important;
-      font-weight: 700;
+      border-radius: var(--rounded-btn);
       padding: 10px 20px;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
-      box-shadow: 0 2px 8px #28478718;
+      font-size: 1em;
+      font-weight: 600;
       cursor: pointer;
-      margin: 0 2px;
-      transition: background .17s;
+      box-shadow: 0 1.5px 10px #2eb9f733;
+      transition: background .15s, box-shadow .14s, transform .10s;
       outline: none;
+      margin: 2px 0;
+      letter-spacing: 0.02em;
+    }
+    .rounded-sky-btn:hover,
+    .rounded-sky-btn:active {
+      background: linear-gradient(90deg, #0e9fec, #2563EB 95%);
+      box-shadow: 0 3px 16px #43c7fc43;
+      transform: translateY(-1.5px) scale(1.03);
+    }
+    /* Variation for 'Cancel' with lighter style */
+    .rounded-sky-btn.cancel {
+      background: #18313c;
+      color: var(--button-skyblue);
+      border: 1.5px solid var(--button-skyblue);
+      font-weight: 600;
+    }
+    .rounded-sky-btn.cancel:hover, .rounded-sky-btn.cancel:active {
+      background: #22384a;
+      color: #fff;
+      border-color: #1095b7;
     }
 
-    .product-list { margin: 0; padding: 0; list-style: none; }
-    .prod-card {
-      background: var(--bg3);
-      border-radius: 13px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 10px #2c345128;
-      display: flex;
-      gap: 19px;
-      align-items: center;
-      padding: 18px 20px;
-      position: relative;
-      animation: fadeUp .35s cubic-bezier(.43,.8,.52,1.18);
-      opacity: 0; transform: translateY(25px);
-      animation-fill-mode: forwards;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: box-shadow 0.14s, border-color 0.16s;
-    }
-    .prod-card.show {opacity: 1;transform: none;}
-    .prod-card:focus, .prod-card:hover { border-color: var(--accent2); box-shadow: 0 6px 24px #18346023;}
-    .prod-img {
-      min-width: 43px;
-      width: 43px;
-      height: 43px;
-      border-radius: 10px;
-      background: #21293f;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent2);
-      font-size: 1.45em;
-      overflow: hidden;
-    }
-    .prod-photo-thumb {
-      max-width: 100%;
-      max-height: 43px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #232b36;
-      display: block;
-    }
-    .prod-main-details { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-    .prod-name { font-weight: 700; font-size: 1.15em; color: var(--text); letter-spacing: -0.5px; margin-bottom: 1.5px; }
-    .prod-cat { border-radius: 7px; padding: 2px 10px 2px 9px; font-size: .93em; background: #183881; color: var(--accent2); margin-left: 7px; }
-    .prod-details { color: var(--gray); font-size: .97em; margin-top: 2px; margin-bottom: 2px; font-family: 'Inter', Arial, sans-serif; }
-    .prod-actions { margin-left: auto; display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
-    .prod-actions button { background: none; border: none; color: var(--accent2); font-size: 1.32em; cursor: pointer; transition: color 0.13s; border-radius: 5px; padding: 3px 5px; outline: none; }
-    .prod-actions button.edit:hover, .prod-actions button.edit:focus { color: var(--accent); }
-    .prod-actions button.delete:hover, .prod-actions button.delete:focus { color: var(--danger); }
-    .no-products { text-align: center; color: var(--text-muted); font-size: 1.12em; margin: 34px 0 14px 0; letter-spacing: .01em; }
+    .prod-card { background:var(--bg3); border-radius:13px; margin-bottom:16px; box-shadow:0 2px 10px #2c345128; display:flex; gap:19px; align-items:center; padding:18px 20px; position:relative; animation:fadeUp .35s; opacity:0; transform:translateY(25px); animation-fill-mode:forwards; cursor:pointer; border:2px solid transparent; transition:box-shadow .14s, border-color .16s; }
+    .prod-card.show { opacity:1; transform:none; }
+    .prod-card:hover { border-color:var(--accent2); box-shadow:0 6px 24px #18346023; }
+    .prod-img { min-width:43px; width:43px; height:43px; border-radius:10px; background:#21293f; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--accent2); font-size:1.45em; overflow:hidden; }
+    .prod-photo-thumb { max-width:100%; max-height:43px; border-radius:8px; object-fit:cover; background:#232b36; display:block; }
+    .prod-name { font-weight:700; font-size:1.15em; color:var(--text); letter-spacing:-0.5px; margin-bottom:1.5px; }
+    .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
+    .prod-actions { margin-left:auto; display:flex; gap:7px; align-items:center; }
+    .prod-actions button { background:none; border:none; color:var(--accent2); font-size:1.32em; cursor:pointer; transition:color .13s; border-radius:5px; padding:3px 5px; outline:none; }
 
-    .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(18, 23, 32, 0.92);
-      z-index: 4999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      visibility: visible;
-      transition: opacity .21s;
-    }
-    .modal-backdrop.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-    .modal {
-      min-width: 320px;
-      max-width: 98vw;
-      background: var(--bg2);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow);
-      z-index: 6000;
-      padding: 36px 22px 23px 22px;
-      animation: fadeUp .4s;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      position: relative;
-    }
-    .modal h3 { margin: 0 0 18px 0; color: var(--accent2); text-align: center; font-weight: 800; font-size: 1.26em; letter-spacing: -.2px; }
-    .modal-close { position: absolute; top: 13px; right: 14px; background: none; border: none; color: var(--accent2); font-size: 1.24em; cursor: pointer; font-weight: bold; outline: none; }
-    .modal label { font-weight: 600; font-size: .96em; color: var(--text-muted); margin-bottom: 4px; }
-    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal textarea {
-      border-radius: 7px; border: 1.5px solid #253048; background: var(--bg3); color: var(--text); font-size: 1em; padding: 8px 11px; margin-bottom: 13px; margin-top: 2px; outline: none; width: 100%; box-sizing: border-box; transition: border 0.13s;
-    }
-    .modal textarea { min-height: 54px; resize: vertical; }
-    .modal input[type=file] { border: none; background: none; padding: 0; }
-    .modal-btnbar { display: flex; align-items: center; justify-content: flex-end; gap: 13px; margin-top: 6px; }
-    .modal button[type=submit] { background: linear-gradient(95deg, var(--accent2), var(--accent)); color: #fff; padding: 11px 22px 10px 22px; font-size: 1em; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 10px #1b314e28; margin: 6px 0; transition: background .14s; outline: none; }
-    .modal .error { font-size: .98em; color: var(--danger); margin-bottom: 7px; min-height: 18px; text-align: left; }
-    #detailModal .prod-detail-photo { display: block; width: 124px; height: 124px; object-fit: cover; border-radius: 19px; margin: 6px auto 0 auto; box-shadow: 0 2px 12px #1b314e22; background: #21293f; }
-    #detailModal .prod-detail-info-list { list-style: none; padding: 0; margin: 0 0 0 0; display: flex; flex-direction: column; gap: .57em; }
-    #detailModal .prod-detail-value { color: var(--accent2); font-weight: 600; font-size: 1.08em; }
-    #detailModal .prod-detail-notes { margin-top: 0.8em; font-size: 1em; color: var(--text-muted); background: #213047; border-radius: 8px; padding: 0.7em 0.9em; }
-
-    @media (max-width: 650px) {
-      .container {padding: 14px 1vw 23px 1vw;}
-      .card {padding: .8rem 0.4rem 1.05rem 0.75rem;}
-      .app-title {font-size: 1.2rem;}
-      .prod-card {padding: 12px 7px;}
-      #detailModal .prod-detail-photo { width: 74px; height: 74px; }
-      .modal {padding: 14vw 3vw 7vw 3vw; min-width:unset;}
-      #mobileInstallInstructions {max-width: 94vw; font-size: 0.96em;}
-    }
-    ::selection {background: var(--accent2); color: #fff;}
-    a {color: var(--accent);}
-    .mockup-col, .phone-mockup { display: none !important; }
-    .icon-title, .features-list, .privacy-list, .ux-list, .table-wrap, .screen-app-title, .screen-sub, .screen-product, .screen-product-img, .screen-product-actions, .screen-tiny { display: none !important; }
-
-    #dealerApp { display: none; }
-    #dealerApp.active { display: block; }
-    #login-modal.hide { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.21s, visibility 0.21s; }
-    #login-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 7000;
-      background: rgba(22, 27, 34, 0.89);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.2s;
-    }
-    .login-dialog { background: var(--bg2); border-radius: 20px; box-shadow: 0 8px 40px #22374b55; padding: 42px 28px 22px 28px; min-width: 310px; width: 90vw; max-width: 340px; display: flex; flex-direction: column; align-items: stretch; }
-    .login-dialog h2 { font-weight: 900; color: var(--accent2); margin-bottom: 17px; text-align: center; font-size: 1.4em; }
-    .login-dialog label { font-size: 1.01em; margin-bottom: 7px; color: var(--text-muted); font-weight: 600; }
-    .login-dialog input[type=password] { border-radius: 7px; border: 1.5px solid #253048; background: var(--bg3); color: var(--text); font-size: 1em; padding: 10px 13px; margin-bottom: 19px; outline: none; width: 100%; box-sizing: border-box; transition: border 0.13s; }
-    .login-dialog input[type=password]:focus { border-color: var(--accent); }
-    .login-dialog button[type=submit] { background: linear-gradient(94deg, var(--accent2), var(--accent)); color: #fff; padding: 11px 2px 10px 2px; font-size: 1.02em; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 10px #1b314e28; margin-bottom: 7px; transition: background .14s; outline: none; }
-    .input-error { font-size: .99em; color: var(--danger); margin-bottom: 7px; min-height: 14px; text-align: left; display: block; }
-    .login-dialog small { color: var(--text-muted); font-size: .93em; text-align: left; margin-top: 1.5em; }
-    .login-dialog .success { font-size: .99em; color: var(--success); min-height: 14px; margin-bottom: 7px; text-align: left; display: block; }
+    .no-products { text-align:center; color:var(--text-muted); font-size:1.12em; margin:34px 0 14px 0; letter-spacing:.01em; }
+    .modal-backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(18,23,32,0.92); z-index:4999; display:flex; align-items:center; justify-content:center; opacity:1; visibility:visible; transition:opacity .21s; }
+    .modal-backdrop.hide { opacity:0; visibility:hidden; pointer-events:none; }
+    .modal { min-width:320px; max-width:98vw; background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); z-index:6000; padding:36px 22px 23px 22px; animation:fadeUp .4s; display:flex; flex-direction:column; align-items:stretch; position:relative; }
+    .modal h3 { margin:0 0 18px 0; color:var(--accent2); text-align:center; font-weight:800; font-size:1.26em; letter-spacing:-.2px; }
+    .modal-close { position:absolute; top:13px; right:14px; background:none; border:none; color:var(--accent2); font-size:1.24em; cursor:pointer; font-weight:bold; outline:none; }
+    .modal label { font-weight:600; font-size:.96em; color:var(--text-muted); margin-bottom:4px; }
+    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal textarea { border-radius:7px; border:1.5px solid #253048; background:var(--bg3); color:var(--text); font-size:1em; padding:8px 11px; margin-bottom:13px; margin-top:2px; outline:none; width:100%; box-sizing:border-box; transition:border .13s; }
+    .modal textarea { min-height:54px; resize:vertical; }
+    .modal-btnbar { display:flex; align-items:center; justify-content:flex-end; gap:13px; margin-top:6px; }
+    .modal button[type=submit] { background:linear-gradient(95deg,var(--accent2),var(--accent)); color:#fff; padding:11px 22px; font-size:1em; border:none; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px #1b314e28; margin:6px 0; transition:background .14s; outline:none; }
+    .modal .error { font-size:.98em; color:var(--danger); margin-bottom:7px; min-height:18px; text-align:left; }
+    #detailModal .prod-detail-photo { display:block; width:124px; height:124px; object-fit:cover; border-radius:19px; margin:6px auto 0 auto; box-shadow:0 2px 12px #1b314e22; background:#21293f; }
+    @media (max-width:650px){ .container{padding:14px 1vw 23px 1vw;} .card{padding:.8rem .4rem 1.05rem .75rem;} .app-title{font-size:1.2rem;} .prod-card{padding:12px 7px;} .modal{padding:14vw 3vw 7vw 3vw; min-width:unset;} #detailModal .prod-detail-photo{ width:74px; height:74px;} #mobileInstallInstructions{max-width:94vw;font-size:0.96em;} }
+    ::selection{background:var(--accent2); color:#fff;}
+    a{color:var(--accent);}
+    .hidden { display:none !important; }
   </style>
 </head>
 <body>
-  <div id="login-modal">
-    <form class="login-dialog" id="loginForm" autocomplete="off" novalidate>
-      <h2>🔐 Dealer Login</h2>
-      <div class="input-error" id="login-error" style="display:block"></div>
-      <label id="pinLabel" for="loginPIN">Create a secure PIN/Password:</label>
-      <input type="password" id="loginPIN" minlength="4" maxlength="32" required autofocus autocomplete="new-password" placeholder="Enter PIN or password"/>
-      <button type="submit" id="loginBtn">Set PIN</button>
-      <small>
-        Tip: This is stored securely (hashed) in localStorage for demo use only.<br>
-        Stay private – the app works 100% offline!
-      </small>
+  <!-- LOGIN / SET PIN modal - always shown on load (no auto login) -->
+  <div id="login-modal" style="position:fixed; inset:0; z-index:7000; background:rgba(22,27,34,0.89); display:flex; justify-content:center; align-items:center;">
+    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
+      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" style="display:none">✖</button>
+      <h3 style="text-align:center;color:var(--accent2);margin-bottom:12px">🔐 Dealer Login</h3>
+      <div class="error input-error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
+
+      <label id="pinLabel" for="loginPIN">Create a secure PIN / Password</label>
+      <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" />
+
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button type="submit" id="loginBtn" style="flex:1;">Set PIN</button>
+        <button type="button" id="forgotBtn" style="display:none; background:transparent; border:1px solid #253048; color:var(--text); padding:9px 12px; border-radius:8px; cursor:pointer;">Forgot</button>
+      </div>
+
+      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data is stored locally in your browser. PIN is hashed before saving.</small>
     </form>
   </div>
 
-  <div id="dealerApp" class="">
+  <!-- Main app container (hidden until correct login) -->
+  <div id="dealerApp" class="" style="display:none;">
     <div class="container">
       <header>
         <div class="logo-wrap">
           <div class="app-logo" title="Local Dealer App">🏷️</div>
           <span class="app-title">Local Dealer App</span>
         </div>
-        <div style="display:flex; align-items:center;">
-          <button id="installPromptBtn" title="Install as App">📲 Install App</button>
-          <button id="installAsAppBtn" title="Force Install App">🛠️ Install as App</button>
+        <div class="top-controls">
+          <button id="installPromptBtn" title="Install as App">📲 Install</button>
+          <button id="installAsAppBtn" title="Install as App (force)">🛠️</button>
+          <button id="settingsBtn" title="Settings (⋮)">⋮</button>
           <span id="mobileInstallInstructions"></span>
         </div>
       </header>
@@ -365,9 +168,9 @@
               <input type="search" placeholder="🔍 Search by name, category, or note..." id="productSearch" autocomplete="off" />
               <span class="search-icon">&#128269;</span>
             </div>
-            <button type="button" id="addProductBtn">+ Add</button>
-            <button type="button" id="exportBtn">Export</button>
-            <button type="button" id="importBtn">Import</button>
+            <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
+            <button type="button" id="exportBtn" class="rounded-sky-btn">Export</button>
+            <button type="button" id="importBtn" class="rounded-sky-btn">Import</button>
             <input type="file" id="importFile" accept="application/json" style="display:none"/>
           </div>
           <ul class="product-list" id="productList"></ul>
@@ -377,12 +180,12 @@
     </div>
   </div>
 
-  <!-- Add/Edit Product Modal -->
+  <!-- Product Add/Edit Modal -->
   <div class="modal-backdrop hide" id="productModalBackdrop">
     <form class="modal" id="productModal" autocomplete="off">
       <button class="modal-close" type="button" id="closeModalBtn" title="Close">✖</button>
       <h3 id="modalTitle">Add Product</h3>
-      <div class="error" id="modalError"></div>
+      <div class="error" id="modalError" style="min-height:18px"></div>
       <label for="prodName">Name</label>
       <input type="text" id="prodName" required maxlength="64" />
       <label for="prodMrp">MRP (₹)</label>
@@ -398,7 +201,7 @@
       <label for="prodPhoto">Photo</label>
       <input type="file" id="prodPhoto" accept="image/*" />
       <div class="modal-btnbar">
-        <button type="submit" id="saveProductBtn">Save</button>
+        <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
       </div>
     </form>
   </div>
@@ -410,8 +213,8 @@
       <h3>Delete Product</h3>
       <div style="margin:11px 0 17px 0">Are you sure you want to delete <b id="deleteName"></b>?</div>
       <div class="modal-btnbar">
-        <button type="button" id="cancelDeleteBtn">Cancel</button>
-        <button type="submit" style="background:var(--danger)">Yes, Delete</button>
+        <button type="button" id="cancelDeleteBtn" class="rounded-sky-btn cancel">Cancel</button>
+        <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px #1b314e28;transition:background .14s;outline:none;">Yes, Delete</button>
       </div>
     </form>
   </div>
@@ -425,16 +228,54 @@
     </div>
   </div>
 
+  <!-- Settings Modal (contains Logout + Reset PIN) -->
+  <div class="modal-backdrop hide" id="settingsBackdrop">
+    <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <button class="modal-close" type="button" id="closeSettingsBtn" title="Close">✖</button>
+      <h3 id="settingsTitle">Settings</h3>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:700">Account</div>
+            <div style="color:var(--text-muted);font-size:.94em;">Logout or reset your PIN</div>
+          </div>
+        </div>
+
+        <button id="logoutBtn" style="padding:10px;border-radius:8px;border:none;background:#2b2f3a;color:var(--text);cursor:pointer;">🔒 Logout</button>
+
+        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;" />
+
+        <div style="font-weight:700">Reset PIN</div>
+        <div style="color:var(--text-muted);font-size:.93em;margin-bottom:6px;">Enter your current PIN, then choose a new one.</div>
+
+        <label for="oldPin">Current PIN</label>
+        <input type="password" id="oldPin" placeholder="Current PIN" maxlength="32" />
+
+        <label for="newPin">New PIN</label>
+        <input type="password" id="newPin" placeholder="New PIN (min 4 chars)" maxlength="32" />
+
+        <label for="confirmPin">Confirm New PIN</label>
+        <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="32" />
+
+        <div class="error" id="resetPinError" style="min-height:18px;"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
+          <button id="resetPinCancel" class="rounded-sky-btn cancel">Cancel</button>
+          <button id="resetPinSubmit" class="rounded-sky-btn">Reset PIN</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
 
   <script>
     /****************************************************************
-     * PWA manifest & service worker (created dynamically here so
-     * you don't need separate files). This helps GitHub Pages +
-     * Chrome produce the installability prompt when criteria met.
+     * PWA manifest & service worker (dynamically created)
      ****************************************************************/
     (function createManifestAndServiceWorker() {
-      // Basic PWA manifest (includes small inline SVG icon as data URL)
       const svgIcon = encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect rx="36" width="100%" height="100%" fill="#2563EB"/><text x="50%" y="55%" font-size="84" text-anchor="middle" fill="#fff" font-family="Arial">${encodeURIComponent('🏷️')}</text></svg>`
       );
@@ -452,7 +293,6 @@
       };
       const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
       const manifestURL = URL.createObjectURL(manifestBlob);
-      // attach or replace a <link rel="manifest">
       (function setManifestLink() {
         let existing = document.querySelector('link[rel="manifest"]');
         if (!existing) {
@@ -463,30 +303,15 @@
         existing.href = manifestURL;
       })();
 
-      // Minimal service worker script as blob (install + cache basic requests)
       const swScript = `
         const CACHE_NAME = 'local-dealer-cache-v1';
-        self.addEventListener('install', event => {
-          self.skipWaiting();
-        });
-        self.addEventListener('activate', event => {
-          event.waitUntil(clients.claim());
-        });
-        // Simple network-first fetch for dynamic app; fallback to cache
+        self.addEventListener('install', event => { self.skipWaiting(); });
+        self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
         self.addEventListener('fetch', event => {
           const req = event.request;
           if (req.method !== 'GET') return;
           event.respondWith(
-            fetch(req).then(resp => {
-              // clone into cache (best-effort)
-              try {
-                const copy = resp.clone();
-                caches.open(CACHE_NAME).then(c => c.put(req, copy));
-              } catch(e) {}
-              return resp;
-            }).catch(() =>
-              caches.match(req).then(m => m || caches.match('/'))
-            )
+            fetch(req).then(resp => { try { const copy = resp.clone(); caches.open(CACHE_NAME).then(c => c.put(req, copy)); } catch(e){} return resp; }).catch(() => caches.match(req).then(m => m || caches.match('/')))
           );
         });
       `;
@@ -494,18 +319,15 @@
         const swBlob = new Blob([swScript], { type: 'text/javascript' });
         const swURL = URL.createObjectURL(swBlob);
         if ('serviceWorker' in navigator) {
-          // register on load to avoid blocking
           window.addEventListener('load', () => {
-            navigator.serviceWorker.register(swURL).catch(()=>{ /* don't break app if registration fails */});
+            navigator.serviceWorker.register(swURL).catch(()=>{});
           });
         }
-      } catch (e) {
-        // ignore - registration not critical
-      }
+      } catch (e) {}
     })();
 
     /**************************************************************
-     * Visual fades on load
+     * UI fade
      **************************************************************/
     window.addEventListener('DOMContentLoaded', function(){
       setTimeout(function() {
@@ -516,7 +338,7 @@
     });
 
     /**************************************************************
-     * PWA install prompt & mobile install hint
+     * PWA install prompt
      **************************************************************/
     let deferredPrompt;
     const installBtn = document.getElementById('installPromptBtn');
@@ -590,7 +412,7 @@
     });
 
     /**************************************************************
-     * Secure PIN hashing + login UI
+     * PIN hashing & auth helpers
      **************************************************************/
     async function hashPIN(pin) {
       let salt = window.localStorage.getItem('dealer-app-salt');
@@ -607,7 +429,6 @@
         const hashArr = new Uint8Array(rawBits);
         return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
       } catch (e) {
-        // fallback to simple digest if PBKDF2 not available
         const data = encoder.encode(pin + salt);
         const arrBuf = await window.crypto.subtle.digest('SHA-256', data);
         const hashArr = new Uint8Array(arrBuf);
@@ -615,66 +436,57 @@
       }
     }
 
-    const loginModal = document.getElementById('login-modal');
+    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
+    function showDealerApp() {
+      document.getElementById('dealerApp').style.display = '';
+      document.getElementById('login-modal').style.display = 'none';
+      setTimeout(refreshProductList, 220);
+    }
+    function showLoginModal(msg) {
+      document.getElementById('dealerApp').style.display = 'none';
+      const loginModal = document.getElementById('login-modal');
+      loginModal.style.display = 'flex';
+      if (msg) { document.getElementById('login-error').textContent = msg; } else { document.getElementById('login-error').textContent = ''; }
+      document.getElementById('loginPIN').value = '';
+      setTimeout(()=>document.getElementById('loginPIN').focus(),120);
+    }
+
+    // Always require PIN on load -> do not auto-unlock
+    window.addEventListener('load', ()=> {
+      // show login modal always
+      updatePINUI(getHasPIN());
+      showLoginModal();
+    });
+
+    // Update login UI depending on whether PIN exists
+    const loginBtn = document.getElementById('loginBtn');
     const loginForm = document.getElementById('loginForm');
     const loginPIN = document.getElementById('loginPIN');
     const loginError = document.getElementById('login-error');
-    const loginBtn = document.getElementById('loginBtn');
     const pinLabel = document.getElementById('pinLabel');
 
     function updatePINUI(hasPIN) {
       if (hasPIN) {
         loginBtn.textContent = "Unlock";
-        pinLabel.textContent = "Enter your PIN/Password:";
-        loginPIN.value = "";
+        pinLabel.textContent = "Enter your PIN / Password:";
         loginPIN.placeholder = "Enter PIN or password";
         loginPIN.autocomplete = "current-password";
       } else {
         loginBtn.textContent = "Set PIN";
-        pinLabel.textContent = "Create a secure PIN/Password:";
-        loginPIN.value = "";
+        pinLabel.textContent = "Create a secure PIN / Password:";
         loginPIN.placeholder = "Set PIN or password";
         loginPIN.autocomplete = "new-password";
       }
       loginError.textContent = '';
-      loginError.className = "input-error";
-      loginError.style.display = "block";
     }
-    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
-    updatePINUI(getHasPIN());
-
-    function showDealerApp() {
-      document.getElementById('dealerApp').classList.add('active');
-      loginModal.classList.add('hide');
-      setTimeout(()=>{ loginModal.style.display='none'; },260);
-    }
-    function hideDealerApp() {
-      document.getElementById('dealerApp').classList.remove('active');
-      loginModal.classList.remove('hide');
-      loginModal.style.display = 'flex';
-      loginError.style.display = "block";
-    }
-
-    document.addEventListener('DOMContentLoaded', ()=>{
-      // When loaded, show/hide login depending on stored PIN
-      if (getHasPIN()) {
-        hideDealerApp();
-      } else {
-        showDealerApp();
-      }
-      loginError.style.display = "block";
-    });
 
     loginForm.onsubmit = async function(e) {
       e.preventDefault();
       loginError.textContent = '';
-      loginError.className = "input-error";
-      loginError.style.display = "block";
-      const pinVal = loginPIN.value.trim();
+      const pinVal = (loginPIN.value || '').trim();
       const hasPIN = getHasPIN();
       if (!pinVal || pinVal.length < 4) {
         loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
-        loginError.style.display = "block";
         return;
       }
       loginBtn.disabled = true;
@@ -683,73 +495,125 @@
         if (!hasPIN) {
           window.localStorage.setItem('dealer-hash', hash);
           updatePINUI(true);
-          loginError.className = "success";
-          loginError.textContent = "PIN set! Please login.";
-          loginError.style.display = "block";
-          setTimeout(()=>{
-            loginError.textContent = '';
-            loginError.className = "input-error";
-            loginError.style.display = "block";
-          }, 1000);
+          loginError.style.color = 'var(--success)';
+          loginError.textContent = "PIN set. Now use it to unlock.";
+          setTimeout(()=>{ loginError.textContent = ''; loginError.style.color=''; },1500);
           loginBtn.disabled = false;
-          loginPIN.value = "";
+          loginPIN.value = '';
           return;
         }
         const userHash = window.localStorage.getItem('dealer-hash');
         if (userHash === hash) {
-          showDealerApp();
-          setTimeout(refreshProductList, 340);
-        } else {
-          loginError.textContent = "Incorrect PIN/Password.";
-          loginError.style.display = "block";
           loginBtn.disabled = false;
+          loginError.textContent = '';
+          showDealerApp();
+        } else {
+          loginBtn.disabled = false;
+          loginError.style.color = '';
+          loginError.textContent = 'Incorrect PIN / Password.';
         }
       } catch (ex) {
-        loginError.textContent = "An error occurred.";
         loginBtn.disabled = false;
+        loginError.textContent = 'An error occurred.';
       }
     };
 
     /**************************************************************
-     * Products store & helpers
+     * Settings modal logic: logout + reset PIN
+     **************************************************************/
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsBackdrop = document.getElementById('settingsBackdrop');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const resetPinSubmit = document.getElementById('resetPinSubmit');
+    const resetPinCancel = document.getElementById('resetPinCancel');
+    const resetPinError = document.getElementById('resetPinError');
+
+    settingsBtn.onclick = () => {
+      settingsBackdrop.classList.remove('hide');
+      // populate/clear reset form
+      document.getElementById('oldPin').value = '';
+      document.getElementById('newPin').value = '';
+      document.getElementById('confirmPin').value = '';
+      resetPinError.textContent = '';
+    };
+    closeSettingsBtn.onclick = () => settingsBackdrop.classList.add('hide');
+
+    logoutBtn.onclick = () => {
+      // do not delete PIN or products, just lock UI
+      settingsBackdrop.classList.add('hide');
+      showLoginModal('You have been logged out.');
+      updatePINUI(getHasPIN());
+    };
+
+    resetPinCancel.onclick = () => {
+      resetPinError.textContent = '';
+      settingsBackdrop.classList.add('hide');
+    };
+
+    resetPinSubmit.onclick = async function() {
+      resetPinError.textContent = '';
+      const oldPin = (document.getElementById('oldPin').value || '').trim();
+      const newPin = (document.getElementById('newPin').value || '').trim();
+      const confirmPin = (document.getElementById('confirmPin').value || '').trim();
+
+      if (!oldPin || oldPin.length < 4) { resetPinError.textContent = "Enter current PIN (min 4 chars)."; return; }
+      if (!newPin || newPin.length < 4) { resetPinError.textContent = "New PIN must be at least 4 characters."; return; }
+      if (newPin !== confirmPin) { resetPinError.textContent = "New PIN and confirmation do not match."; return; }
+
+      resetPinSubmit.disabled = true;
+      try {
+        const oldHash = await hashPIN(oldPin);
+        const stored = window.localStorage.getItem('dealer-hash');
+        if (stored !== oldHash) {
+          resetPinError.textContent = "Current PIN is incorrect.";
+          resetPinSubmit.disabled = false;
+          return;
+        }
+        const newHash = await hashPIN(newPin);
+        window.localStorage.setItem('dealer-hash', newHash);
+        // feedback and close
+        resetPinError.style.color = 'var(--success)';
+        resetPinError.textContent = "PIN updated successfully.";
+        setTimeout(()=>{
+          resetPinError.textContent = '';
+          resetPinError.style.color = '';
+          settingsBackdrop.classList.add('hide');
+        }, 1000);
+      } catch (err) {
+        resetPinError.textContent = "Failed to update PIN.";
+      }
+      resetPinSubmit.disabled = false;
+    };
+
+    /**************************************************************
+     * Products store & UI (same as previous working code)
      **************************************************************/
     const productListElem = document.getElementById('productList');
     const noProductsElem = document.getElementById('noProducts');
     let products = [];
 
     function saveProducts() {
-      try {
-        window.localStorage.setItem('dealer-products', JSON.stringify(products));
-      } catch (e) {
-        console.error("Saving products failed", e);
-      }
+      try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){ console.error("Saving products failed",e); }
       refreshProductList();
     }
     function loadProducts() {
       products = [];
       try {
         const str = window.localStorage.getItem('dealer-products');
-        if (str) {
-          products = JSON.parse(str) || [];
-        }
-      } catch (e) {
-        products = [];
-      }
+        if (str) products = JSON.parse(str) || [];
+      } catch (e) { products = []; }
     }
     function escapeHTML(v) {
       if (typeof v !== "string") return v === undefined || v === null ? "" : String(v);
       return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c]));
     }
 
-    /**************************************************************
-     * Product card + detail
-     **************************************************************/
     function createProductCard(product, idx) {
       const li = document.createElement('li');
       li.className = 'prod-card';
-      li.setAttribute('tabindex', '0');
-      setTimeout(()=>li.classList.add('show'), 121 + idx*64);
-
+      li.setAttribute('tabindex','0');
+      setTimeout(()=>li.classList.add('show'), 121+idx*64);
       let imgHTML = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="Product Photo">` : `<span>📦</span>`;
       const nameSafe = escapeHTML(product.name || "Unnamed");
       const cat = product.category ? `<span class="prod-cat">${escapeHTML(String(product.category)).slice(0,18)}</span>` : '';
@@ -761,8 +625,8 @@
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
           <div class="prod-name">${nameSafe}${cat}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined, {maximumFractionDigits:2})}${costNum !== null ? `<span style="color:var(--text-muted);font-size:.928em;"> (Cost: ₹${costNum.toLocaleString(undefined, {maximumFractionDigits:2})})</span>` : ""}</div>
-          ${product.notes ? `<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>` : ""}
+          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₹${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
+          ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
           <button type="button" title="Edit" class="edit" data-id="${product.id}">✏️</button>
@@ -772,16 +636,14 @@
 
       const editBtn = li.querySelector('.edit');
       const delBtn = li.querySelector('.delete');
-      if (editBtn) editBtn.onclick = (e) => { e.stopPropagation(); showProductModal('edit', product); };
-      if (delBtn) delBtn.onclick = (e) => { e.stopPropagation(); showDeleteModal(product); };
+      if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
+      if (delBtn) delBtn.onclick = (e)=>{ e.stopPropagation(); showDeleteModal(product); };
 
       li.addEventListener('click', function(e){
         if(!e.target.closest('.prod-actions')) showDetailModal(product);
       });
       li.addEventListener('keydown', function(e){
-        if((e.key === "Enter" || e.key === " ") && !e.target.closest('.prod-actions')) {
-          e.preventDefault(); showDetailModal(product);
-        }
+        if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { e.preventDefault(); showDetailModal(product); }
       });
       return li;
     }
@@ -790,7 +652,6 @@
      * Detail modal
      **************************************************************/
     const detailModalBackdrop = document.getElementById('detailModalBackdrop');
-    const detailModal = document.getElementById('detailModal');
     const detailModalBody = document.getElementById('detailModalBody');
 
     function showDetailModal(product) {
@@ -800,33 +661,28 @@
       const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
 
       detailModalBody.innerHTML = `
-        <div style="text-align:center;">
-          ${photoBlock}
-        </div>
-        <ul class="prod-detail-info-list">
-          <li><b>Name:</b> <span class="prod-detail-value">${nameSafe}</span></li>
-          ${product.category ? `<li><b>Category:</b> <span class="prod-detail-value">${escapeHTML(String(product.category))}</span></li>` : ""}
-          <li><b>Stock:</b> <span class="prod-detail-value">${Number(product.qty)||0}</span></li>
-          <li><b>MRP:</b> <span class="prod-detail-value">₹${mrpNum.toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>
-          ${costNum !== null ? `<li><b>Cost:</b> <span class="prod-detail-value">₹${costNum.toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>` : ""}
+        <div style="text-align:center;">${photoBlock}</div>
+        <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
+          <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
+          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
+          <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
+          <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
+          ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₹${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
         </ul>
-        ${product.notes ? `<div class="prod-detail-notes">${escapeHTML(String(product.notes))}</div>` : ""}
+        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
       `;
       detailModalBackdrop.classList.remove('hide');
-      setTimeout(()=>detailModal.focus(),100);
+      setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
     }
 
-    document.getElementById('closeDetailModalBtn').onclick = function() {
-      detailModalBackdrop.classList.add('hide');
-      setTimeout(()=>{ detailModalBody.innerHTML = ""; }, 250);
-    };
+    document.getElementById('closeDetailModalBtn').onclick = function(){ detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML = ''; };
 
-    // Escape key closes any open modal
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function(e){
       if (e.key === "Escape") {
         if (!detailModalBackdrop.classList.contains('hide')) { detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML=''; }
         if (!productModalBackdrop.classList.contains('hide')) productModalBackdrop.classList.add('hide');
         if (!deleteModalBackdrop.classList.contains('hide')) deleteModalBackdrop.classList.add('hide');
+        if (!settingsBackdrop.classList.contains('hide')) settingsBackdrop.classList.add('hide');
       }
     });
 
@@ -834,7 +690,7 @@
      * Search
      **************************************************************/
     const searchInput = document.getElementById('productSearch');
-    searchInput.addEventListener('input', function() { refreshProductList(); });
+    searchInput.addEventListener('input', function(){ refreshProductList(); });
     searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
 
     /**************************************************************
@@ -849,25 +705,16 @@
         (String(prod.category||"").toLowerCase().includes(q)) ||
         (String(prod.notes||"").toLowerCase().includes(q))
       );
-      if (!filtered.length) {
-        noProductsElem.style.display = "";
-        return;
-      }
+      if (!filtered.length) { noProductsElem.style.display = ""; return; }
       noProductsElem.style.display = "none";
-      filtered.sort((a, b) => (Number(b.qty) - Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
-      filtered.forEach((prod,i) => productListElem.appendChild(createProductCard(prod,i)));
+      filtered.sort((a,b) => (Number(b.qty)-Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
+      filtered.forEach((prod,i)=>productListElem.appendChild(createProductCard(prod,i)));
     }
 
     /**************************************************************
-     * Add / Edit product modal wiring (fixed to use direct element refs)
+     * Add / Edit product modal
      **************************************************************/
     let productEditing = null;
-    const productModalBackdrop = document.getElementById('productModalBackdrop');
-    const productModal = document.getElementById('productModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalError = document.getElementById('modalError');
-
-    // Direct element refs
     const prodName = document.getElementById('prodName');
     const prodMrp = document.getElementById('prodMrp');
     const prodCost = document.getElementById('prodCost');
@@ -875,6 +722,10 @@
     const prodCategory = document.getElementById('prodCategory');
     const prodNotes = document.getElementById('prodNotes');
     const prodPhoto = document.getElementById('prodPhoto');
+    const productModalBackdrop = document.getElementById('productModalBackdrop');
+    const productModal = document.getElementById('productModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalError = document.getElementById('modalError');
 
     function showProductModal(mode, product) {
       productModal.reset();
@@ -882,26 +733,14 @@
       if (mode === 'add') {
         modalTitle.textContent = "Add Product";
         productEditing = null;
-        prodName.value = "";
-        prodMrp.value = "";
-        prodCost.value = "";
-        prodQty.value = "";
-        prodCategory.value = "";
-        prodNotes.value = "";
-        prodPhoto.value = "";
+        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = ""; prodNotes.value = ""; prodPhoto.value = "";
       } else {
         modalTitle.textContent = "Edit Product";
         productEditing = product;
-        prodName.value = product.name || "";
-        prodMrp.value = product.mrp !== undefined ? product.mrp : "";
-        prodCost.value = product.cost !== undefined ? product.cost : "";
-        prodQty.value = product.qty !== undefined ? product.qty : "";
-        prodCategory.value = product.category || "";
-        prodNotes.value = product.notes || "";
-        prodPhoto.value = "";
+        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = "";
       }
       productModalBackdrop.classList.remove('hide');
-      setTimeout(()=>{ prodName.focus(); }, 150);
+      setTimeout(()=>prodName.focus(),150);
     }
 
     document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
@@ -923,9 +762,7 @@
 
       let photoData = null;
       if (prodPhoto && prodPhoto.files && prodPhoto.files[0]) {
-        try {
-          photoData = await readFileAsDataURL(prodPhoto.files[0]);
-        } catch (err) { /* ignore photo errors */ }
+        try { photoData = await readFileAsDataURL(prodPhoto.files[0]); } catch (err) {}
       } else if (productEditing && productEditing.photo) {
         photoData = productEditing.photo;
       }
@@ -941,20 +778,17 @@
         photo: photoData
       };
 
-      if (!productEditing) {
-        products.push(productObj);
-      } else {
-        // replace object (keeping stable reference not required)
+      if (!productEditing) products.push(productObj);
+      else {
         const idx = products.findIndex(p => p.id === productEditing.id);
-        if (idx >= 0) products[idx] = productObj;
-        else products.push(productObj);
+        if (idx >= 0) products[idx] = productObj; else products.push(productObj);
       }
       saveProducts();
       productModalBackdrop.classList.add('hide');
     };
 
     function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve,reject)=>{
         const reader = new FileReader();
         reader.onload = e => resolve(e.target.result);
         reader.onerror = reject;
@@ -976,18 +810,18 @@
       productToDelete = product;
       setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60);
     }
+
     document.getElementById('closeDeleteBtn').onclick =
     document.getElementById('cancelDeleteBtn').onclick = () => {
-      deleteModalBackdrop.classList.add('hide');
-      productToDelete = null;
+      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
     };
-    deleteModal.onsubmit = function(e) {
+
+    deleteModal.onsubmit = function(e){
       e.preventDefault();
       if (!productToDelete) return;
       products = products.filter(p => p.id !== productToDelete.id);
       saveProducts();
-      deleteModalBackdrop.classList.add('hide');
-      productToDelete = null;
+      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
     };
 
     function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
@@ -999,13 +833,7 @@
       const dataStr = JSON.stringify(products || [], null, 2);
       const blob = new Blob([dataStr], {type:"application/json"});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'dealer-products-backup.json';
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
+      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = 'dealer-products-backup.json'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url);
       setTimeout(()=>{ document.body.removeChild(a); },200);
     };
 
@@ -1033,10 +861,9 @@
     /**************************************************************
      * Initial load
      **************************************************************/
-    // Guarantee products loaded for UI
     window.addEventListener('load', function() {
       loadProducts();
-      refreshProductList();
+      // do not auto-show app; user must login each time
     });
   </script>
 </body>
