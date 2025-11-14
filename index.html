@@ -188,9 +188,9 @@
       <div class="error" id="modalError" style="min-height:18px"></div>
       <label for="prodName">Name</label>
       <input type="text" id="prodName" required maxlength="64" />
-      <label for="prodMrp">MRP (₹)</label>
+      <label for="prodMrp">MRP (₨)</label>
       <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
-      <label for="prodCost">Cost Price (₹)</label>
+      <label for="prodCost">Cost Price (₨)</label>
       <input type="number" id="prodCost" min="0" max="100000" step="0.01"/>
       <label for="prodQty">Quantity</label>
       <input type="number" id="prodQty" min="0" max="100000" required />
@@ -625,7 +625,7 @@
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
           <div class="prod-name">${nameSafe}${cat}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₹${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
+          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
           ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
@@ -666,8 +666,8 @@
           <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
           ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
           <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
-          <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₹${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
-          ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₹${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
+          <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
+          ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
         </ul>
         ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
       `;
