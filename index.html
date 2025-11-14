@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Local Dealer App</title>
-  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#161B22" />
-  <!-- Google fonts for more professional UI -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -81,7 +80,7 @@
       color: var(--text);
       margin-left: 2px;
     }
-    #installPromptBtn {
+    #installPromptBtn, #installAsAppBtn {
       display: none;
       margin-left: 12px;
       font-size: .99em;
@@ -95,23 +94,7 @@
       box-shadow: 0 1px 11px #2e5fad23;
       transition: background .17s;
     }
-    #installPromptBtn:active, #installPromptBtn:hover {
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    #installAsAppBtn {
-      display: none;
-      margin-left: 12px;
-      font-size: .99em;
-      padding: 8px 17px;
-      border-radius: 8px;
-      background: linear-gradient(91deg, var(--accent2), var(--accent));
-      color: #fff;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 1px 11px #2e5fad23;
-      transition: background .17s;
-    }
+    #installPromptBtn:active, #installPromptBtn:hover,
     #installAsAppBtn:active, #installAsAppBtn:hover {
       background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
@@ -128,86 +111,7 @@
       max-width: 310px;
       line-height: 1.45;
     }
-    /* -------- Custom styles for install prompt popup -------- */
-    .install-popup-backdrop {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      z-index: 10000;
-      background: rgba(22, 27, 34, 0.89);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-      visibility: visible;
-      transition: opacity .2s;
-    }
-    .install-popup-backdrop.hide {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-    }
-    .install-popup {
-      background: var(--bg2, #161B22);
-      border-radius: 16px;
-      box-shadow: 0 6px 36px rgba(30,45,70,0.24);
-      padding: 36px 26px 30px 26px;
-      min-width: 282px;
-      max-width: 95vw;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      position: relative;
-      animation: fadeUp .35s;
-      z-index: 10001;
-    }
-    .install-popup h3 {
-      font-size: 1.22em;
-      font-weight: 700;
-      margin: 0 0 20px 0;
-      color: var(--accent2, #06B6D4);
-      text-align: center;
-    }
-    .install-popup .install-desc {
-      font-size: 1em;
-      color: var(--text-muted, #B0B9C6);
-      margin-bottom: 17px;
-      text-align: center;
-    }
-    .install-popup-btnbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 25px;
-      margin-top: 18px;
-    }
-    .install-popup button {
-      font-size: 1em;
-      padding: 9px 21px;
-      border-radius: 8px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(93deg, var(--accent2, #06B6D4), var(--accent, #2563EB));
-      color: #fff;
-      transition: background 0.16s;
-      box-shadow: 0 1px 11px #2e5fad23;
-    }
-    .install-popup button:active, .install-popup button:hover {
-      background: linear-gradient(91deg, var(--accent, #2563EB), var(--accent2, #06B6D4));
-    }
-    .install-popup .close-popup {
-      position: absolute;
-      top: 10px;
-      right: 13px;
-      background: none;
-      border: none;
-      color: var(--accent2, #06B6D4);
-      font-size: 1.3em;
-      cursor: pointer;
-      font-weight: bold;
-      outline: none;
-    }
-    /* ---- END custom install popup styles ---- */
+
     .main-content {
       display: flex;
       flex-direction: column;
@@ -216,7 +120,6 @@
       justify-content: flex-start;
       width: 100%;
     }
-    /* ---- Card UI ---- */
     .card {
       background: var(--bg2);
       border-radius: var(--radius-card);
@@ -240,8 +143,6 @@
       65% { opacity: .6;}
       100% {opacity: 1; transform: translateY(0);}
     }
-
-    /* ---- Search Bar and Actions UI ---- */
     .products-top-actions {
       display: flex;
       align-items: flex-end;
@@ -294,14 +195,8 @@
       transition: background .17s;
       outline: none;
     }
-    .products-top-actions button:active, .products-top-actions button:focus, .products-top-actions button:hover {
-      background: linear-gradient(92deg, var(--accent), var(--accent2));
-    }
 
-    /* --- Product List --- */
-    .product-list {
-      margin: 0; padding: 0; list-style: none;
-    }
+    .product-list { margin: 0; padding: 0; list-style: none; }
     .prod-card {
       background: var(--bg3);
       border-radius: 13px;
@@ -321,7 +216,6 @@
     }
     .prod-card.show {opacity: 1;transform: none;}
     .prod-card:focus, .prod-card:hover { border-color: var(--accent2); box-shadow: 0 6px 24px #18346023;}
-
     .prod-img {
       min-width: 43px;
       width: 43px;
@@ -344,60 +238,16 @@
       background: #232b36;
       display: block;
     }
-    .prod-main-details {
-      flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;
-    }
-    .prod-name {
-      font-weight: 700;
-      font-size: 1.15em;
-      color: var(--text);
-      letter-spacing: -0.5px;
-      margin-bottom: 1.5px;
-    }
-    .prod-cat {
-      border-radius: 7px;
-      padding: 2px 10px 2px 9px;
-      font-size: .93em;
-      background: #183881;
-      color: var(--accent2);
-      margin-left: 7px;
-    }
-    .prod-details {
-      color: var(--gray);
-      font-size: .97em;
-      margin-top: 2px;
-      margin-bottom: 2px;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    .prod-actions {
-      margin-left: auto;
-      display: flex;
-      gap: 7px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .prod-actions button {
-      background: none;
-      border: none;
-      color: var(--accent2);
-      font-size: 1.32em;
-      cursor: pointer;
-      transition: color 0.13s;
-      border-radius: 5px;
-      padding: 3px 5px;
-      outline: none;
-    }
-    .prod-actions button.edit:hover, .prod-actions button.edit:focus { color: var(--accent);}
-    .prod-actions button.delete:hover, .prod-actions button.delete:focus { color: var(--danger);}
-    .prod-actions button:active {transform: scale(.95);}
-    .no-products {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 1.12em;
-      margin: 34px 0 14px 0;
-      letter-spacing: .01em;
-    }
-    /* Modal general and detail view modal */
+    .prod-main-details { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .prod-name { font-weight: 700; font-size: 1.15em; color: var(--text); letter-spacing: -0.5px; margin-bottom: 1.5px; }
+    .prod-cat { border-radius: 7px; padding: 2px 10px 2px 9px; font-size: .93em; background: #183881; color: var(--accent2); margin-left: 7px; }
+    .prod-details { color: var(--gray); font-size: .97em; margin-top: 2px; margin-bottom: 2px; font-family: 'Inter', Arial, sans-serif; }
+    .prod-actions { margin-left: auto; display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+    .prod-actions button { background: none; border: none; color: var(--accent2); font-size: 1.32em; cursor: pointer; transition: color 0.13s; border-radius: 5px; padding: 3px 5px; outline: none; }
+    .prod-actions button.edit:hover, .prod-actions button.edit:focus { color: var(--accent); }
+    .prod-actions button.delete:hover, .prod-actions button.delete:focus { color: var(--danger); }
+    .no-products { text-align: center; color: var(--text-muted); font-size: 1.12em; margin: 34px 0 14px 0; letter-spacing: .01em; }
+
     .modal-backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -410,7 +260,7 @@
       visibility: visible;
       transition: opacity .21s;
     }
-    .modal-backdrop.hide { opacity: 0; visibility: hidden; pointer-events: none;}
+    .modal-backdrop.hide { opacity: 0; visibility: hidden; pointer-events: none; }
     .modal {
       min-width: 320px;
       max-width: 98vw;
@@ -425,122 +275,22 @@
       align-items: stretch;
       position: relative;
     }
-    .modal h3 {
-      margin: 0 0 18px 0;
-      color: var(--accent2);
-      text-align: center;
-      font-weight: 800;
-      font-size: 1.26em;
-      letter-spacing: -.2px;
+    .modal h3 { margin: 0 0 18px 0; color: var(--accent2); text-align: center; font-weight: 800; font-size: 1.26em; letter-spacing: -.2px; }
+    .modal-close { position: absolute; top: 13px; right: 14px; background: none; border: none; color: var(--accent2); font-size: 1.24em; cursor: pointer; font-weight: bold; outline: none; }
+    .modal label { font-weight: 600; font-size: .96em; color: var(--text-muted); margin-bottom: 4px; }
+    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal textarea {
+      border-radius: 7px; border: 1.5px solid #253048; background: var(--bg3); color: var(--text); font-size: 1em; padding: 8px 11px; margin-bottom: 13px; margin-top: 2px; outline: none; width: 100%; box-sizing: border-box; transition: border 0.13s;
     }
-    .modal-close {
-      position: absolute;
-      top: 13px; right: 14px;
-      background: none; border: none;
-      color: var(--accent2);
-      font-size: 1.24em;
-      cursor: pointer;
-      font-weight: bold;
-      outline: none;
-    }
-    .modal label {
-      font-weight: 600;
-      font-size: .96em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .modal input[type=text],
-    .modal input[type=number],
-    .modal input[type=file],
-    .modal textarea {
-      border-radius: 7px;
-      border: 1.5px solid #253048;
-      background: var(--bg3);
-      color: var(--text);
-      font-size: 1em;
-      padding: 8px 11px;
-      margin-bottom: 13px;
-      margin-top: 2px;
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border 0.13s;
-    }
-    .modal input:focus, .modal textarea:focus { border-color: var(--accent);}
-    .modal textarea {
-      min-height: 54px;
-      resize: vertical;
-    }
-    .modal input[type=file] {
-      border: none;
-      background: none;
-      padding: 0;
-    }
-    .modal-btnbar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 13px;
-      margin-top: 6px;
-    }
-    .modal button[type=submit] {
-      background: linear-gradient(95deg, var(--accent2), var(--accent));
-      color: #fff;
-      padding: 11px 22px 10px 22px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 2px 10px #1b314e28;
-      margin: 6px 0;
-      transition: background .14s;
-      outline: none;
-    }
-    .modal button[type=submit]:active,.modal button[type=submit]:focus {
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    .modal .error {
-      font-size: .98em;
-      color: var(--danger);
-      margin-bottom: 7px;
-      min-height: 18px;
-      text-align: left;
-    }
-    /* Product Detail Modal UI */
-    #detailModal .prod-detail-photo {
-      display: block;
-      width: 124px;
-      height: 124px;
-      object-fit: cover;
-      border-radius: 19px;
-      margin: 6px auto 0 auto;
-      box-shadow: 0 2px 12px #1b314e22;
-      background: #21293f;
-    }
-    #detailModal .prod-detail-info-list {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 0 0;
-      display: flex;
-      flex-direction: column;
-      gap: .57em;
-    }
-    #detailModal .prod-detail-value {
-      color: var(--accent2);
-      font-weight: 600;
-      font-size: 1.08em;
-    }
-    #detailModal .prod-detail-notes {
-      margin-top: 0.8em;
-      font-size: 1em;
-      color: var(--text-muted);
-      background: #213047;
-      border-radius: 8px;
-      padding: 0.7em 0.9em;
-    }
+    .modal textarea { min-height: 54px; resize: vertical; }
+    .modal input[type=file] { border: none; background: none; padding: 0; }
+    .modal-btnbar { display: flex; align-items: center; justify-content: flex-end; gap: 13px; margin-top: 6px; }
+    .modal button[type=submit] { background: linear-gradient(95deg, var(--accent2), var(--accent)); color: #fff; padding: 11px 22px 10px 22px; font-size: 1em; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 10px #1b314e28; margin: 6px 0; transition: background .14s; outline: none; }
+    .modal .error { font-size: .98em; color: var(--danger); margin-bottom: 7px; min-height: 18px; text-align: left; }
+    #detailModal .prod-detail-photo { display: block; width: 124px; height: 124px; object-fit: cover; border-radius: 19px; margin: 6px auto 0 auto; box-shadow: 0 2px 12px #1b314e22; background: #21293f; }
+    #detailModal .prod-detail-info-list { list-style: none; padding: 0; margin: 0 0 0 0; display: flex; flex-direction: column; gap: .57em; }
+    #detailModal .prod-detail-value { color: var(--accent2); font-weight: 600; font-size: 1.08em; }
+    #detailModal .prod-detail-notes { margin-top: 0.8em; font-size: 1em; color: var(--text-muted); background: #213047; border-radius: 8px; padding: 0.7em 0.9em; }
 
-    /* Responsive */
     @media (max-width: 650px) {
       .container {padding: 14px 1vw 23px 1vw;}
       .card {padding: .8rem 0.4rem 1.05rem 0.75rem;}
@@ -549,27 +299,15 @@
       #detailModal .prod-detail-photo { width: 74px; height: 74px; }
       .modal {padding: 14vw 3vw 7vw 3vw; min-width:unset;}
       #mobileInstallInstructions {max-width: 94vw; font-size: 0.96em;}
-      .install-popup {padding: 10vw 4vw 7vw 4vw; min-width:unset;}
     }
     ::selection {background: var(--accent2); color: #fff;}
     a {color: var(--accent);}
-    /* Hide unused classes from previous design */
     .mockup-col, .phone-mockup { display: none !important; }
     .icon-title, .features-list, .privacy-list, .ux-list, .table-wrap, .screen-app-title, .screen-sub, .screen-product, .screen-product-img, .screen-product-actions, .screen-tiny { display: none !important; }
 
-    /* Hide main app when login is active (resolve login/products overlap) */
-    #dealerApp {
-      display: none;
-    }
-    #dealerApp.active {
-      display: block;
-    }
-    #login-modal.hide {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-      transition: opacity 0.21s, visibility 0.21s;
-    }
+    #dealerApp { display: none; }
+    #dealerApp.active { display: block; }
+    #login-modal.hide { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.21s, visibility 0.21s; }
     #login-modal {
       position: fixed;
       inset: 0;
@@ -580,93 +318,27 @@
       align-items: center;
       transition: opacity 0.2s;
     }
-    .login-dialog {
-      background: var(--bg2);
-      border-radius: 20px;
-      box-shadow: 0 8px 40px #22374b55;
-      padding: 42px 28px 22px 28px;
-      min-width: 310px;
-      width: 90vw;
-      max-width: 340px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .login-dialog h2 {
-      font-weight: 900;
-      color: var(--accent2);
-      margin-bottom: 17px;
-      text-align: center;
-      font-size: 1.4em;
-    }
-    .login-dialog label {
-      font-size: 1.01em;
-      margin-bottom: 7px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-    .login-dialog input[type=password] {
-      border-radius: 7px;
-      border: 1.5px solid #253048;
-      background: var(--bg3);
-      color: var(--text);
-      font-size: 1em;
-      padding: 10px 13px;
-      margin-bottom: 19px;
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border 0.13s;
-    }
-    .login-dialog input[type=password]:focus {
-      border-color: var(--accent);
-    }
-    .login-dialog button[type=submit] {
-      background: linear-gradient(94deg, var(--accent2), var(--accent));
-      color: #fff;
-      padding: 11px 2px 10px 2px;
-      font-size: 1.02em;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 2px 10px #1b314e28;
-      margin-bottom: 7px;
-      transition: background .14s;
-      outline: none;
-    }
-    .login-dialog button[type=submit]:active,.login-dialog button[type=submit]:focus {
-      background: linear-gradient(92deg, var(--accent), var(--accent2));
-    }
-    .input-error {
-      font-size: .99em;
-      color: var(--danger);
-      margin-bottom: 7px;
-      min-height: 14px;
-      text-align: left;
-    }
-    .login-dialog small {
-      color: var(--text-muted);
-      font-size: .93em;
-      text-align: left;
-      margin-top: 1.5em;
-    }
-    .login-dialog .success {
-      font-size: .99em;
-      color: var(--success);
-    }
+    .login-dialog { background: var(--bg2); border-radius: 20px; box-shadow: 0 8px 40px #22374b55; padding: 42px 28px 22px 28px; min-width: 310px; width: 90vw; max-width: 340px; display: flex; flex-direction: column; align-items: stretch; }
+    .login-dialog h2 { font-weight: 900; color: var(--accent2); margin-bottom: 17px; text-align: center; font-size: 1.4em; }
+    .login-dialog label { font-size: 1.01em; margin-bottom: 7px; color: var(--text-muted); font-weight: 600; }
+    .login-dialog input[type=password] { border-radius: 7px; border: 1.5px solid #253048; background: var(--bg3); color: var(--text); font-size: 1em; padding: 10px 13px; margin-bottom: 19px; outline: none; width: 100%; box-sizing: border-box; transition: border 0.13s; }
+    .login-dialog input[type=password]:focus { border-color: var(--accent); }
+    .login-dialog button[type=submit] { background: linear-gradient(94deg, var(--accent2), var(--accent)); color: #fff; padding: 11px 2px 10px 2px; font-size: 1.02em; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 10px #1b314e28; margin-bottom: 7px; transition: background .14s; outline: none; }
+    .input-error { font-size: .99em; color: var(--danger); margin-bottom: 7px; min-height: 14px; text-align: left; display: block; }
+    .login-dialog small { color: var(--text-muted); font-size: .93em; text-align: left; margin-top: 1.5em; }
+    .login-dialog .success { font-size: .99em; color: var(--success); min-height: 14px; margin-bottom: 7px; text-align: left; display: block; }
   </style>
 </head>
 <body>
   <div id="login-modal">
-    <form class="login-dialog" id="loginForm" autocomplete="off">
+    <form class="login-dialog" id="loginForm" autocomplete="off" novalidate>
       <h2>🔐 Dealer Login</h2>
-      <div class="input-error" id="login-error"></div>
+      <div class="input-error" id="login-error" style="display:block"></div>
       <label id="pinLabel" for="loginPIN">Create a secure PIN/Password:</label>
       <input type="password" id="loginPIN" minlength="4" maxlength="32" required autofocus autocomplete="new-password" placeholder="Enter PIN or password"/>
       <button type="submit" id="loginBtn">Set PIN</button>
       <small>
-        Tip: This is stored securely (hashed), and cannot be recovered.<br>
+        Tip: This is stored securely (hashed) in localStorage for demo use only.<br>
         Stay private – the app works 100% offline!
       </small>
     </form>
@@ -679,8 +351,13 @@
           <div class="app-logo" title="Local Dealer App">🏷️</div>
           <span class="app-title">Local Dealer App</span>
         </div>
-        <span id="chromeInstallInstructions" style="margin-left:12px; font-size:.99em; padding:8px 17px; border-radius:8px; background:linear-gradient(91deg, var(--accent2), var(--accent)); color:#fff; font-weight:700; display:none; box-shadow:0 1px 11px #2e5fad23;">📲 Install this app via Chrome menu</span>
+        <div style="display:flex; align-items:center;">
+          <button id="installPromptBtn" title="Install as App">📲 Install App</button>
+          <button id="installAsAppBtn" title="Force Install App">🛠️ Install as App</button>
+          <span id="mobileInstallInstructions"></span>
+        </div>
       </header>
+
       <div class="main-content">
         <section class="card" style="animation-delay:.06s">
           <div class="products-top-actions">
@@ -725,6 +402,7 @@
       </div>
     </form>
   </div>
+
   <!-- Delete confirmation modal -->
   <div class="modal-backdrop hide" id="deleteModalBackdrop">
     <form class="modal" id="deleteModal">
@@ -737,6 +415,7 @@
       </div>
     </form>
   </div>
+
   <!-- Product Detail Modal -->
   <div class="modal-backdrop hide" id="detailModalBackdrop">
     <div class="modal" id="detailModal" tabindex="-1">
@@ -747,8 +426,87 @@
   </div>
 
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
+
   <script>
-    // --- FADES ON LOAD (cards and product cards) ---
+    /****************************************************************
+     * PWA manifest & service worker (created dynamically here so
+     * you don't need separate files). This helps GitHub Pages +
+     * Chrome produce the installability prompt when criteria met.
+     ****************************************************************/
+    (function createManifestAndServiceWorker() {
+      // Basic PWA manifest (includes small inline SVG icon as data URL)
+      const svgIcon = encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect rx="36" width="100%" height="100%" fill="#2563EB"/><text x="50%" y="55%" font-size="84" text-anchor="middle" fill="#fff" font-family="Arial">${encodeURIComponent('🏷️')}</text></svg>`
+      );
+      const manifestObj = {
+        name: "Local Dealer App",
+        short_name: "Dealer",
+        description: "Local-only dealer product listing (offline-first)",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#161B22",
+        theme_color: "#161B22",
+        icons: [
+          { src: `data:image/svg+xml,${svgIcon}`, sizes: "192x192", type: "image/svg+xml" }
+        ]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      // attach or replace a <link rel="manifest">
+      (function setManifestLink() {
+        let existing = document.querySelector('link[rel="manifest"]');
+        if (!existing) {
+          existing = document.createElement('link');
+          existing.rel = 'manifest';
+          document.head.appendChild(existing);
+        }
+        existing.href = manifestURL;
+      })();
+
+      // Minimal service worker script as blob (install + cache basic requests)
+      const swScript = `
+        const CACHE_NAME = 'local-dealer-cache-v1';
+        self.addEventListener('install', event => {
+          self.skipWaiting();
+        });
+        self.addEventListener('activate', event => {
+          event.waitUntil(clients.claim());
+        });
+        // Simple network-first fetch for dynamic app; fallback to cache
+        self.addEventListener('fetch', event => {
+          const req = event.request;
+          if (req.method !== 'GET') return;
+          event.respondWith(
+            fetch(req).then(resp => {
+              // clone into cache (best-effort)
+              try {
+                const copy = resp.clone();
+                caches.open(CACHE_NAME).then(c => c.put(req, copy));
+              } catch(e) {}
+              return resp;
+            }).catch(() =>
+              caches.match(req).then(m => m || caches.match('/'))
+            )
+          );
+        });
+      `;
+      try {
+        const swBlob = new Blob([swScript], { type: 'text/javascript' });
+        const swURL = URL.createObjectURL(swBlob);
+        if ('serviceWorker' in navigator) {
+          // register on load to avoid blocking
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register(swURL).catch(()=>{ /* don't break app if registration fails */});
+          });
+        }
+      } catch (e) {
+        // ignore - registration not critical
+      }
+    })();
+
+    /**************************************************************
+     * Visual fades on load
+     **************************************************************/
     window.addEventListener('DOMContentLoaded', function(){
       setTimeout(function() {
         document.querySelectorAll(".card").forEach((el,i)=> {
@@ -757,45 +515,83 @@
       }, 180);
     });
 
-    // --- Native Chrome App Install Handling (No custom JS install button) ---
-    // Simply recommend Chrome's own feature for both mobile/desktop.
-    // Remove all PWA install prompt custom buttons/scripts for simplicity.
+    /**************************************************************
+     * PWA install prompt & mobile install hint
+     **************************************************************/
+    let deferredPrompt;
+    const installBtn = document.getElementById('installPromptBtn');
+    const installAsAppBtn = document.getElementById('installAsAppBtn');
+    const mobileInstall = document.getElementById('mobileInstallInstructions');
 
-    // Show guidance for Chrome users to use native "Install App" or "Add to Home screen"
-    function isChromeOnAndroid() {
+    function isMobileChromeStandaloneCapable() {
       const ua = navigator.userAgent || '';
-      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua);
-    }
-    function isChromeOnDesktop() {
-      // Test for Chrome (excluding Edge etc.) on Windows/Mac/Linux
-      const ua = navigator.userAgent || '';
-      return /Chrome\/[.0-9]*\s/.test(ua) && !/Edg\//.test(ua) && !/OPR\//.test(ua) && !/Android/.test(ua);
+      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches;
     }
 
-    window.addEventListener('DOMContentLoaded', function() {
-      const installGuide = document.getElementById('chromeInstallInstructions');
-      // If not installed (not standalone)
-      if (!window.matchMedia('(display-mode: standalone)').matches &&
-          !window.matchMedia('(display-mode: fullscreen)').matches
-      ) {
-        if (isChromeOnAndroid()) {
-          installGuide.innerHTML = "To install: Tap <b><span style='font-size:1.22em;'>⋮</span></b> at top-right in Chrome, then select <b>Add to Home screen</b>.";
-          installGuide.style.display = "inline-block";
-        } else if (isChromeOnDesktop()) {
-          installGuide.innerHTML = "To install: Click the <b>install icon <span style='font-size:1.2em;'>📥</span></b> in Chrome's address bar.";
-          installGuide.style.display = "inline-block";
-        }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+      installAsAppBtn.style.display = 'inline-block';
+      mobileInstall.style.display = 'none';
+    });
+
+    installBtn && (installBtn.onclick = async function() {
+      installBtn.disabled = true;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+        installAsAppBtn.style.display = 'none';
+        installBtn.disabled = false;
+      } else {
+        installBtn.disabled = false;
       }
     });
 
-    // --- Service worker registration ---
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').catch(()=>{});
-      });
-    }
+    installAsAppBtn && (installAsAppBtn.onclick = async function() {
+      installAsAppBtn.disabled = true;
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+        installAsAppBtn.style.display = 'none';
+        installAsAppBtn.disabled = false;
+      } else {
+        alert("Install prompt not available right now. Use Chrome's menu: Add to Home screen.");
+        installAsAppBtn.disabled = false;
+      }
+    });
 
-    // === Secure PIN logic ===
+    window.addEventListener('appinstalled', ()=>{
+      installBtn.style.display='none';
+      installAsAppBtn.style.display='none';
+      deferredPrompt = null;
+      mobileInstall.style.display='none';
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        if (!window.matchMedia('(display-mode: standalone)').matches &&
+            !window.matchMedia('(display-mode: fullscreen)').matches &&
+            isMobileChromeStandaloneCapable()
+        ) {
+          if ((installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") &&
+              (installAsAppBtn.style.display === "none" || getComputedStyle(installAsAppBtn).display === "none"))
+          {
+            mobileInstall.innerHTML =
+              "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>.";
+            mobileInstall.style.display = "inline-block";
+          }
+        }
+      }, 1100);
+    });
+
+    /**************************************************************
+     * Secure PIN hashing + login UI
+     **************************************************************/
     async function hashPIN(pin) {
       let salt = window.localStorage.getItem('dealer-app-salt');
       if (!salt) {
@@ -805,34 +601,27 @@
         window.localStorage.setItem('dealer-app-salt', salt);
       }
       const encoder = new TextEncoder();
-      const baseKey = await window.crypto.subtle.importKey(
-        'raw',
-        encoder.encode(pin),
-        'PBKDF2',
-        false, ['deriveBits']
-      );
-      let rawBits;
       try {
-        rawBits = await window.crypto.subtle.deriveBits(
-          { name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" },
-          baseKey,
-          256
-        );
+        const baseKey = await window.crypto.subtle.importKey('raw', encoder.encode(pin), 'PBKDF2', false, ['deriveBits']);
+        const rawBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" }, baseKey, 256);
+        const hashArr = new Uint8Array(rawBits);
+        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
       } catch (e) {
+        // fallback to simple digest if PBKDF2 not available
         const data = encoder.encode(pin + salt);
         const arrBuf = await window.crypto.subtle.digest('SHA-256', data);
-        rawBits = arrBuf;
+        const hashArr = new Uint8Array(arrBuf);
+        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
       }
-      const hashArr = new Uint8Array(rawBits);
-      return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
     }
-    // Login / PIN logic
+
     const loginModal = document.getElementById('login-modal');
     const loginForm = document.getElementById('loginForm');
     const loginPIN = document.getElementById('loginPIN');
     const loginError = document.getElementById('login-error');
     const loginBtn = document.getElementById('loginBtn');
     const pinLabel = document.getElementById('pinLabel');
+
     function updatePINUI(hasPIN) {
       if (hasPIN) {
         loginBtn.textContent = "Unlock";
@@ -847,73 +636,93 @@
         loginPIN.placeholder = "Set PIN or password";
         loginPIN.autocomplete = "new-password";
       }
+      loginError.textContent = '';
+      loginError.className = "input-error";
+      loginError.style.display = "block";
     }
     function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
     updatePINUI(getHasPIN());
 
-    // Control the visibility of the dealerApp and login modal
     function showDealerApp() {
       document.getElementById('dealerApp').classList.add('active');
       loginModal.classList.add('hide');
-      setTimeout(()=>{loginModal.style.display='none'},260);
+      setTimeout(()=>{ loginModal.style.display='none'; },260);
     }
     function hideDealerApp() {
       document.getElementById('dealerApp').classList.remove('active');
       loginModal.classList.remove('hide');
       loginModal.style.display = 'flex';
+      loginError.style.display = "block";
     }
 
-    // Show login modal at startup as needed
     document.addEventListener('DOMContentLoaded', ()=>{
+      // When loaded, show/hide login depending on stored PIN
       if (getHasPIN()) {
         hideDealerApp();
       } else {
-        showDealerApp();   // No PIN set, go direct to app
+        showDealerApp();
       }
+      loginError.style.display = "block";
     });
 
     loginForm.onsubmit = async function(e) {
       e.preventDefault();
       loginError.textContent = '';
       loginError.className = "input-error";
+      loginError.style.display = "block";
       const pinVal = loginPIN.value.trim();
-      let hasPIN = getHasPIN();
+      const hasPIN = getHasPIN();
       if (!pinVal || pinVal.length < 4) {
         loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
+        loginError.style.display = "block";
         return;
       }
       loginBtn.disabled = true;
-      const hash = await hashPIN(pinVal);
-      if (!hasPIN) {
-        window.localStorage.setItem('dealer-hash', hash);
-        updatePINUI(true);
-        loginError.className = "success";
-        loginError.textContent = "PIN set! Please login.";
-        setTimeout(()=>{
-          loginError.textContent = '';
-          loginError.className = "input-error";
-        }, 1000);
-        loginBtn.disabled = false;
-        loginPIN.value = "";
-        return;
-      }
-      const userHash = window.localStorage.getItem('dealer-hash');
-      if (userHash === hash) {
-        showDealerApp();
-        setTimeout(refreshProductList, 340);
-      } else {
-        loginError.textContent = "Incorrect PIN/Password.";
+      try {
+        const hash = await hashPIN(pinVal);
+        if (!hasPIN) {
+          window.localStorage.setItem('dealer-hash', hash);
+          updatePINUI(true);
+          loginError.className = "success";
+          loginError.textContent = "PIN set! Please login.";
+          loginError.style.display = "block";
+          setTimeout(()=>{
+            loginError.textContent = '';
+            loginError.className = "input-error";
+            loginError.style.display = "block";
+          }, 1000);
+          loginBtn.disabled = false;
+          loginPIN.value = "";
+          return;
+        }
+        const userHash = window.localStorage.getItem('dealer-hash');
+        if (userHash === hash) {
+          showDealerApp();
+          setTimeout(refreshProductList, 340);
+        } else {
+          loginError.textContent = "Incorrect PIN/Password.";
+          loginError.style.display = "block";
+          loginBtn.disabled = false;
+        }
+      } catch (ex) {
+        loginError.textContent = "An error occurred.";
         loginBtn.disabled = false;
       }
     };
 
-    // Products store
+    /**************************************************************
+     * Products store & helpers
+     **************************************************************/
     const productListElem = document.getElementById('productList');
     const noProductsElem = document.getElementById('noProducts');
     let products = [];
 
     function saveProducts() {
-      window.localStorage.setItem('dealer-products', JSON.stringify(products));
+      try {
+        window.localStorage.setItem('dealer-products', JSON.stringify(products));
+      } catch (e) {
+        console.error("Saving products failed", e);
+      }
       refreshProductList();
     }
     function loadProducts() {
@@ -921,43 +730,52 @@
       try {
         const str = window.localStorage.getItem('dealer-products');
         if (str) {
-          products = JSON.parse(str);
+          products = JSON.parse(str) || [];
         }
-      } catch {}
+      } catch (e) {
+        products = [];
+      }
     }
     function escapeHTML(v) {
-      if (typeof v !== "string") return "";
-      return v.replace(/[&<>'"]/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'
-      }[c]));
+      if (typeof v !== "string") return v === undefined || v === null ? "" : String(v);
+      return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c]));
     }
 
-    // --- Product Card and Detail Modal ---
+    /**************************************************************
+     * Product card + detail
+     **************************************************************/
     function createProductCard(product, idx) {
       const li = document.createElement('li');
       li.className = 'prod-card';
       li.setAttribute('tabindex', '0');
       setTimeout(()=>li.classList.add('show'), 121 + idx*64);
-      let imgHTML = product.photo ? `<img src="${product.photo}" class="prod-photo-thumb" alt="Product Photo">`
-        : `<span>📦</span>`;
+
+      let imgHTML = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="Product Photo">` : `<span>📦</span>`;
+      const nameSafe = escapeHTML(product.name || "Unnamed");
+      const cat = product.category ? `<span class="prod-cat">${escapeHTML(String(product.category)).slice(0,18)}</span>` : '';
+      const qtyNum = Number(product.qty) || 0;
+      const mrpNum = Number(product.mrp) || 0;
+      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
+
       li.innerHTML = `
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
-          <div class="prod-name">${escapeHTML(product.name)}${product.category ? `<span class="prod-cat">${escapeHTML(product.category).slice(0,18)}</span>` : ''}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${product.qty}</b> • ₹${Number(product.mrp).toLocaleString(undefined, {maximumFractionDigits:2})}${product.cost?`<span style="color:var(--text-muted);font-size:.928em;"> (Cost: ₹${Number(product.cost).toLocaleString(undefined, {maximumFractionDigits:2})})</span>`:""}</div>
-          ${product.notes ? `<div class="prod-details">${escapeHTML(product.notes).slice(0,55)}</div>` : ""}
+          <div class="prod-name">${nameSafe}${cat}</div>
+          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₹${mrpNum.toLocaleString(undefined, {maximumFractionDigits:2})}${costNum !== null ? `<span style="color:var(--text-muted);font-size:.928em;"> (Cost: ₹${costNum.toLocaleString(undefined, {maximumFractionDigits:2})})</span>` : ""}</div>
+          ${product.notes ? `<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>` : ""}
         </div>
         <div class="prod-actions">
           <button type="button" title="Edit" class="edit" data-id="${product.id}">✏️</button>
           <button type="button" title="Delete" class="delete" data-id="${product.id}">🗑️</button>
         </div>
       `;
-      // Actions
-      li.querySelector('.edit').onclick = (e) => { e.stopPropagation(); showProductModal('edit', product);};
-      li.querySelector('.delete').onclick = (e) => { e.stopPropagation(); showDeleteModal(product);};
-      // Open detail modal on main card click (not on actions)
+
+      const editBtn = li.querySelector('.edit');
+      const delBtn = li.querySelector('.delete');
+      if (editBtn) editBtn.onclick = (e) => { e.stopPropagation(); showProductModal('edit', product); };
+      if (delBtn) delBtn.onclick = (e) => { e.stopPropagation(); showDeleteModal(product); };
+
       li.addEventListener('click', function(e){
-        // Only open if not clicking on edit/delete
         if(!e.target.closest('.prod-actions')) showDetailModal(product);
       });
       li.addEventListener('keydown', function(e){
@@ -968,160 +786,193 @@
       return li;
     }
 
-    // --- Product Detail Modal ---
+    /**************************************************************
+     * Detail modal
+     **************************************************************/
     const detailModalBackdrop = document.getElementById('detailModalBackdrop');
     const detailModal = document.getElementById('detailModal');
     const detailModalBody = document.getElementById('detailModalBody');
+
     function showDetailModal(product) {
+      const nameSafe = escapeHTML(product.name || 'Unnamed');
+      const photoBlock = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
+      const mrpNum = Number(product.mrp) || 0;
+      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
+
       detailModalBody.innerHTML = `
         <div style="text-align:center;">
-          ${product.photo?`<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${escapeHTML(product.name)}"/>`:`<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`}
+          ${photoBlock}
         </div>
         <ul class="prod-detail-info-list">
-          <li><b>Name:</b> <span class="prod-detail-value">${escapeHTML(product.name)}</span></li>
-          ${product.category?`<li><b>Category:</b> <span class="prod-detail-value">${escapeHTML(product.category)}</span></li>`:""}
-          <li><b>Stock:</b> <span class="prod-detail-value">${product.qty}</span></li>
-          <li><b>MRP:</b> <span class="prod-detail-value">₹${Number(product.mrp).toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>
-          ${product.cost?`<li><b>Cost:</b> <span class="prod-detail-value">₹${Number(product.cost).toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>`:""}
+          <li><b>Name:</b> <span class="prod-detail-value">${nameSafe}</span></li>
+          ${product.category ? `<li><b>Category:</b> <span class="prod-detail-value">${escapeHTML(String(product.category))}</span></li>` : ""}
+          <li><b>Stock:</b> <span class="prod-detail-value">${Number(product.qty)||0}</span></li>
+          <li><b>MRP:</b> <span class="prod-detail-value">₹${mrpNum.toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>
+          ${costNum !== null ? `<li><b>Cost:</b> <span class="prod-detail-value">₹${costNum.toLocaleString(undefined, {maximumFractionDigits:2})}</span></li>` : ""}
         </ul>
-        ${product.notes?`<div class="prod-detail-notes">${escapeHTML(product.notes)}</div>`:""}
+        ${product.notes ? `<div class="prod-detail-notes">${escapeHTML(String(product.notes))}</div>` : ""}
       `;
       detailModalBackdrop.classList.remove('hide');
       setTimeout(()=>detailModal.focus(),100);
     }
-    // Close detailModal logic
+
     document.getElementById('closeDetailModalBtn').onclick = function() {
       detailModalBackdrop.classList.add('hide');
-      setTimeout(()=>{detailModalBody.innerHTML="";},250);
+      setTimeout(()=>{ detailModalBody.innerHTML = ""; }, 250);
     };
 
-    // General ESC handler for modals
+    // Escape key closes any open modal
     document.addEventListener('keydown', function(e) {
-      if(e.key === "Escape") {
-        if(!detailModalBackdrop.classList.contains('hide')) {
-          detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML='';
-        }
-        if(!productModalBackdrop.classList.contains('hide')) productModalBackdrop.classList.add('hide');
-        if(!deleteModalBackdrop.classList.contains('hide')) deleteModalBackdrop.classList.add('hide');
+      if (e.key === "Escape") {
+        if (!detailModalBackdrop.classList.contains('hide')) { detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML=''; }
+        if (!productModalBackdrop.classList.contains('hide')) productModalBackdrop.classList.add('hide');
+        if (!deleteModalBackdrop.classList.contains('hide')) deleteModalBackdrop.classList.add('hide');
       }
     });
 
-    // --- Enhanced Search Feature ---
+    /**************************************************************
+     * Search
+     **************************************************************/
     const searchInput = document.getElementById('productSearch');
-    let lastSearchVal = "";
-    searchInput.addEventListener('input', function() {
-      refreshProductList();
-    });
-    searchInput.addEventListener('keydown', function(e){
-      if(e.key==='Escape') { searchInput.value=''; refreshProductList();}
-    });
+    searchInput.addEventListener('input', function() { refreshProductList(); });
+    searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
 
-    // --- Product list refresh
+    /**************************************************************
+     * Refresh product list
+     **************************************************************/
     function refreshProductList() {
       loadProducts();
       productListElem.innerHTML = '';
-      let q = searchInput.value.trim().toLowerCase();
-      let filtered = !q
-        ? products 
-        : products.filter(prod =>
-            (prod.name||"").toLowerCase().includes(q) ||
-            (prod.category||"").toLowerCase().includes(q) ||
-            (prod.notes||"").toLowerCase().includes(q)
-          );
+      let q = (searchInput.value || '').trim().toLowerCase();
+      let filtered = !q ? products : products.filter(prod =>
+        (String(prod.name||"").toLowerCase().includes(q)) ||
+        (String(prod.category||"").toLowerCase().includes(q)) ||
+        (String(prod.notes||"").toLowerCase().includes(q))
+      );
       if (!filtered.length) {
         noProductsElem.style.display = "";
         return;
       }
       noProductsElem.style.display = "none";
-      filtered.sort((a, b) => (b.qty - a.qty) || a.name.localeCompare(b.name));
-      filtered.forEach((prod,i) => {
-        productListElem.appendChild(createProductCard(prod,i));
-      });
+      filtered.sort((a, b) => (Number(b.qty) - Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
+      filtered.forEach((prod,i) => productListElem.appendChild(createProductCard(prod,i)));
     }
 
-    // --- Add/Edit Product Modal ---
+    /**************************************************************
+     * Add / Edit product modal wiring (fixed to use direct element refs)
+     **************************************************************/
     let productEditing = null;
     const productModalBackdrop = document.getElementById('productModalBackdrop');
     const productModal = document.getElementById('productModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalError = document.getElementById('modalError');
+
+    // Direct element refs
+    const prodName = document.getElementById('prodName');
+    const prodMrp = document.getElementById('prodMrp');
+    const prodCost = document.getElementById('prodCost');
+    const prodQty = document.getElementById('prodQty');
+    const prodCategory = document.getElementById('prodCategory');
+    const prodNotes = document.getElementById('prodNotes');
+    const prodPhoto = document.getElementById('prodPhoto');
+
     function showProductModal(mode, product) {
       productModal.reset();
       modalError.textContent = '';
-      if (mode==='add') {
+      if (mode === 'add') {
         modalTitle.textContent = "Add Product";
         productEditing = null;
-        productModal.prodName.value = "";
-        productModal.prodMrp.value = "";
-        productModal.prodCost.value = "";
-        productModal.prodQty.value = "";
-        productModal.prodCategory.value = "";
-        productModal.prodNotes.value = "";
-        productModal.prodPhoto.value = "";
+        prodName.value = "";
+        prodMrp.value = "";
+        prodCost.value = "";
+        prodQty.value = "";
+        prodCategory.value = "";
+        prodNotes.value = "";
+        prodPhoto.value = "";
       } else {
         modalTitle.textContent = "Edit Product";
         productEditing = product;
-        productModal.prodName.value = product.name;
-        productModal.prodMrp.value = product.mrp;
-        productModal.prodCost.value = product.cost||"";
-        productModal.prodQty.value = product.qty;
-        productModal.prodCategory.value = product.category||"";
-        productModal.prodNotes.value = product.notes||"";
-        productModal.prodPhoto.value = "";
+        prodName.value = product.name || "";
+        prodMrp.value = product.mrp !== undefined ? product.mrp : "";
+        prodCost.value = product.cost !== undefined ? product.cost : "";
+        prodQty.value = product.qty !== undefined ? product.qty : "";
+        prodCategory.value = product.category || "";
+        prodNotes.value = product.notes || "";
+        prodPhoto.value = "";
       }
       productModalBackdrop.classList.remove('hide');
-      setTimeout(()=>{productModal.prodName.focus()},150);
+      setTimeout(()=>{ prodName.focus(); }, 150);
     }
+
     document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
     document.getElementById('closeModalBtn').onclick = ()=>productModalBackdrop.classList.add('hide');
 
     productModal.onsubmit = async function(e) {
       e.preventDefault();
       modalError.textContent = "";
-      let name = productModal.prodName.value.trim();
-      let mrp = productModal.prodMrp.value.trim();
-      let cost = productModal.prodCost.value.trim();
-      let qty = Number(productModal.prodQty.value.trim());
-      let category = productModal.prodCategory.value.trim();
-      let notes = productModal.prodNotes.value.trim();
-      let photo = null;
-      if (!name) {modalError.textContent="Name required."; return;}
-      if (!mrp || isNaN(mrp) || Number(mrp) < 0) {modalError.textContent="MRP required."; return;}
-      if (qty<0 || isNaN(qty)) {modalError.textContent="Quantity required."; return;}
-      let fileInput = productModal.prodPhoto;
-      if (fileInput && fileInput.files && fileInput.files[0]) {
-        photo = await readFileAsDataURL(fileInput.files[0]);
+      const name = (prodName.value || '').trim();
+      const mrpVal = prodMrp.value;
+      const costVal = prodCost.value;
+      const qtyVal = prodQty.value;
+      const category = (prodCategory.value || '').trim();
+      const notes = (prodNotes.value || '').trim();
+
+      if (!name) { modalError.textContent = "Name required."; return; }
+      if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
+      if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
+
+      let photoData = null;
+      if (prodPhoto && prodPhoto.files && prodPhoto.files[0]) {
+        try {
+          photoData = await readFileAsDataURL(prodPhoto.files[0]);
+        } catch (err) { /* ignore photo errors */ }
       } else if (productEditing && productEditing.photo) {
-        photo = productEditing.photo;
+        photoData = productEditing.photo;
       }
+
+      const productObj = {
+        id: productEditing ? productEditing.id : genID(),
+        name,
+        mrp: Number(mrpVal),
+        cost: costVal !== "" ? Number(costVal) : null,
+        qty: Number(qtyVal),
+        category,
+        notes,
+        photo: photoData
+      };
+
       if (!productEditing) {
-        products.push({
-          id: genID(),
-          name, mrp, cost, qty, category, notes, photo
-        });
+        products.push(productObj);
       } else {
-        Object.assign(productEditing, {name, mrp, cost, qty, category, notes, photo});
+        // replace object (keeping stable reference not required)
+        const idx = products.findIndex(p => p.id === productEditing.id);
+        if (idx >= 0) products[idx] = productObj;
+        else products.push(productObj);
       }
       saveProducts();
       productModalBackdrop.classList.add('hide');
     };
+
     function readFileAsDataURL(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = e=>resolve(e.target.result);
+        reader.onload = e => resolve(e.target.result);
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
 
-    // --- Delete modal logic ---
+    /**************************************************************
+     * Delete modal
+     **************************************************************/
     const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
     const deleteModal = document.getElementById('deleteModal');
     const deleteName = document.getElementById('deleteName');
     let productToDelete = null;
+
     function showDeleteModal(product) {
       deleteModalBackdrop.classList.remove('hide');
-      deleteName.textContent = product.name;
+      deleteName.textContent = product.name || '';
       productToDelete = product;
       setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60);
     }
@@ -1133,18 +984,19 @@
     deleteModal.onsubmit = function(e) {
       e.preventDefault();
       if (!productToDelete) return;
-      products = products.filter(p=>p.id!==productToDelete.id);
+      products = products.filter(p => p.id !== productToDelete.id);
       saveProducts();
       deleteModalBackdrop.classList.add('hide');
       productToDelete = null;
     };
-    function genID() {
-      return 'p'+(Date.now()+(''+Math.random()).slice(2, 7));
-    }
 
-    // --- Export/import ---
+    function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
+
+    /**************************************************************
+     * Export / Import
+     **************************************************************/
     document.getElementById('exportBtn').onclick = function() {
-      const dataStr = JSON.stringify(products, null, 2);
+      const dataStr = JSON.stringify(products || [], null, 2);
       const blob = new Blob([dataStr], {type:"application/json"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1154,8 +1006,9 @@
       document.body.appendChild(a);
       a.click();
       URL.revokeObjectURL(url);
-      setTimeout(()=>{document.body.removeChild(a)},200);
+      setTimeout(()=>{ document.body.removeChild(a); },200);
     };
+
     document.getElementById('importBtn').onclick = ()=>document.getElementById('importFile').click();
     document.getElementById('importFile').onchange = function(evt) {
       let file = evt.target.files[0];
@@ -1165,17 +1018,26 @@
         try {
           let arr = JSON.parse(e.target.result);
           if (Array.isArray(arr)) {
-            arr.forEach(prod=>{
-              if (!prod.id) prod.id = genID();
-            });
+            arr.forEach(prod => { if (!prod.id) prod.id = genID(); });
             products = arr;
             saveProducts();
-          } else throw new Error();
-        } catch{ alert("Invalid file"); }
+          } else throw new Error("Not an array");
+        } catch (err) {
+          alert("Invalid file - import failed.");
+        }
       };
       reader.readAsText(file);
       evt.target.value = '';
     };
+
+    /**************************************************************
+     * Initial load
+     **************************************************************/
+    // Guarantee products loaded for UI
+    window.addEventListener('load', function() {
+      loadProducts();
+      refreshProductList();
+    });
   </script>
 </body>
 </html>
