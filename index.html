@@ -730,7 +730,6 @@
         </div>
         <div class="prod-actions">
           <button type="button" title="Edit" class="edit" data-id="${product.id}">✏️</button>
-          <button type="button" title="Delete" class="delete" data-id="${product.id}">🗑️</button>
         </div>
       `;
 
@@ -748,9 +747,7 @@
       }
 
       const editBtn = li.querySelector('.edit');
-      const delBtn = li.querySelector('.delete');
       if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
-      if (delBtn) delBtn.onclick = (e)=>{ e.stopPropagation(); showDeleteModal(product); };
 
       li.addEventListener('click', function(e){
         if(e.target.classList.contains('prod-select-checkbox')) return;
