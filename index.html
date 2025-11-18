@@ -59,6 +59,32 @@
     #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 38px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
     #productSearch:focus { border-color:var(--accent); }
     .search-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
+
+    /* Multi-select controls */
+    #multiSelectControls {
+      display: none;
+      gap: 10px;
+      margin-top: 6px;
+      margin-left: 2px;
+      align-items: center;
+    }
+    #multiSelectControls.active { display: flex; }
+    #deleteSelectedBtn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: var(--rounded-btn);
+      padding: 10px 18px;
+      font-size: 0.97em;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 1px 7px #ef444433;
+      transition: background .14s, box-shadow .13s;
+      margin-left: 6px;
+    }
+    #deleteSelectedBtn:disabled { background: #ce5353a0; cursor: not-allowed; }
+    #selectAllCheckbox { accent-color: var(--accent2); margin-left:4px; margin-right:0; transform: scale(1.1); }
+
     .product-list { margin:0; padding:0; list-style:none; }
 
     /* Stylish Skyblue Buttons (for add/export/import/cancel) */
@@ -83,7 +109,6 @@
       box-shadow: 0 3px 16px #43c7fc43;
       transform: translateY(-1.5px) scale(1.03);
     }
-    /* Variation for 'Cancel' with lighter style */
     .rounded-sky-btn.cancel {
       background: #18313c;
       color: var(--button-skyblue);
@@ -105,6 +130,14 @@
     .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
     .prod-actions { margin-left:auto; display:flex; gap:7px; align-items:center; }
     .prod-actions button { background:none; border:none; color:var(--accent2); font-size:1.32em; cursor:pointer; transition:color .13s; border-radius:5px; padding:3px 5px; outline:none; }
+    .prod-select-checkbox {
+      margin-right: 18px;
+      transform: scale(1.25);
+      accent-color: var(--accent2);
+      cursor:pointer;
+    }
+    .prod-card.selected { border-color: var(--danger); background: #1b1d2d; box-shadow: 0 4px 16px #ef44441a;}
+    .prod-card .prod-select-checkbox:focus { outline: 2px solid var(--accent2); outline-offset:1px;}
 
     .no-products { text-align:center; color:var(--text-muted); font-size:1.12em; margin:34px 0 14px 0; letter-spacing:.01em; }
     .modal-backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(18,23,32,0.92); z-index:4999; display:flex; align-items:center; justify-content:center; opacity:1; visibility:visible; transition:opacity .21s; }
@@ -119,7 +152,16 @@
     .modal button[type=submit] { background:linear-gradient(95deg,var(--accent2),var(--accent)); color:#fff; padding:11px 22px; font-size:1em; border:none; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px #1b314e28; margin:6px 0; transition:background .14s; outline:none; }
     .modal .error { font-size:.98em; color:var(--danger); margin-bottom:7px; min-height:18px; text-align:left; }
     #detailModal .prod-detail-photo { display:block; width:124px; height:124px; object-fit:cover; border-radius:19px; margin:6px auto 0 auto; box-shadow:0 2px 12px #1b314e22; background:#21293f; }
-    @media (max-width:650px){ .container{padding:14px 1vw 23px 1vw;} .card{padding:.8rem .4rem 1.05rem .75rem;} .app-title{font-size:1.2rem;} .prod-card{padding:12px 7px;} .modal{padding:14vw 3vw 7vw 3vw; min-width:unset;} #detailModal .prod-detail-photo{ width:74px; height:74px;} #mobileInstallInstructions{max-width:94vw;font-size:0.96em;} }
+    @media (max-width:650px){
+      .container{padding:14px 1vw 23px 1vw;}
+      .card{padding:.8rem .4rem 1.05rem .75rem;}
+      .app-title{font-size:1.2rem;}
+      .prod-card{padding:12px 7px;}
+      .modal{padding:14vw 3vw 7vw 3vw; min-width:unset;}
+      #detailModal .prod-detail-photo{ width:74px; height:74px;}
+      #mobileInstallInstructions{max-width:94vw;font-size:0.96em;}
+      #multiSelectControls{font-size:0.99em; flex-wrap:wrap;}
+    }
     ::selection{background:var(--accent2); color:#fff;}
     a{color:var(--accent);}
     .hidden { display:none !important; }
@@ -173,6 +215,14 @@
             <button type="button" id="importBtn" class="rounded-sky-btn">Import</button>
             <input type="file" id="importFile" accept="application/json" style="display:none"/>
           </div>
+          <div id="multiSelectControls">
+            <label style="display:flex;align-items:center;gap:4px;">
+              <input type="checkbox" id="selectAllCheckbox" title="Select all" />
+              <span style="user-select:none;">Select all</span>
+            </label>
+            <button type="button" id="deleteSelectedBtn" disabled>🗑️ Delete Selected</button>
+            <span id="selectedCountText" style="color:var(--danger);font-weight:600;font-size:0.99em;"></span>
+          </div>
           <ul class="product-list" id="productList"></ul>
           <div class="no-products" id="noProducts" style="display:none">No products yet. Click <b>+ Add</b> to get started!</div>
         </section>
@@ -189,9 +239,9 @@
       <label for="prodName">Name</label>
       <input type="text" id="prodName" required maxlength="64" />
       <label for="prodMrp">MRP (₨)</label>
-      <input type="number" id="prodMrp" min="0" max="1000000" step="0.01" required />
+      <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
       <label for="prodCost">Cost Price (₨)</label>
-      <input type="number" id="prodCost" min="0" max="1000000" step="0.01"/>
+      <input type="number" id="prodCost" min="0" max="100000" step="0.01"/>
       <label for="prodQty">Quantity</label>
       <input type="number" id="prodQty" min="0" max="100000" required />
       <label for="prodCategory">Category</label>
@@ -593,6 +643,10 @@
     const noProductsElem = document.getElementById('noProducts');
     let products = [];
 
+    // -- Multi-select state
+    let multiSelectMode = false;
+    let selectedProductIds = new Set();
+
     function saveProducts() {
       try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){ console.error("Saving products failed",e); }
       refreshProductList();
@@ -609,6 +663,48 @@
       return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c]));
     }
 
+    function handleCheckboxChange(productId, checked) {
+      if (checked) selectedProductIds.add(productId);
+      else selectedProductIds.delete(productId);
+      updateMultiSelectControls();
+    }
+
+    function updateMultiSelectControls() {
+      const multiSelectControls = document.getElementById('multiSelectControls');
+      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+      const selectedCountText = document.getElementById('selectedCountText');
+      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+
+      if (selectedProductIds.size > 0) {
+        multiSelectMode = true;
+        multiSelectControls.classList.add('active');
+        deleteSelectedBtn.disabled = false;
+        selectedCountText.textContent = `${selectedProductIds.size} selected`;
+      } else {
+        deleteSelectedBtn.disabled = true;
+        selectedCountText.textContent = "";
+      }
+
+      // Decide whether hide controls if none selected
+      if (!multiSelectMode && selectedProductIds.size === 0) {
+        multiSelectControls.classList.remove('active');
+      } else {
+        multiSelectControls.classList.add('active');
+      }
+
+      // Select all checkbox indeterminate
+      if (products.length && selectedProductIds.size === products.length) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+      } else if (selectedProductIds.size > 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+      } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+      }
+    }
+
     function createProductCard(product, idx) {
       const li = document.createElement('li');
       li.className = 'prod-card';
@@ -621,7 +717,11 @@
       const mrpNum = Number(product.mrp) || 0;
       const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
 
+      // Multi-select checkbox
+      let checkboxHTML = `<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" tabindex="0" ${selectedProductIds.has(product.id) ? "checked" : ""}/>`;
+
       li.innerHTML = `
+        ${checkboxHTML}
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
           <div class="prod-name">${nameSafe}${cat}</div>
@@ -634,12 +734,26 @@
         </div>
       `;
 
+      // highlight selection
+      if (selectedProductIds.has(product.id)) li.classList.add('selected');
+
+      // Checkboxes
+      const checkbox = li.querySelector('.prod-select-checkbox');
+      if (checkbox) {
+        checkbox.addEventListener('change', (e) => {
+          handleCheckboxChange(product.id, checkbox.checked);
+        });
+        checkbox.addEventListener('click', (e)=>e.stopPropagation()); // don't fire detail modal
+        checkbox.addEventListener('keydown', (e)=>e.stopPropagation());
+      }
+
       const editBtn = li.querySelector('.edit');
       const delBtn = li.querySelector('.delete');
       if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
       if (delBtn) delBtn.onclick = (e)=>{ e.stopPropagation(); showDeleteModal(product); };
 
       li.addEventListener('click', function(e){
+        if(e.target.classList.contains('prod-select-checkbox')) return;
         if(!e.target.closest('.prod-actions')) showDetailModal(product);
       });
       li.addEventListener('keydown', function(e){
@@ -647,6 +761,29 @@
       });
       return li;
     }
+
+    /**************************************************************
+     * Multi-select controls
+     **************************************************************/
+
+    document.getElementById("selectAllCheckbox").addEventListener("change", function() {
+      if (this.checked) {
+        products.forEach(prod => selectedProductIds.add(prod.id));
+      } else {
+        selectedProductIds.clear();
+      }
+      refreshProductList();
+      updateMultiSelectControls();
+    });
+
+    document.getElementById("deleteSelectedBtn").onclick = function() {
+      if (selectedProductIds.size === 0) return;
+      if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return;
+      products = products.filter(p => !selectedProductIds.has(p.id));
+      selectedProductIds.clear();
+      saveProducts();
+      updateMultiSelectControls();
+    };
 
     /**************************************************************
      * Detail modal
@@ -705,10 +842,15 @@
         (String(prod.category||"").toLowerCase().includes(q)) ||
         (String(prod.notes||"").toLowerCase().includes(q))
       );
-      if (!filtered.length) { noProductsElem.style.display = ""; return; }
+      if (!filtered.length) {
+        noProductsElem.style.display = "";
+        document.getElementById('multiSelectControls').classList.remove('active');
+        return;
+      }
       noProductsElem.style.display = "none";
       filtered.sort((a,b) => (Number(b.qty)-Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
       filtered.forEach((prod,i)=>productListElem.appendChild(createProductCard(prod,i)));
+      updateMultiSelectControls();
     }
 
     /**************************************************************
@@ -785,6 +927,9 @@
       }
       saveProducts();
       productModalBackdrop.classList.add('hide');
+      // Exit multi-select
+      selectedProductIds.clear();
+      updateMultiSelectControls();
     };
 
     function readFileAsDataURL(file) {
@@ -822,6 +967,9 @@
       products = products.filter(p => p.id !== productToDelete.id);
       saveProducts();
       deleteModalBackdrop.classList.add('hide'); productToDelete = null;
+      // Remove from multi-select, if any
+      selectedProductIds.delete(productToDelete.id);
+      updateMultiSelectControls();
     };
 
     function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
