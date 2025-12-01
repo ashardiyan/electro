@@ -31,6 +31,133 @@
     html,body {padding:0;margin:0;font-family:'Inter',Arial,sans-serif;
       font-size:16.1px;background:var(--bg1);color:var(--text);}
     body {display:flex;flex-direction:column;min-height:100vh;}
+
+    /* Login Modal Modern Improvements */
+    #login-modal {
+      position:fixed;
+      inset:0;
+      z-index:7000;
+      background:rgba(22,27,34,0.95);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      min-width:100vw;
+      transition:opacity .25s;
+      animation:loginfadein .70s cubic-bezier(.61,.12,.38,1.07);
+      /* For mobile overscroll */
+      overscroll-behavior:contain;
+    }
+    @keyframes loginfadein {
+      0% {opacity:0;}
+      100%{opacity:1;}
+    }
+    .login-dialog {
+      box-shadow:0 8px 38px 0 rgba(9,19,49,0.23),0 0 0 #0002;
+      background:var(--bg2);
+      border-radius:1.2em;
+      max-width:100vw;
+      min-width:315px;
+      padding:36px 20px 24px 20px !important;
+      margin:0 3vw;
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      position:relative;
+    }
+    .login-dialog h3 {
+      font-size:1.35em;
+      font-weight:900;
+      margin-bottom:14px;
+      letter-spacing:-.07em;
+    }
+    .login-dialog label {
+      margin-top:5px;
+      margin-bottom:5px;
+      color:var(--text-muted);
+      font-size:1.02em;
+      font-weight:600;
+      letter-spacing:-.02em;
+    }
+    .login-dialog input[type=password],
+    .login-dialog input[type=text] {
+      width:100%;
+      border-radius:8px;
+      border:1.5px solid #253048;
+      background:var(--bg3);
+      color:var(--text);
+      font-size:1.09em;
+      padding:8.5px 38px 8.5px 13px;
+      margin-bottom:11px;
+      box-sizing:border-box;
+      outline:none;
+      transition:border-color .14s;
+      /* Remove blue highlight on focus/tap */
+      box-shadow:none !important;
+      caret-color:var(--accent2);
+    }
+    .login-dialog input[type=password]:focus,
+    .login-dialog input[type=text]:focus {
+      border-color:var(--accent2);
+    }
+    /* Remove blue highlight for buttons and inputs when clicked (remove "blue box") */
+    *:focus {
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    button, .rounded-sky-btn:not(:active) {
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    .login-password-toggle {
+      position:absolute;
+      right:7px;
+      top:50%;
+      transform:translateY(-50%);
+      background:none;
+      border:none;
+      color:var(--accent2);
+      font-size:1.18em;
+      cursor:pointer;
+      padding:2px 8px 2px 2px;
+      border-radius:7px;
+      transition:background .09s;
+    }
+    .login-password-toggle:active {
+      background:rgba(92,120,169,0.11);
+    }
+    /* Add fingerprint icon style */
+    #fingerprintBtn {
+      margin-top:10px;
+      background:none;
+      border:none;
+      color:var(--accent2);
+      font-size:1.7em;
+      align-self:center;
+      cursor:pointer;
+      transition:color .12s;
+      border-radius:10px;
+      padding:5px 12px;
+      line-height:1.1em;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      outline:none !important;
+      box-shadow:none !important;
+    }
+    #fingerprintBtn:active,
+    #fingerprintBtn:focus { color:var(--accent); background:rgba(47, 127, 255, 0.08);}
+    /* Hide blue tap highlight on all */
+    * {
+      -webkit-tap-highlight-color:rgba(0,0,0,0);
+    }
+
+    /* Hide close button for login modal (if desired) */
+    #loginCloseBtn {
+      display: none !important;
+    }
+
     .container {max-width:540px;margin:0 auto;padding:1.8em 1em 6em;width:100%;box-sizing:border-box;}
 
     header {display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
@@ -138,24 +265,28 @@
 </head>
 <body>
   <!-- LOGIN MODAL -->
-  <div id="login-modal" style="position:fixed;inset:0;z-index:7000;background:rgba(22,27,34,0.89);display:flex;justify-content:center;align-items:center;">
-    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
-      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" aria-label="Close dialog" style="display:none">✖</button>
+  <div id="login-modal">
+    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate>
+      <!-- No close button for login modal, for cleaner style -->
       <h3 style="text-align:center;color:var(--accent2);margin-bottom:12px">🔐 Dealer Login</h3>
       <div class="error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
       <label id="pinLabel" for="loginPIN">Create a secure PIN / Password</label>
       <div style="position:relative;display:flex;align-items:center;">
         <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" style="flex:1;"/>
-        <button type="button" id="showLoginPINBtn" title="Show/hide PIN" style="position:absolute;right:8px;background:none;border:none;color:var(--accent2);font-size:1.05em;cursor:pointer;">
+        <button type="button" id="showLoginPINBtn" title="Show/hide PIN" class="login-password-toggle">
           <span id="showLoginPINBtnIcon">&#128065;</span>
         </button>
       </div>
+      <button type="button" id="fingerprintBtn" tabindex="0" title="Fingerprint Login" style="display:none">
+        <span style="font-size:1.4em">🔒</span>
+        <span style="font-size:.96em;">Use Fingerprint</span>
+      </button>
       <label class="keep-logged-toggle" title="Stay logged in 5 Min unless closed/locked">
         <input type="checkbox" id="keepLoggedInToggle"/>
         <span>Keep me logged in for 5 Minutes</span>
       </label>
       <div id="timeoutNotice"></div>
-      <div style="display:flex;gap:8px;align-items:center;">
+      <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
         <button type="submit" id="loginBtn" style="flex:1;" class="rounded-sky-btn">Set PIN</button>
       </div>
       <small style="display:block;margin-top:12px;color:var(--text-muted);">All data stored locally in your browser. PIN stored hashed.</small>
@@ -391,6 +522,79 @@
       });
     })();
 
+    // ---- FINGERPRINT Auth (WebAuthn platform) ----
+    async function canUseFingerprint() {
+      // Only offer on android/chrome; only if a PIN exists
+      if(!window.PublicKeyCredential || !navigator.credentials || !getHasPIN()) return false;
+      // quick check for platform authenticator + android
+      try {
+        if(!/android/i.test(navigator.userAgent)) return false;
+        if(typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable !== "function") return false;
+        if(!(await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())) return false;
+        // simple chrome+android
+        return true;
+      } catch(e){return false;}
+    }
+
+    // Fingerprint: Register (when PIN is created)
+    async function setupWebauthnCredentialForLogin(pin) {
+      if(!window.PublicKeyCredential || !navigator.credentials) return false;
+      try {
+        const idB = new TextEncoder().encode('ARE_DEALER_UNIQ_FP');
+        // fake/implicit registration; only in Chrome/Android, store challenge in localStorage (user may ignore warn)
+        const cred = await navigator.credentials.create({
+          publicKey: {
+            challenge: window.crypto.getRandomValues(new Uint8Array(32)),
+            rp: { name: 'Al Rahman Electronics'},
+            user: { id: idB, name: "dealer", displayName: "Dealer"},
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            timeout: 20000,
+            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+            attestation: "none"
+          }
+        });
+        if (cred) {
+          // Don't really use these on client, only allow fingerprint on this device!
+          window.localStorage.setItem('dealer-fp-enabled', '1');
+          return true;
+        }
+      } catch(e) {}
+      return false;
+    }
+
+    async function tryFingerprintLogin() {
+      try {
+        // Use static challenge; just need user presence on same device
+        // (For production, challenge should be server-generated and signed but here it's for local client)
+        const idB = new TextEncoder().encode('ARE_DEALER_UNIQ_FP');
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge: window.crypto.getRandomValues(new Uint8Array(32)),
+            allowCredentials: [{
+              id: idB,
+              type:'public-key',
+              transports: ['internal']
+            }],
+            timeout: 12000,
+            userVerification: "required"
+          }
+        });
+        if(assertion){
+          // If assertion succeeded, auto unlock.
+          // No PIN required, so we simply fill correct PIN hash match
+          // For extra security, store a dummy 'fingerprint-unlocked' token TTL~5min
+          setKeepSessionActive(Date.now()+5*60*1000);
+          updatePINUI(getHasPIN());
+          showDealerApp();
+          startSessionTimeoutMonitor();
+          return true;
+        }
+      } catch(e) {
+        alert('Fingerprint unlock failed or cancelled.');
+      }
+      return false;
+    }
+
     // PIN auth & login
     const KEEP_LOGGED_TIMEOUT_MS = 5*60*1000;
     function setKeepSessionActive(expAt){try{sessionStorage.setItem('dealer-keep-expires',String(expAt));}catch(e){}}
@@ -433,8 +637,7 @@
       updatePINUI(getHasPIN());
     }
     function addSessionAutoLogoutHandlers(){
-      window.addEventListener('pagehide',function(e){clearKeepSession();});
-      document.addEventListener('visibilitychange',function(){if(document.hidden){clearKeepSession();}});
+      // Removed: clearKeepSession(); from pagehide/blur for better back-button experience
     }
     addSessionAutoLogoutHandlers();
 
@@ -461,8 +664,13 @@
       }
     }
     function getHasPIN(){return !!window.localStorage.getItem('dealer-hash');}
-    function showDealerApp(){document.getElementById('dealerApp').style.display='';
-      document.getElementById('login-modal').style.display='none';setTimeout(refreshProductList,200);}
+    function showDealerApp(){
+      document.getElementById('dealerApp').style.display='';
+      document.getElementById('login-modal').style.display='none';
+      setTimeout(refreshProductList,200);
+      // Push main state to history to enable back-button logic for modals
+      history.replaceState({dealerApp:true},window.document.title,window.location.href);
+    }
     function showLoginModal(msg){
       document.getElementById('dealerApp').style.display='none';
       const loginModal=document.getElementById('login-modal');
@@ -470,10 +678,55 @@
       document.getElementById('login-error').textContent=msg||'';
       document.getElementById('loginPIN').value='';
       setTimeout(()=>document.getElementById('loginPIN').focus(),120);
+      // Push login state
+      history.replaceState({dealerLogin:true},window.document.title,window.location.href);
     }
     let justSetPIN=false;
-    window.addEventListener('load',()=>{updatePINUI(getHasPIN());if(!checkQuickAutoUnlock()){showLoginModal();}
-      setTimeout(function(){if("serviceWorker" in navigator && window.matchMedia('(display-mode:standalone)').matches){try{history.replaceState({start:true},document.title,window.location.href);}catch(e){}}},180);});
+    // --- Improved BACK button/modal support ---
+    (() => {
+      // Detail/modal back support
+      window.addEventListener('popstate', function(e){
+        // Closing Product Detail Modal on back
+        if(document.body.classList.contains('detail-modal-open')) {
+          document.getElementById('detailModalBackdrop').classList.add('hide');
+          document.getElementById('detailModalBody').innerHTML='';
+          document.body.classList.remove('detail-modal-open');
+          // Don't navigate further back
+          history.replaceState({dealerApp:true},window.document.title,window.location.href);
+        }
+        // Closing Add/Edit Modal
+        else if(document.body.classList.contains('modal-open') && !document.getElementById('detailModalBackdrop').classList.contains('hide')){
+          document.getElementById('productModalBackdrop').classList.add('hide');
+          document.body.classList.remove('modal-open');
+          document.getElementById('imageCompressMsg').style.display='none';
+          history.replaceState({dealerApp:true},window.document.title,window.location.href);
+        }
+        // Closing login: optional, go to login modal if in app
+        else if(document.getElementById('dealerApp').style.display!='none') {
+          doLogout();//force to login modal
+        }
+      });
+    })();
+
+    window.addEventListener('load',()=>{
+      updatePINUI(getHasPIN());
+      if(!checkQuickAutoUnlock()){
+        showLoginModal();
+      }
+      // Back button logic on direct load
+      history.replaceState({dealerLogin:true},window.document.title,window.location.href);
+
+      setTimeout(function(){
+        if("serviceWorker" in navigator && window.matchMedia('(display-mode:standalone)').matches){
+          try{history.replaceState({start:true},document.title,window.location.href);}catch(e){}
+        }
+      },180);
+
+      // Fingerprint: show button if available
+      canUseFingerprint().then(show => {
+        document.getElementById('fingerprintBtn').style.display = show ? '' : 'none';
+      });
+    });
     const loginBtn=document.getElementById('loginBtn'),loginForm=document.getElementById('loginForm'),loginPIN=document.getElementById('loginPIN'),pinLabel=document.getElementById('pinLabel'),keepLoggedInToggle=document.getElementById('keepLoggedInToggle');
     (function(){
       const showBtn=document.getElementById('showLoginPINBtn'),pinInput=document.getElementById('loginPIN'),iconSpan=document.getElementById('showLoginPINBtnIcon');
@@ -485,11 +738,25 @@
         pinInput.addEventListener('keydown',function(e){if(visible&&e.key==="Escape"){pinInput.type='password';visible=false;iconSpan.textContent='👁️';showBtn.setAttribute('aria-label',"Show PIN");}});
       }
     })();
+    // Fingerprint unlock
+    document.getElementById('fingerprintBtn').onclick = tryFingerprintLogin;
+
     function updatePINUI(hasPIN){
       if(hasPIN){
-        loginBtn.textContent="Unlock";pinLabel.textContent="Enter your PIN / Password:";loginPIN.placeholder="Enter PIN";loginPIN.autocomplete="current-password";
+        loginBtn.textContent="Unlock";
+        pinLabel.textContent="Enter your PIN / Password:";
+        loginPIN.placeholder="Enter PIN";
+        loginPIN.autocomplete="current-password";
+        // If first time and fingerprint supported, recommend Fingerprint
+        canUseFingerprint().then(show=>{
+          document.getElementById('fingerprintBtn').style.display = show ? '' : 'none';
+        });
       }else{
-        loginBtn.textContent="Set PIN";pinLabel.textContent="Create PIN:";loginPIN.placeholder="Set PIN or password";loginPIN.autocomplete="new-password";
+        loginBtn.textContent="Set PIN";
+        pinLabel.textContent="Create PIN:";
+        loginPIN.placeholder="Set PIN or password";
+        loginPIN.autocomplete="new-password";
+        document.getElementById('fingerprintBtn').style.display = 'none';
       }
       document.getElementById('login-error').textContent='';
     }
@@ -504,7 +771,13 @@
         if(!hasPIN){
           window.localStorage.setItem('dealer-hash',hash);justSetPIN=true;updatePINUI(true);document.getElementById('login-error').style.color='var(--success)';
           document.getElementById('login-error').textContent="PIN set. Unlock now.";loginBtn.disabled=false;loginPIN.value='';
-          keepLoggedInToggle.checked=false;return;
+          keepLoggedInToggle.checked=false;
+          // Attempt fingerprint registration after PIN
+          if(await canUseFingerprint()) {
+            setupWebauthnCredentialForLogin(pinVal);
+            document.getElementById('fingerprintBtn').style.display='';
+          }
+          return;
         }
         // UNLOCK result
         const userHash=window.localStorage.getItem('dealer-hash');
@@ -533,10 +806,11 @@
       document.getElementById('settingsBackdrop').classList.remove('hide');
       document.getElementById('oldPin').value='';document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
       document.getElementById('resetPinError').textContent='';
+      history.pushState({settings:true},window.document.title,window.location.href);
     };
-    document.getElementById('closeSettingsBtn').onclick=()=>document.getElementById('settingsBackdrop').classList.add('hide');
+    document.getElementById('closeSettingsBtn').onclick=()=>{document.getElementById('settingsBackdrop').classList.add('hide');history.back();}
     document.getElementById('logoutBtn').onclick=()=>{document.getElementById('settingsBackdrop').classList.add('hide');doLogout();}
-    document.getElementById('resetPinCancel').onclick=()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');};
+    document.getElementById('resetPinCancel').onclick=()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');history.back();};
     document.getElementById('resetPinSubmit').onclick=async function(){
       const oldPin=(document.getElementById('oldPin').value||'').trim(),newPin=(document.getElementById('newPin').value||'').trim(),confirmPin=(document.getElementById('confirmPin').value||'').trim();
       if(!oldPin||oldPin.length<4) {document.getElementById('resetPinError').textContent="Enter current PIN (min 4 chars).";return;}
@@ -550,7 +824,7 @@
         const newHash=await hashPIN(newPin);
         window.localStorage.setItem('dealer-hash',newHash);
         document.getElementById('resetPinError').textContent="PIN updated!";
-        setTimeout(()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');},800);
+        setTimeout(()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');history.back();},800);
       }catch(e){document.getElementById('resetPinError').textContent="Update failed.";}
       this.disabled=false;
     };
@@ -595,8 +869,18 @@
         checkbox.addEventListener('change',()=>{handleCheckboxChange(product.id,checkbox.checked);});
         checkbox.addEventListener('click',e=>e.stopPropagation());
       }
-      li.querySelector('.prod-actions button').onclick=(e)=>{e.stopPropagation();showProductModal('edit',product);};
-      li.addEventListener('click',function(e){if(e.target.classList.contains('prod-select-checkbox'))return;showDetailModal(product);});
+      li.querySelector('.prod-actions button').onclick=(e)=>{
+        e.stopPropagation();
+        showProductModal('edit',product);
+        // Push modal to history for back-button close
+        history.pushState({modal:'edit'},window.document.title,window.location.href);
+      };
+      li.addEventListener('click',function(e){
+        if(e.target.classList.contains('prod-select-checkbox'))return;
+        showDetailModal(product);
+        // Push to history for back-close modal
+        history.pushState({modal:'detail'},window.document.title,window.location.href);
+      });
       return li;
     }
     document.getElementById("selectAllCheckbox").addEventListener("change",function(){
@@ -635,6 +919,7 @@
       document.getElementById('detailModalBackdrop').classList.add('hide');
       document.getElementById('detailModalBody').innerHTML='';
       document.body.classList.remove('detail-modal-open');
+      history.back();
     };
 
     // Search
@@ -719,11 +1004,15 @@
         currentProductPhotoDataUrl=null;document.getElementById('imageCompressMsg').style.display='none';updatePhotoPreviewUI();prodPhotoLastPendingPromise=null;
       }
     });
-    document.getElementById('addProductBtn').onclick=()=>showProductModal('add');
+    document.getElementById('addProductBtn').onclick=()=>{
+      showProductModal('add');
+      history.pushState({modal:'add'},window.document.title,window.location.href);
+    };
     document.getElementById('closeModalBtn').onclick=()=>{
       document.getElementById('productModalBackdrop').classList.add('hide');
       document.body.classList.remove('modal-open');
       document.getElementById('imageCompressMsg').style.display='none';
+      history.back();
     };
     function showProductModal(mode,product){
       document.getElementById('productModal').reset();document.getElementById('modalError').textContent='';
@@ -760,6 +1049,7 @@
       if(!productEditing)products.push(productObj);else{const idx=products.findIndex(p=>p.id===productEditing.id);if(idx>=0)products[idx]=productObj;else products.push(productObj);}
       saveProducts();document.getElementById('productModalBackdrop').classList.add('hide');
       document.body.classList.remove('modal-open');selectedProductIds.clear();updateMultiSelectControls();
+      history.back();
     };
 
     // --- Delete Product Modal ---
