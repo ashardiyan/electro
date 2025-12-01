@@ -5,444 +5,186 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Al Rehman Electronics</title>
   <meta name="theme-color" content="#161B22"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <link rel="manifest" href="" id="manifestLink"/>
-  <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true"/>
-  <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
+  <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg1: #0C1220;
+      --bg1: #0D1C2F;
       --bg2: #161B22;
-      --bg3: #1c2131;
-      --accent: #2563EB;
-      --accent-hover: #164eab;
-      --accent2: #23D2FA;
-      --accent2-hover: #1095b7;
+      --bg3: #202A3F;
+      --accent: #297EFF;
+      --accent-hover: #1856b4;
+      --accent2: #06B6D4;
       --gray: #AEB9C7;
-      --text: #F9F9FE;
-      --text-muted: #B0B9C6;
-      --radius: 18px;
-      --radius-card: 14px;
-      --shadow: 0 8px 32px 0 rgba(60,120,220,0.18);
-      --shadow-soft: 0 2px 12px rgba(40,98,180,.12);
+      --text: #F3F7FF;
+      --text-muted: #A4ADC5;
+      --radius: 16px;
+      --shadow: 0 8px 32px 0 rgba(60,130,250,0.13);
+      --shadow-soft: 0 2px 8px #18486311;
       --danger: #ef4444;
       --success: #10b981;
-      --rounded-btn: 11px;
-      --button-skyblue: #23D2FA;
-      --button-gradient: linear-gradient(90deg, #23D2FA 27%, #2563EB 100%);
-      --modal-backdrop: rgba(18,23,32,0.96);
-      --transition: cubic-bezier(.43,.8,.52,1.18);
+      --skyb: #06B6D4;
+      --gradient: linear-gradient(90deg,#0FC3F0 16%,#297EFF 80%);
     }
-    html, body {
-      box-sizing: border-box;
-      font-family: 'Inter', system-ui, Arial, sans-serif;
-      font-size: 18px;
-      background: linear-gradient(115deg, var(--bg1) 0%, var(--bg2) 57%, var(--bg3) 100%);
-      color: var(--text);
-      min-height: 100vh;
-      margin: 0; padding: 0;
-      scroll-behavior: smooth;
-    }
-    *, *::before, *::after { box-sizing: inherit; }
-    body { display:flex; flex-direction:column; min-height:100vh; }
-    .container {
-      max-width: 650px;
-      margin:0 auto;
-      padding:40px 16px 60px;
-      width:100%;
-      box-sizing:border-box;
-      transition: padding .25s var(--transition);
-    }
-    header {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:26px; gap: 10px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid rgba(27,38,56,0.13);
-      animation: fadeUp .7s var(--transition);
-    }
-    .logo-wrap { display:flex; align-items:center; gap:18px; }
-    .app-logo {
-      width:54px; height:54px; border-radius:18px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2)75%);
-      display:flex; align-items:center; justify-content:center;
-      font-size:2.3rem; box-shadow:var(--shadow-soft);
-      font-weight:700; overflow:hidden;
-      transition: box-shadow .18s var(--transition);
-      border: 0.5px solid #274AB8;
-    }
-    .app-logo img { width:100%; height:100%; border-radius:16px; object-fit:cover; background:#fff; border:none;}
-    .app-title {
-      font-weight:900; font-size:2.02rem; letter-spacing:-2px;
-      color: var(--text); text-shadow:0 1.5px 6px #2c345128;
-      margin-left: 1px;
-    }
-    .top-controls {
-      display:flex; align-items:center; gap:13px;
-    }
-    button.icon-btn, button#settingsBtn {
-      background:none; border:none; color:var(--accent2); font-size:1.32rem;
-      padding:8px 10px; border-radius: 11px; cursor:pointer; outline:none;
-      transition: background .18s, color .19s;
-    }
-    button#settingsBtn {
-      color: var(--text); background:#192139;
-      padding:10px 13px; border-radius:12px;
-      font-size:1.34rem;
-      box-shadow:0 2px 7px #0006;
-      border: none;
-    }
-    #installPromptBtn, #installAsAppBtn {
-      display:none; margin-left:13px;
-      font-size:1em; padding:9px 18px; border-radius:10px;
-      background: var(--button-gradient);
-      color:#fff; font-weight:700; border:none;
-      box-shadow:0 2px 12px #2e5fad33;
-      cursor:pointer;
-      transition:background .15s, box-shadow .14s, transform .10s;
-    }
-    #installPromptBtn:active, #installAsAppBtn:active {
-      background:linear-gradient(90deg,#32ecfa,#2563EB 93%);
-      box-shadow:0 5px 14px #43c7fc43;
-      transform:scale(1.05);
-    }
-    #mobileInstallInstructions {
-      display:none; margin-left:9px; padding:7px 10px; border-radius:9px;
-      background:#162948; color:var(--accent2); font-size:.99em;
-      font-style:italic; box-shadow:0 2px 12px #222c3d25;
-      max-width:310px; line-height:1.43;
-      animation:fadeUp .7s;
-    }
-    .main-content { display:flex; flex-direction:column; gap:0; align-items:stretch; width:100%; }
-    .card {
-      background:var(--bg2);
-      border-radius:var(--radius-card);
-      box-shadow:var(--shadow);
-      margin-bottom:38px;
-      padding:2rem 2rem 1.6rem;
-      animation: fadeUp .7s var(--transition);
-      opacity:0;
-      transform:translateY(38px);
-      animation-fill-mode:forwards;
-      border:none; transition:box-shadow .15s, background .16s;
-    }
-    .card.show { opacity:1; transform:none; }
-    @keyframes fadeUp { 0%{opacity:0;transform:translateY(50px);}60%{opacity:.6;}100%{opacity:1;transform:translateY(0);} }
-    .products-top-actions {
-      display:flex; align-items:flex-end; gap:12px; margin-bottom:21px; flex-wrap:wrap;
-    }
-    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; }
-    #productSearch {
-      width:100%; border-radius:10px; background:var(--bg3); color:var(--text);
-      font-size:1.09em; padding:10px 40px 10px 16px; outline:none;
-      box-shadow:0 1.5px 8px #35455a21;
-      transition:border .16s, box-shadow .16s var(--transition);
-      border:2px solid #23314a;
-    }
-    #productSearch:focus {
-      border-color: var(--accent2);
-      box-shadow:0 4px 12px #2562eb21;
-      background: #21293f;
-    }
-    .search-icon {
-      position:absolute; right:16px; top:50%; transform:translateY(-50%);
-      color:var(--accent2); font-size:1.19em; opacity:0.7; pointer-events:none;
-    }
-    #multiSelectControls {
-      display: none;
-      gap: 11px;
-      margin-top: 9px;
-      margin-left: 2px;
-      align-items: center;
-      font-size: 1.01em;
-      background: #17203b; border-radius:9px; padding:6px 12px;
-      box-shadow: 0 1.5px 8px #1c314226;
-    }
-    #multiSelectControls.active { display: flex; }
-    #deleteSelectedBtn {
-      background: var(--danger);
-      color: #fff;
-      border: none;
-      border-radius: var(--rounded-btn);
-      padding: 11px 20px;
-      font-size: 1em;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 2px 11px #ef444433;
-      transition: background .14s, box-shadow .13s;
-      margin-left: 6px;
-      outline: none;
-    }
-    #deleteSelectedBtn:disabled { background: #ce5353a0; cursor: not-allowed; opacity:0.7;}
-    #selectAllCheckbox { accent-color: var(--accent2); margin-left:4px; margin-right:0; transform: scale(1.17); }
+    html,body {padding:0;margin:0;font-family:'Inter',Arial,sans-serif;
+      font-size:16.1px;background:var(--bg1);color:var(--text);}
+    body {display:flex;flex-direction:column;min-height:100vh;}
+    .container {max-width:540px;margin:0 auto;padding:1.8em 1em 6em;width:100%;box-sizing:border-box;}
 
-    .product-list { margin:0; padding:0; list-style:none; }
+    header {display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .logo-wrap {display:flex;align-items:center;gap:14px;}
+    .app-logo {width:52px;height:52px;border-radius:16px;box-shadow:var(--shadow-soft);
+      background:var(--gradient);display:flex;align-items:center;justify-content:center;}
+    .app-logo img {width:100%;height:100%;border-radius:16px;}
+    .app-title {font-weight:900;font-size:1.22rem;letter-spacing:-.5px;}
+
+    .top-controls {display:flex;align-items:center;gap:10px;}
+    button.icon-btn,#settingsBtn {background:none;border:none;font-size:1.1rem;color:var(--accent2);padding:8px;border-radius:9px;cursor:pointer;}
+    #installPromptBtn,#installAsAppBtn {display:none;margin-left:9px;padding:7px 15px;
+      border-radius:8px;background:var(--gradient);color:#fff;font-weight:700;border:none;cursor:pointer;box-shadow:0 1px 7px #18486314;}
+    #mobileInstallInstructions {display:none;margin-left:10px;padding:6px 10px;border-radius:8px;background:#212841;color:var(--accent2);font-size:.96em;}
+
+    .card {background:var(--bg2);border-radius:var(--radius);box-shadow:var(--shadow);
+      margin-bottom:2em;padding:1.45em;animation:fadeUp .7s cubic-bezier(.43,.8,.52,1.18);opacity:0;transform:translateY(36px);animation-fill-mode:forwards;}
+    .card.show {opacity:1;transform:none;}
+    @keyframes fadeUp {0%{opacity:0;transform:translateY(45px);}65%{opacity:.6;}100%{opacity:1;transform:translateY(0);}}
+
+    .products-top-actions {display:flex;align-items:flex-end;gap:12px;margin-bottom:17px;flex-wrap:wrap;}
+    .product-search-wrap {position:relative;flex:1 1 200px; max-width:340px;}
+    #productSearch {width:100%;border-radius:8px;border:1.5px solid #22314a; background:var(--bg3);color:var(--text);
+      font-size:.99em;padding:9px 34px 9px 14px;box-shadow:0 1.5px 6px #293d5e18;}
+    #productSearch:focus {border-color:var(--accent);}
+    .search-icon {position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--accent2);pointer-events:none;opacity:.7;font-size:1.05em;}
+
+    #multiSelectControls {display:none;gap:10px;margin:7px 0 0 5px;align-items:center;}
+    #multiSelectControls.active {display:flex;}
+    #deleteSelectedBtn {background:var(--danger);color:#fff;border:none;border-radius:12px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.97em;box-shadow:0 1px 7px #ef444433;}
+    #deleteSelectedBtn:disabled {background:#d67070a8;}
+    #selectAllCheckbox {accent-color:var(--accent2);margin-left:4px;transform:scale(1.08);}
+    #selectedCountText {color:var(--danger);font-weight:600;font-size:.99em;}
 
     .rounded-sky-btn {
-      background: var(--button-gradient);
-      color: #fff;
-      border: none;
-      border-radius: var(--rounded-btn);
-      padding: 12px 22px;
-      font-size: 1.09em;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 10px #39baf633;
-      transition: background .16s, box-shadow .16s, transform .10s;
-      outline: none;
-      margin: 3px 0;
-      letter-spacing: 0.02em;
-      position: relative;
-      overflow: hidden;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    .rounded-sky-btn:hover,
-    .rounded-sky-btn:active {
-      background: linear-gradient(90deg, #1095b7, #2563EB 93%);
-      box-shadow: 0 5px 14px #43c7fc43;
-      transform: translateY(-2px) scale(1.033);
-    }
-    .rounded-sky-btn.cancel {
-      background: #18313c; color: var(--button-skyblue);
-      border: 2px solid var(--button-skyblue); font-weight: 600;
-    }
-    .rounded-sky-btn.cancel:hover, .rounded-sky-btn.cancel:active {
-      background: #22384a; color: #fff; border-color: #1095b7;
-    }
+      background:var(--gradient);color:#fff;border:none;border-radius:12px;padding:9px 18px;font-size:.98em;font-weight:600;cursor:pointer;box-shadow:0 1.2px 7px #09B7D450;
+      transition:background .15s,box-shadow .1s,transform .10s;letter-spacing:0.02em;user-select:none;}
+    .rounded-sky-btn:hover {background:linear-gradient(90deg,#09B7D4 60%,#297EFF 90%);}
+    .rounded-sky-btn.cancel {background:#19263c;color:var(--accent);border:1.3px solid var(--accent);}
+    .rounded-sky-btn.cancel:hover {background:#22384a;color:#fff;border-color:var(--accent2);}
+    button,.rounded-sky-btn {outline:none !important;}
+    ::selection {background:var(--accent2);color:#fff;}
+    a {color:var(--accent);font-weight:500;}
+    .hidden {display:none !important;}
 
-    ::selection{background:var(--accent2); color:#fff;}
-    a{color:var(--accent); text-decoration:none;}
-    a:hover{color:var(--accent2);}
-    .hidden { display:none !important; }
+    /* Product list & cards */
+    .product-list {margin:0;padding:0;list-style:none;}
+    .prod-card {background:var(--bg3);border-radius:1em;margin-bottom:13px;box-shadow:0 2px 10px #297EFF18;display:flex;gap:16px;align-items:center;padding:15px 15px 15px 5px;position:relative;animation:fadeUp .42s;opacity:0;transform:translateY(18px);animation-fill-mode:forwards;transition:box-shadow .14s,border-color .18s;}
+    .prod-card.show {opacity:1;transform:none;}
+    .prod-card:hover {border-color:var(--accent2);}
+    .prod-img {min-width:39px;width:39px;height:39px;border-radius:9px;background:#2c3144;display:flex;align-items:center;justify-content:center;font-size:1.32em;}
+    .prod-photo-thumb {max-width:100%;max-height:39px;border-radius:8px;object-fit:cover;background:#232e3a;}
+    .prod-main-details {flex:1;overflow:hidden;}
+    .prod-name {font-weight:700;font-size:1.10em;color:var(--text);}
+    .prod-details {color:var(--gray);font-size:.96em;}
+    .prod-actions {margin-left:auto;display:flex;gap:7px;align-items:center;}
+    .prod-actions button {background:none;border:none;color:var(--accent2);font-size:1.18em;padding:3px 3px;border-radius:6px;cursor:pointer;}
+    .prod-select-checkbox {margin-right:12px;transform:scale(1.18);accent-color:var(--accent2);}
+    .prod-card.selected {border:2px solid var(--danger);background:#20233a;box-shadow:0 0 12px #ef44441a;}
 
-    /* Cards, product items */
-    .prod-card {
-      background:var(--bg3); border-radius:13px; margin-bottom:17px;
-      box-shadow:0 2px 11px #2c345118;
-      display:flex; gap:19px; align-items:center;
-      padding:20px 22px;
-      position:relative; animation:fadeUp .4s; opacity:0; transform:translateY(23px);
-      animation-fill-mode:forwards;
-      cursor:pointer; border:2px solid transparent;
-      transition: box-shadow .14s, border-color .16s, background .17s var(--transition);
-    }
-    .prod-card.show { opacity:1; transform:none; }
-    .prod-card:hover { border-color:var(--accent2); box-shadow:0 6px 26px #18346019; }
-    .prod-card.selected { border-color: var(--danger); background: #1b1d2d; box-shadow: 0 4px 20px #ef44441a;}
-    .prod-card .prod-select-checkbox:focus { outline: 2px solid var(--accent2); outline-offset:2px;}
-    .prod-img {
-      min-width:44px; width:44px; height:44px;
-      border-radius:10px; background:#21293f;
-      flex-shrink:0; display:flex; align-items:center; justify-content:center;
-      color:var(--accent2); font-size:1.42em; overflow:hidden;
-    }
-    .prod-photo-thumb { max-width:100%; max-height:44px; border-radius:8px; object-fit:cover; background:#232b36; display:block; }
-    .prod-name { font-weight:700; font-size:1.17em; color:var(--text); letter-spacing:-0.7px; margin-bottom:1.5px; }
-    .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
-    .prod-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
-    .prod-actions button {
-      background:none; border:none; color:var(--accent2); font-size:1.35em;
-      cursor:pointer; transition:color .13s, background .13s;
-      border-radius:7px; padding:6px 10px; outline:none;
-    }
-    .prod-select-checkbox {
-      margin-right: 18px;
-      transform: scale(1.26);
-      accent-color: var(--accent2);
-      cursor:pointer;
-      transition: box-shadow .12s;
-    }
-    .no-products {
-      text-align:center; color:var(--text-muted); font-size:1.16em; margin:40px 0 10px 0; letter-spacing:.01em;
-      animation:fadeUp .7s;
-    }
+    .no-products {text-align:center;color:var(--text-muted);font-size:1.09em;margin:34px 0 14px;}
 
     /* Modal styles */
-    .modal-backdrop {
-      position:fixed; top:0; left:0; right:0; bottom:0;
-      background: var(--modal-backdrop);
-      z-index:4999; display:flex; align-items:center; justify-content:center;
-      opacity:1; visibility:visible;
-      transition:opacity .24s var(--transition);
-      animation:fadeUp .19s;
-      backdrop-filter: blur(2.2px);
+    .modal-backdrop {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(19,25,38,.92);z-index:4000;display:flex;align-items:center;justify-content:center;opacity:1;visibility:visible;transition:opacity .2s;}
+    .modal-backdrop.hide {opacity:0;visibility:hidden;pointer-events:none;}
+    .modal {min-width:300px;max-width:99vw;background:var(--bg2);border-radius:1em;box-shadow:var(--shadow);padding:36px 18px 23px;display:flex;flex-direction:column;align-items:stretch;position:relative;}
+    .modal h3 {margin:0 0 18px;color:var(--accent2);text-align:center;font-weight:800;font-size:1.18em;}
+    .modal-close {position:absolute;top:13px;right:14px;background:none;border:none;color:var(--accent2);font-size:1.18em;cursor:pointer;}
+    .modal label {font-weight:600;font-size:.99em;color:var(--text-muted);margin-bottom:4px;}
+    .modal input, .modal textarea {border-radius:7px;border:1.3px solid #253048;background:var(--bg3);color:var(--text);padding:8px 11px;margin-bottom:13px;width:100%;box-sizing:border-box;font-size:.99em;}
+    .modal textarea {min-height:54px;resize:vertical;}
+    .modal-btnbar {display:flex;align-items:center;justify-content:flex-end;gap:13px;margin-top:6px;}
+    .modal button[type=submit] {background:var(--gradient);color:#fff;padding:11px 22px;font-size:.98em;border:none;border-radius:8px;font-weight:700;cursor:pointer;}
+    .modal .error {font-size:.98em;color:var(--danger);margin-bottom:7px;min-height:18px;text-align:left;}
+    #detailModal .prod-detail-photo {display:block;width:110px;height:110px;object-fit:cover;border-radius:15px;margin:8px auto 0;background:#21293f;box-shadow:0 2px 10px #297EFF16;}
+
+    /* Modern toggle styling */
+    .keep-logged-toggle {display:flex;align-items:center;gap:7px;margin-top:8px;user-select:none;font-size:.99em;color:var(--text-muted);}
+    .keep-logged-toggle input[type=checkbox] {accent-color:var(--accent2);transform:scale(1.13);}
+    #timeoutNotice {font-size:.97em;color:var(--accent2);margin-top:11px;text-align:center;display:none;font-weight:600;background:#132447;padding:8px 10px;border-radius:10px;}
+
+    /* Photo upload preview styles */
+    .photo-preview-wrap {display:inline-flex;align-items:center;gap:2px;}
+    .photo-preview-img-thumb {max-width:36px;max-height:36px;border-radius:7px;object-fit:cover;border:2px solid var(--accent2);background:#273855;}
+    .remove-photo-btn {background:var(--danger);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:.9em;display:inline-flex;align-items:center;justify-content:center;margin-left:3px;cursor:pointer;box-shadow:0 1px 5px #ef444433;}
+    .remove-photo-btn:hover {background:#cd2424;}
+    .modal-file-upload-wrap {display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .modal-file-label {font-weight:600;font-size:.97em;color:var(--text-muted);margin-bottom:3px;}
+    .modal-file-upload-btn {position:relative;}
+    .modal-file-upload-btn input[type=file] {position:absolute;left:0;right:0;top:0;bottom:0;opacity:0;width:100%;height:100%;cursor:pointer;}
+
+    @media (max-width:650px){
+      .container{padding:11px .5vw 15px;}
+      .card {padding:.8em .4em .95em .45em;}
+      .app-logo {width:36px;height:36px;}
+      .app-title{font-size:1rem;}
+      .prod-card{padding:10px 3px 10px 1.5px;}
+      .modal{padding:10vw 2vw 7vw 2vw;}
+      #detailModal .prod-detail-photo{width:70px;height:70px;}
+      #multiSelectControls{font-size:0.98em;}
+      .photo-preview-img-thumb {max-width:29px;max-height:29px;}
+      .remove-photo-btn {width:17px;height:17px;font-size:.85em;}
     }
-    .modal-backdrop.hide { opacity:0; visibility:hidden; pointer-events:none; }
-    .modal {
-      min-width:350px; max-width:98vw;
-      background:var(--bg2); border-radius:var(--radius-card);
-      box-shadow:var(--shadow); z-index:6000;
-      padding:42px 28px 23px 28px;
-      animation:fadeUp .38s;
-      display:flex; flex-direction:column; align-items:stretch; position:relative;
-    }
-    .modal h3 {
-      margin:0 0 18px 0;
-      color:var(--accent2); text-align:center;
-      font-weight:800; font-size:1.31em; letter-spacing:-1px;
-      text-shadow: 0 1px 7px #151e2f3f;
-    }
-    .modal-close {
-      position:absolute; top:13px; right:14px;
-      background:none; border:none; color:var(--accent2);
-      font-size:1.29em; cursor:pointer; font-weight:700;
-      outline:none; border-radius:50%;
-      padding:2px 8px;
-      box-shadow:0 1px 9px #2562eb22;
-    }
-    .modal label {
-      font-weight:600; font-size:1em; color:var(--text-muted); margin-bottom:4px;
-    }
-    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal textarea {
-      border-radius:7px; border:2px solid #253048;
-      background:var(--bg3); color:var(--text);
-      font-size:1em; padding:10px 14px;
-      margin-bottom:15px; margin-top:2px; outline:none; width:100%;
-      box-sizing:border-box; transition:border .15s, box-shadow .15s var(--transition);
-      box-shadow:0 1.5px 6px #2c495a26;
-    }
-    .modal input[type=text]:focus, .modal input[type=password]:focus, .modal input[type=number]:focus,
-    .modal textarea:focus { border-color: var(--accent2); background: #21293f; box-shadow:0 4px 12px #2562eb21;}
-    .modal textarea { min-height:54px; resize:vertical; }
-    .modal-btnbar {
-      display:flex; align-items:center; justify-content:flex-end;
-      gap:13px; margin-top:8px; padding-bottom:9px;
-    }
-    .modal button[type=submit] {
-      background:var(--button-gradient); color:#fff;
-      padding:13px 26px; font-size:1em; border:none;
-      border-radius:9px; font-weight:700; cursor:pointer;
-      box-shadow:0 2px 14px #1b314e28; margin:6px 0;
-      transition:background .14s; outline:none;
-    }
-    .modal .error { font-size:1em; color:var(--danger); margin-bottom:7px; min-height:18px; text-align:left; }
-    #detailModal .prod-detail-photo {
-      display:block; width:126px; height:126px; object-fit:cover;
-      border-radius:24px; margin:10px auto 0 auto;
-      box-shadow:0 2px 14px #1b314e22; background:#21293f;
-    }
-    .modal-file-upload-wrap {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      margin-bottom: 13px;
-      margin-top: 2px;
-    }
-    .modal-file-upload-btn {
-      display: inline-block; position: relative;
-      transition: background .14s var(--transition);
-    }
-    .modal-file-upload-btn input[type="file"] {
-      position: absolute; left: 0; right: 0; top: 0; bottom: 0;
-      opacity: 0; width: 100%; height: 100%; cursor: pointer;
-    }
-    .remove-photo-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--danger); color: #fff; border: none;
-      border-radius: 50%; width: 26px; height: 26px;
-      font-size: 1.18em; font-weight: bold; margin-left: 4px; cursor: pointer;
-      transition: background 0.14s, color 0.12s;
-      box-shadow: 0 1px 5px #ef444433; z-index: 2; vertical-align: middle;
-    }
-    .remove-photo-btn:hover, .remove-photo-btn:focus { background: #ce3737; color: #fff; }
-    .photo-preview-wrap { display: inline-flex; align-items: center; gap: 2px; }
-    .photo-preview-img-thumb {
-      max-width: 42px; max-height: 42px; border-radius: 7px; object-fit: cover;
-      border: 2px solid var(--accent2-hover); margin-right: 2px; background: #273855; display: block;
-    }
-    .prod-card, .prod-card * { -webkit-tap-highlight-color: transparent !important; }
-    .show-password-wrap { display: flex; align-items: center; gap: 0; position: relative;}
-    #showLoginPINBtn {
-      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; color: var(--accent2); cursor: pointer;
-      font-size: 1.15em; opacity: 0.79; padding: 3px 8px; border-radius: 9px;
-      z-index: 5; user-select: none; outline: none !important;
-      transition: background .11s, color .11s;
-    }
-    #showLoginPINBtn:active, #showLoginPINBtn:focus { background: #1f2336; color: var(--accent2-hover); outline: none !important; box-shadow: none !important; }
-    #timeoutNotice {
-      font-size: 1em; color: var(--accent2); margin-top: 11px; text-align: center;
-      display: none; font-weight: 600; background: #122447; padding: 8px 10px; border-radius: 11px;
-      margin-bottom: 10px;
-    }
-    @media (max-width:680px){
-      .container{padding:12px 1vw 20px 1vw;}
-      .card{padding:1rem .5rem 1.08rem .8rem;}
-      .app-title{font-size:1.19rem;}
-      .prod-card{padding:11px 6px;}
-      .modal{padding:10vw 3vw 6vw 3vw; min-width:unset;}
-      #detailModal .prod-detail-photo{ width:76px; height:76px;}
-      #mobileInstallInstructions{max-width:94vw;font-size:0.96em;}
-      .photo-preview-img-thumb { max-width:32px; max-height:32px; }
-      .remove-photo-btn { width:22px; height:22px; font-size:1em;}
-      .products-top-actions{flex-wrap:wrap;}
-    }
-    /* Keep me logged in for 5 minutes toggle */
-    .keep-logged-toggle {
-      display: flex; align-items: center; gap: 8px; margin-top: 8px;
-      user-select: none; font-size: .99em; color: var(--text-muted); cursor: pointer;
-    }
-    .keep-logged-toggle input[type="checkbox"] {
-      accent-color: var(--accent2); transform: scale(1.15); margin-right: 2px;
-    }
-    /* Prevent background scrolling when modal is open */
-    body.modal-open { overflow: hidden !important; position: fixed !important; width: 100vw;}
-    /* Custom class for detail modal open */
-    body.detail-modal-open { overflow: hidden !important; }
   </style>
 </head>
 <body>
-  <!-- LOGIN / SET PIN modal -->
-  <div id="login-modal" style="position:fixed; inset:0; z-index:7000; background:rgba(22,27,34,0.89); display:flex; justify-content:center; align-items:center;">
-    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:400px;">
-      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" aria-label="Close dialog" role="button" style="display:none">✖</button>
+  <!-- LOGIN MODAL -->
+  <div id="login-modal" style="position:fixed;inset:0;z-index:7000;background:rgba(22,27,34,0.89);display:flex;justify-content:center;align-items:center;">
+    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
+      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" aria-label="Close dialog" style="display:none">✖</button>
       <h3 style="text-align:center;color:var(--accent2);margin-bottom:12px">🔐 Dealer Login</h3>
-      <div class="error input-error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
+      <div class="error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
       <label id="pinLabel" for="loginPIN">Create a secure PIN / Password</label>
-      <div class="show-password-wrap">
-        <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" />
-        <button type="button" id="showLoginPINBtn" title="Show/Hide PIN" tabindex="-1" aria-label="Show password" style="display:inline-flex;align-items:center;">
-          <span id="showLoginPINBtnIcon" aria-hidden="true">&#128065;</span>
+      <div style="position:relative;display:flex;align-items:center;">
+        <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" style="flex:1;"/>
+        <button type="button" id="showLoginPINBtn" title="Show/hide PIN" style="position:absolute;right:8px;background:none;border:none;color:var(--accent2);font-size:1.05em;cursor:pointer;">
+          <span id="showLoginPINBtnIcon">&#128065;</span>
         </button>
       </div>
-      <label class="keep-logged-toggle" title="If checked, you stay logged in for 5 minutes unless the app is closed or device is locked.">
-        <input type="checkbox" id="keepLoggedInToggle" />
+      <label class="keep-logged-toggle" title="Stay logged in 5 Min unless closed/locked">
+        <input type="checkbox" id="keepLoggedInToggle"/>
         <span>Keep me logged in for 5 Minutes</span>
       </label>
       <div id="timeoutNotice"></div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button type="submit" id="loginBtn" style="flex:1;">Set PIN</button>
-        <button type="button" id="forgotBtn" style="display:none; background:transparent; border:1px solid #253048; color:var(--text); padding:9px 12px; border-radius:8px; cursor:pointer;">Forgot</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="submit" id="loginBtn" style="flex:1;" class="rounded-sky-btn">Set PIN</button>
       </div>
-      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data is stored locally in your browser. PIN is hashed before saving.</small>
+      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data stored locally in your browser. PIN stored hashed.</small>
     </form>
   </div>
-  <div id="dealerApp" class="" style="display:none;">
+
+  <!-- APP MAIN -->
+  <div id="dealerApp" style="display:none;">
     <div class="container">
       <header>
         <div class="logo-wrap">
-          <div class="app-logo" title="Al Rahman Electronics" style="padding:0;">
+          <div class="app-logo" title="Al Rahman Electronics">
             <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" alt="App Logo"/>
           </div>
           <span class="app-title">Al Rahman Electronics</span>
         </div>
         <div class="top-controls">
-          <button id="installPromptBtn" title="Install as App"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 5-5"/><path d="M12 17V3"/></svg> Install</button>
+          <button id="installPromptBtn" title="Install as App">📲 Install</button>
           <button id="installAsAppBtn" title="Install as App (force)">🛠️</button>
           <button id="settingsBtn" title="Settings (⋮)">⋮</button>
           <span id="mobileInstallInstructions"></span>
         </div>
       </header>
       <div class="main-content">
-        <section class="card" style="animation-delay:.09s">
+        <section class="card" style="animation-delay:.08s">
           <div class="products-top-actions">
             <div class="product-search-wrap">
               <input type="search" placeholder="Search by name, category, or note..." id="productSearch" autocomplete="off"/>
-              <span class="search-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#23D2FA" stroke-width="2"/><path stroke="#23D2FA" stroke-width="2" stroke-linecap="round" d="M21 21L17 17"/></svg></span>
+              <span class="search-icon">&#128269;</span>
             </div>
             <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
             <button type="button" id="exportBtn" class="rounded-sky-btn">Export</button>
@@ -450,12 +192,9 @@
             <input type="file" id="importFile" accept="application/json" style="display:none"/>
           </div>
           <div id="multiSelectControls">
-            <label style="display:flex;align-items:center;gap:4px;">
-              <input type="checkbox" id="selectAllCheckbox" title="Select all" />
-              <span style="user-select:none;">Select all</span>
-            </label>
+            <label style="display:flex;align-items:center;gap:5px;"><input type="checkbox" id="selectAllCheckbox"/><span>Select all</span></label>
             <button type="button" id="deleteSelectedBtn" disabled>🗑️ Delete Selected</button>
-            <span id="selectedCountText" style="color:var(--danger);font-weight:600;font-size:0.99em;"></span>
+            <span id="selectedCountText"></span>
           </div>
           <ul class="product-list" id="productList"></ul>
           <div class="no-products" id="noProducts" style="display:none">No products yet. Click <b>+ Add</b> to get started!</div>
@@ -463,10 +202,11 @@
       </div>
     </div>
   </div>
+
   <!-- Product Add/Edit Modal -->
   <div class="modal-backdrop hide" id="productModalBackdrop">
     <form class="modal" id="productModal" autocomplete="off">
-      <button class="modal-close" type="button" id="closeModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <button class="modal-close" type="button" id="closeModalBtn">✖</button>
       <h3 id="modalTitle">Add Product</h3>
       <div class="error" id="modalError" style="min-height:18px"></div>
       <label for="prodName">Name</label>
@@ -480,65 +220,62 @@
       <label for="prodCategory">Category</label>
       <input type="text" id="prodCategory" maxlength="32"/>
       <label for="prodNotes">Notes</label>
-      <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
-      <span class="modal-file-label">Photo <span title="Base64 photos use much more space than compressed images. Large images may slow the app. Compressed automatically." style="font-size:1.1em;color:var(--accent2)">[auto-compressed]</span></span>
-      <div class="modal-file-upload-wrap" id="fileUploadWrap">
+      <textarea id="prodNotes" maxlength="120"></textarea>
+      <span class="modal-file-label">Photo <span style="color:var(--accent2)">[auto-compressed]</span></span>
+      <div class="modal-file-upload-wrap">
         <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText">
-          <svg width="19" height="19" style="margin-right:5px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span id="uploadBtnInnerText">Choose Image</span>
-          <input type="file" id="prodPhoto" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
+          <input type="file" id="prodPhoto" accept="image/*"/>
         </span>
-        <span id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em;"></span>
+        <span id="prodPhotoFileContainer" class="photo-preview-wrap"></span>
         <span id="prodPhotoFileName" style="color:var(--text-muted);font-size:.99em;"></span>
       </div>
       <div class="modal-btnbar">
         <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
       </div>
-      <div id="imageCompressMsg" style="font-size:.99em;color:var(--text-muted);margin-top:10px;user-select:none;display:none"></div>
+      <div id="imageCompressMsg" style="font-size:.99em;color:var(--text-muted);margin-top:10px;display:none"></div>
     </form>
   </div>
-  <!-- Delete confirmation modal -->
+
   <div class="modal-backdrop hide" id="deleteModalBackdrop">
     <form class="modal" id="deleteModal">
-      <button class="modal-close" type="button" id="closeDeleteBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <button class="modal-close" type="button" id="closeDeleteBtn">✖</button>
       <h3>Delete Product</h3>
-      <div style="margin:12px 0 20px 0;font-size:1.08em;">Are you sure you want to delete <b id="deleteName"></b>?</div>
+      <div style="margin:11px 0 17px 0">Are you sure you want to delete <b id="deleteName"></b>?</div>
       <div class="modal-btnbar">
         <button type="button" id="cancelDeleteBtn" class="rounded-sky-btn cancel">Cancel</button>
-        <button type="submit" style="background:var(--danger);border-radius:11px;padding:11px 25px;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px #1b314e28;transition:background .14s;outline:none;">Yes, Delete</button>
+        <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;">Yes, Delete</button>
       </div>
     </form>
   </div>
-  <!-- Product Detail Modal -->
+
   <div class="modal-backdrop hide" id="detailModalBackdrop">
     <div class="modal" id="detailModal" tabindex="-1">
-      <button class="modal-close" type="button" id="closeDetailModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <button class="modal-close" type="button" id="closeDetailModalBtn">✖</button>
       <h3>Product Details</h3>
       <div id="detailModalBody"></div>
     </div>
   </div>
-  <!-- Settings Modal -->
+
   <div class="modal-backdrop hide" id="settingsBackdrop">
-    <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <button class="modal-close" type="button" id="closeSettingsBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
-      <h3 id="settingsTitle">Settings</h3>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-weight:700">Account</div>
-            <div style="color:var(--text-muted);font-size:.96em;">Logout or reset your PIN</div>
-          </div>
+    <div class="modal" id="settingsModal" role="dialog" aria-modal="true">
+      <button class="modal-close" type="button" id="closeSettingsBtn">✖</button>
+      <h3>Settings</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div><span style="font-weight:700">Account</span>
+          <div style="color:var(--text-muted);font-size:.94em;">Logout or reset PIN</div>
         </div>
-        <button id="logoutBtn" style="padding:11px 13px;border-radius:9px;border:none;background:#232942;color:var(--text);cursor:pointer;">🔒 Logout</button>
-        <hr style="border:none;height:2px;background:#22272f;margin:7px 0;border-radius:2px;" />
+        <button id="logoutBtn" class="rounded-sky-btn" style="background:#24272f;color:var(--text)">🔒 Logout</button>
+        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;"/>
         <div style="font-weight:700">Reset PIN</div>
-        <div style="color:var(--text-muted);font-size:.94em;margin-bottom:8px;">Enter your current PIN, then choose a new one.</div>
+        <div style="color:var(--text-muted);font-size:.92em;margin-bottom:6px;">Enter current PIN, then choose a new one.</div>
         <label for="oldPin">Current PIN</label>
-        <input type="password" id="oldPin" placeholder="Current PIN" maxlength="32" />
+        <input type="password" id="oldPin" maxlength="32"/>
         <label for="newPin">New PIN</label>
-        <input type="password" id="newPin" placeholder="New PIN (min 4 chars)" maxlength="32" />
+        <input type="password" id="newPin" maxlength="32"/>
         <label for="confirmPin">Confirm New PIN</label>
-        <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="32" />
+        <input type="password" id="confirmPin" maxlength="32"/>
         <div class="error" id="resetPinError" style="min-height:18px;"></div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button id="resetPinCancel" class="rounded-sky-btn cancel">Cancel</button>
@@ -547,11 +284,79 @@
       </div>
     </div>
   </div>
+
+  <!-- Hidden import for products json -->
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
- <script>
-    /****************************************************************
-     * Modal background scroll lock
-     ****************************************************************/
+
+  <!-- --- Service Worker for PWA --- -->
+  <script>
+    // Dynamically add manifest for PWA install support
+    (function(){
+      const manifest = {
+        name: "Al Rahman Electronics",
+        short_name: "ARE",
+        description: "Offline-first dealer product listing",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#161B22",
+        theme_color: "#161B22",
+        icons: [
+          { src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true", sizes: "192x192", type: "image/png" },
+          { src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true", sizes: "512x512", type: "image/png" }
+        ]
+      };
+      let link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type: 'application/json'}));
+      document.head.appendChild(link);
+    })();
+
+    // Service worker for offline support (in-page for GitHub Pages)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        try {
+          const swBlob = new Blob([`
+            const CACHE_NAME = 'dealer-cache-v3';
+            const FILES = [
+              location.pathname.endsWith('.html') ? location.pathname : '/index.html',
+              '/',
+            ];
+            self.addEventListener('install', e => {
+              e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));
+            });
+            self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
+            self.addEventListener('fetch',e=>{
+              if(e.request.method!='GET')return;
+              e.respondWith(
+                caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
+                  if(resp&&resp.status==200&&resp.type=='basic'){
+                    caches.open(CACHE_NAME).then(c=>c.put(e.request,resp.clone()));
+                  }
+                  return resp;
+                }).catch(()=>{
+                  if(e.request.mode=='navigate'||e.request.destination=='document')
+                    return caches.match('/index.html');
+                  return;
+                }))
+              );
+            });
+          `],{type:'text/javascript'});
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl).catch(()=>{});
+        } catch(e){}
+      });
+    }
+  </script>
+
+  <!-- --- APP JS --- -->
+  <script>
+    // All JS goes here; identical logic unless for visual tweaks
+
+    // Utility
+    function escapeHTML(v){return typeof v!=="string"?v===null||v===undefined?"":String(v):v.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+    function genID(){return 'p'+(Date.now() +(Math.random()).toString().slice(2,7));}
+
+    // Modal scroll lock
     (function() {
       function lockBodyScroll() {
         if (!document.body.classList.contains('modal-open')) {
@@ -569,76 +374,41 @@
           delete document.body.dataset.scrollY;
         }
       }
-
       function observeProductModalOpen() {
         const productModalBackdrop = document.getElementById('productModalBackdrop');
         if (!productModalBackdrop) return;
         const config = { attributes: true, attributeFilter: ['class'] };
         const observer = new MutationObserver(() => {
-          if (!productModalBackdrop.classList.contains('hide')) {
-            lockBodyScroll();
-          } else {
-            unlockBodyScroll();
-          }
+          if (!productModalBackdrop.classList.contains('hide')) lockBodyScroll();
+          else unlockBodyScroll();
         });
         observer.observe(productModalBackdrop, config);
         window.addEventListener('beforeunload', unlockBodyScroll);
       }
       window.addEventListener('DOMContentLoaded', observeProductModalOpen);
       window.addEventListener('keydown', function(e) {
-        if (e.key === "Escape") {
-          unlockBodyScroll();
-        }
+        if (e.key === "Escape") unlockBodyScroll();
       });
     })();
-  </script>
-  <script>
-    /****************************************************************
-     * Keep-logged-in authentication logic
-     ****************************************************************/
-    // Configuration
-    const KEEP_LOGGED_TIMEOUT_MS = 5*60*1000; // 5 minutes
 
-    // Helpers to store and retrieve session expiry (use sessionStorage so closes/logouts always expire it!)
-    function setKeepSessionActive(expiresAt) {
-      try {
-        sessionStorage.setItem('dealer-keep-expires', String(expiresAt));
-      } catch(e) {}
+    // PIN auth & login
+    const KEEP_LOGGED_TIMEOUT_MS = 5*60*1000;
+    function setKeepSessionActive(expAt){try{sessionStorage.setItem('dealer-keep-expires',String(expAt));}catch(e){}}
+    function getKeepSessionActive(){try{const v=sessionStorage.getItem('dealer-keep-expires');return v&&/^\d+$/.test(v)?parseInt(v,10):null;}catch(e){return null;}}
+    function clearKeepSession(){try{sessionStorage.removeItem('dealer-keep-expires');}catch(e){}}
+    function showTimeoutNotice(msg){const t=document.getElementById('timeoutNotice');t.textContent=msg||'';t.style.display=msg?'block':'none';}
+    function isSessionStillActive(){const e=getKeepSessionActive();return !!e&&Date.now()<e;}
+    function showTimeoutCountdownIfAny(){
+      const e=getKeepSessionActive();if(e&&Date.now()<e){
+        const s=Math.max(0,Math.round((e-Date.now())/1000));
+        if(s<60)showTimeoutNotice("Session locks in "+s+" sec"+(s===1?"":"s"));
+        else if(s<90)showTimeoutNotice("Session locks in about 1 min.");
+        else showTimeoutNotice("Session locks in "+Math.ceil(s/60)+" min.");
+      }else showTimeoutNotice("");
     }
-    function getKeepSessionActive() {
-      try {
-        const val = sessionStorage.getItem('dealer-keep-expires');
-        return val && /^\d+$/.test(val) ? parseInt(val, 10) : null;
-      } catch(e) { return null; }
-    }
-    function clearKeepSession() {
-      try { sessionStorage.removeItem('dealer-keep-expires'); } catch(e) {}
-    }
-    function showTimeoutNotice(msg) {
-      const t = document.getElementById('timeoutNotice');
-      t.textContent = msg || '';
-      t.style.display = msg ? 'block' : 'none';
-    }
-    function isSessionStillActive() {
-      const expiresAt = getKeepSessionActive();
-      return !!expiresAt && Date.now() < expiresAt;
-    }
-    function showTimeoutCountdownIfAny() {
-      const expiresAt = getKeepSessionActive();
-      if (expiresAt && Date.now() < expiresAt) {
-        const secs = Math.max(0, Math.round((expiresAt-Date.now())/1000));
-        if(secs<60) showTimeoutNotice("Session will auto-lock in "+secs+" sec" + (secs===1?"":"s") + ".");
-        else if(secs<90) showTimeoutNotice("Session will auto-lock in about 1 min.");
-        else showTimeoutNotice("Session will auto-lock in about "+Math.ceil(secs/60)+" min.");
-      } else {
-        showTimeoutNotice("");
-      }
-    }
-    let timeoutCountdownInterval = null;
-
-    function checkQuickAutoUnlock() {
-      if (isSessionStillActive()) {
-        // Set PIN UI state: Unlock not Set PIN
+    let timeoutCountdownInterval=null;
+    function checkQuickAutoUnlock(){
+      if(isSessionStillActive()){
         updatePINUI(getHasPIN());
         showDealerApp();
         startSessionTimeoutMonitor();
@@ -646,679 +416,168 @@
       }
       return false;
     }
-    function startSessionTimeoutMonitor() {
-      if (timeoutCountdownInterval) clearInterval(timeoutCountdownInterval);
-      function check() {
+    function startSessionTimeoutMonitor(){
+      if(timeoutCountdownInterval)clearInterval(timeoutCountdownInterval);
+      function check(){
         showTimeoutCountdownIfAny();
-        if (!isSessionStillActive()) {
-          showTimeoutNotice("Session expired for security. Please login again.");
-          setTimeout(()=>manualLogoutDueToTimeout(), 1100);
-        }
+        if(!isSessionStillActive()){
+          showTimeoutNotice("Session expired. Please login again.");setTimeout(()=>manualLogoutDueToTimeout(),1070);}
       }
-      timeoutCountdownInterval = setInterval(check, 800);
-      check();
+      timeoutCountdownInterval=setInterval(check,800);check();
     }
-    function stopSessionTimeoutMonitor() {
-      if (timeoutCountdownInterval) clearInterval(timeoutCountdownInterval);
-      showTimeoutNotice("");
-    }
-    function manualLogoutDueToTimeout() {
-      stopSessionTimeoutMonitor();
-      clearKeepSession();
-      document.getElementById('dealerApp').style.display = 'none';
-      showLoginModal("Session expired for security. Please login again.");
+    function stopSessionTimeoutMonitor(){if(timeoutCountdownInterval)clearInterval(timeoutCountdownInterval);showTimeoutNotice("");}
+    function manualLogoutDueToTimeout(){
+      stopSessionTimeoutMonitor();clearKeepSession();
+      document.getElementById('dealerApp').style.display='none';
+      showLoginModal("Session expired. Please login again.");
       updatePINUI(getHasPIN());
     }
-    function addSessionAutoLogoutHandlers() {
-      window.addEventListener('pagehide', function(e) {
-        clearKeepSession();
-      });
-      document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-          clearKeepSession();
-        }
-      });
+    function addSessionAutoLogoutHandlers(){
+      window.addEventListener('pagehide',function(e){clearKeepSession();});
+      document.addEventListener('visibilitychange',function(){if(document.hidden){clearKeepSession();}});
     }
     addSessionAutoLogoutHandlers();
 
-    /****************************************************************
-     * PIN hashing & auth helpers - improved and bugfixed
-     ****************************************************************/
-    // ... (PWA manifest/service worker unchanged) ...
-    (function createManifestAndServiceWorker() {
-      // Using a PNG icon as requested
-      const imgIcon = "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true";
-      const manifestObj = {
-        name: "Al Rahman Electronics",
-        short_name: "ARE",
-        description: "Local-only dealer product listing (offline-first)",
-        start_url: "/index.html",
-        display: "standalone",
-        background_color: "#161B22",
-        theme_color: "#161B22",
-        icons: [
-          { src: imgIcon, sizes: "192x192", type: "image/png" },
-          { src: imgIcon, sizes: "512x512", type: "image/png" }
-        ]
-      };
-      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-      const manifestURL = URL.createObjectURL(manifestBlob);
-      (function setManifestLink() {
-        let existing = document.querySelector('link[rel="manifest"]');
-        if (!existing) {
-          existing = document.createElement('link');
-          existing.rel = 'manifest';
-          document.head.appendChild(existing);
-        }
-        existing.href = manifestURL;
-      })();
-
-      // Improved service worker for offline opening
-      const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v2';
-        const FILES_TO_CACHE = [
-          '/',
-          '/index.html',
-          location.pathname.endsWith('.html') ? location.pathname : '/index.html'
-        ];
-
-        self.addEventListener('install', event => {
-          event.waitUntil(
-            caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
-          );
-          self.skipWaiting();
-        });
-
-        self.addEventListener('activate', event => {
-          event.waitUntil(clients.claim());
-        });
-
-        self.addEventListener('fetch', event => {
-          if (event.request.method !== 'GET') return;
-          event.respondWith(
-            caches.match(event.request).then(response => {
-              return response || fetch(event.request).then(resp => {
-                // Cache new file
-                if (resp && resp.status === 200 && resp.type === 'basic') {
-                  const respClone = resp.clone();
-                  caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, respClone);
-                  });
-                }
-                return resp;
-              }).catch(() => {
-                // If HTML navigation request, fallback to offline page
-                if (event.request.mode === 'navigate' || (event.request.destination === 'document')) {
-                  return caches.match('/index.html');
-                }
-                return undefined;
-              });
-            })
-          );
-        });
-      `;
-      try {
-        const swBlob = new Blob([swScript], { type: 'text/javascript' });
-        const swURL = URL.createObjectURL(swBlob);
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register(swURL).catch(()=>{});
-          });
-        }
-      } catch (e) {}
-    })();
-
-    /**************************************************************
-     * Export / Import
-     **************************************************************/
-    window.addEventListener('DOMContentLoaded', function(){
-      setTimeout(function() {
-        document.querySelectorAll(".card").forEach((el,i)=> {
-          setTimeout(()=>{ el.classList.add('show') }, 160+60*i);
-        });
-      }, 180);
-    });
-
-    /**************************************************************
-     * PWA install prompt
-     **************************************************************/
-    let deferredPrompt;
-    const installBtn = document.getElementById('installPromptBtn');
-    const installAsAppBtn = document.getElementById('installAsAppBtn');
-    const mobileInstall = document.getElementById('mobileInstallInstructions');
-
-    function isMobileChromeStandaloneCapable() {
-      const ua = navigator.userAgent || '';
-      return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches;
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-block';
-      installAsAppBtn.style.display = 'inline-block';
-      mobileInstall.style.display = 'none';
-    });
-
-    installBtn && (installBtn.onclick = async function() {
-      installBtn.disabled = true;
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-        installAsAppBtn.style.display = 'none';
-        installBtn.disabled = false;
-      } else {
-        installBtn.disabled = false;
-      }
-    });
-
-    installAsAppBtn && (installAsAppBtn.onclick = async function() {
-      installAsAppBtn.disabled = true;
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-        installAsAppBtn.style.display = 'none';
-        installAsAppBtn.disabled = false;
-      } else {
-        alert("Install prompt not available right now. Use Chrome's menu: Add to Home screen.");
-        installAsAppBtn.disabled = false;
-      }
-    });
-
-    window.addEventListener('appinstalled', ()=>{
-      installBtn.style.display='none';
-      installAsAppBtn.style.display='none';
-      deferredPrompt = null;
-      mobileInstall.style.display='none';
-    });
-
-    window.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches &&
-            !window.matchMedia('(display-mode: fullscreen)').matches &&
-            isMobileChromeStandaloneCapable()
-        ) {
-          if ((installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") &&
-              (installAsAppBtn.style.display === "none" || getComputedStyle(installAsAppBtn).display === "none"))
-          {
-            mobileInstall.innerHTML =
-              "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>.";
-            mobileInstall.style.display = "inline-block";
-          }
-        }
-      }, 1100);
-    });
-
-    /**************************************************************
-     * Handle Android back button in PWA (improved so back closes modals first, then product, but does NOT logout)
-     **************************************************************/
-    (function handleAndroidBackButton() {
-      // Only for standalone PWA mode
-      function isStandalone() {
-        return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-               (window.navigator.standalone === true);
-      }
-      // Keep track of our own stack of modal closings in history
-      let openedModals = [];
-      // modal id order preference (topmost modal should be closed first)
-      const modalPriority = ['productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop'];
-
-      // Helper: check any modal open, return its id (in priority order)
-      function getOpenModalId() {
-        for (const id of modalPriority) {
-          const el = document.getElementById(id);
-          if (el && !el.classList.contains('hide')) return id;
-        }
-        return null;
-      }
-
-      // Called after entering app
-      function pushMainStateToHistory() {
-        // Push a base state to history. Only needed in standalone mode.
-        if (!isStandalone()) return;
-        try {
-          history.replaceState({dealerAppMain: true}, document.title, window.location.href);
-        } catch (e) {}
-      }
-
-      // Called when opening a modal: push extra state (so back closes)
-      function pushModalState(modalId) {
-        if (!isStandalone()) return;
-        try {
-          history.pushState({modal: modalId}, document.title, window.location.href);
-          openedModals.push(modalId);
-        } catch (e) {}
-      }
-
-      // Called on modal close
-      function popModalState() {
-        if (!isStandalone()) return;
-        try {
-          // On close, go back in history just once
-          if (openedModals.length) {
-            openedModals.pop();
-            history.back();
-          }
-        } catch (e) {}
-      }
-
-      // On login/unlock, set initial state (don't push extra!)
-      function enablePwaBackHandler() {
-        pushMainStateToHistory();
-
-        window.addEventListener('popstate', function(e) {
-          // Only act if we are in dealer app view
-          if (document.getElementById('dealerApp').style.display !== 'none') {
-            // If a modal is open, close the most "top" (last in modalPriority) one
-            const topOpenModal = (() => {
-              for (let i = 0; i < modalPriority.length; ++i) {
-                const el = document.getElementById(modalPriority[i]);
-                if (el && !el.classList.contains('hide')) return modalPriority[i];
-              }
-              return null;
-            })();
-
-            if (topOpenModal) {
-              // Instead of locking/logging out, just close modal
-              document.getElementById(topOpenModal).classList.add('hide');
-              // When you close a modal using history back, prevent further side effects
-              setTimeout(()=>{},10);
-              return;
-            }
-            // NO modals open, stay in app. Ignore standard back (prevent leaving app on "back"), unless user is on login!
-            // Option 1: Stay at current page (don't push new state, just ignore back)
-            // Option 2: Optionally show a toast "Press back again to exit"
-            // We'll do Option 1: Ignore further back (user can manually exit the PWA from app switcher)
-            pushMainStateToHistory();
-          } else {
-            // On login screen, allow exit with back (one level). Could show a message or just allow browser to leave.
-            // But "main" state always on top, so back from here can't be intercepted
-          }
-        });
-      }
-
-      // Auto-track modal open/close: whenever any modal is opened, push modal state if needed
-      function setupModalHistoryTracking() {
-        modalPriority.forEach(id => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          // Observe open
-          const observer = new MutationObserver(() => {
-            if (!el.classList.contains('hide')) {
-              // Modal opened
-              if (!openedModals.includes(id)) pushModalState(id);
-            } else {
-              // Modal closed (pop from our stack if present)
-              const idx = openedModals.indexOf(id);
-              if (idx !== -1) openedModals.splice(idx, 1);
-            }
-          });
-          observer.observe(el, { attributes: true, attributeFilter: ['class'] });
-        });
-      }
-
-      // Attach after showDealerApp is called, and modal tracking
-      window.__enablePwaBackHandler = function() {
-        enablePwaBackHandler();
-        setupModalHistoryTracking();
-      };
-    })();
-
-    /**************************************************************
-     * PIN hashing & auth helpers
-     **************************************************************/
-    async function hashPIN(pin) {
-      let salt = window.localStorage.getItem('dealer-app-salt');
-      if (!salt) {
-        const arr = new Uint8Array(16);
-        window.crypto.getRandomValues(arr);
-        salt = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-        window.localStorage.setItem('dealer-app-salt', salt);
-      }
-      const encoder = new TextEncoder();
-      try {
-        // Defensive: PBKDF2 with a salt (slow hash) for security, fallback to SHA-256
-        const baseKey = await window.crypto.subtle.importKey('raw', encoder.encode(pin), 'PBKDF2', false, ['deriveBits']);
-        const rawBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" }, baseKey, 256);
-        const hashArr = new Uint8Array(rawBits);
-        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
-      } catch (e) {
-        try {
-          const data = encoder.encode(pin + salt);
-          const arrBuf = await window.crypto.subtle.digest('SHA-256', data);
-          const hashArr = new Uint8Array(arrBuf);
-          return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
-        } catch (e2) {
-          // If hashing not available, fallback (not secure)
-          return pin + salt;
-        }
+    // PIN hash logic, PBKDF2+salt or SHA256 fallback
+    async function hashPIN(pin){
+      let salt=window.localStorage.getItem('dealer-app-salt');
+      if(!salt){
+        const a=new Uint8Array(16);window.crypto.getRandomValues(a);
+        salt=Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join('');
+        window.localStorage.setItem('dealer-app-salt',salt);}
+      const encoder=new TextEncoder();
+      try{
+        const baseKey=await window.crypto.subtle.importKey('raw',encoder.encode(pin),'PBKDF2',false,['deriveBits']);
+        const rawBits=await window.crypto.subtle.deriveBits({name:"PBKDF2",salt:encoder.encode(salt),iterations:3000,hash:"SHA-256"},baseKey,256);
+        const hArr=new Uint8Array(rawBits);
+        return Array.from(hArr).map(b=>b.toString(16).padStart(2,"0")).join('');
+      }catch(e){
+        try{
+          const d=encoder.encode(pin+salt);
+          const arrB=await window.crypto.subtle.digest('SHA-256',d);
+          const hArr=new Uint8Array(arrB);
+          return Array.from(hArr).map(b=>b.toString(16).padStart(2,"0")).join('');
+        }catch(e2){return pin+salt;}
       }
     }
-    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
-    function showDealerApp() {
-      document.getElementById('dealerApp').style.display = '';
-      document.getElementById('login-modal').style.display = 'none';
-      setTimeout(refreshProductList, 220);
-      // Enable PWA back handler for Android after entering app
-      if (typeof window.__enablePwaBackHandler === 'function') window.__enablePwaBackHandler();
-    }
-    function showLoginModal(msg) {
-      document.getElementById('dealerApp').style.display = 'none';
-      const loginModal = document.getElementById('login-modal');
-      loginModal.style.display = 'flex';
-      if (msg) { 
-        document.getElementById('login-error').textContent = msg; 
-        document.getElementById('login-error').style.color = 'var(--danger)';
-      } else { 
-        document.getElementById('login-error').textContent = ''; 
-        document.getElementById('login-error').style.color = '';
-      }
-      document.getElementById('loginPIN').value = '';
+    function getHasPIN(){return !!window.localStorage.getItem('dealer-hash');}
+    function showDealerApp(){document.getElementById('dealerApp').style.display='';
+      document.getElementById('login-modal').style.display='none';setTimeout(refreshProductList,200);}
+    function showLoginModal(msg){
+      document.getElementById('dealerApp').style.display='none';
+      const loginModal=document.getElementById('login-modal');
+      loginModal.style.display='flex';
+      document.getElementById('login-error').textContent=msg||'';
+      document.getElementById('loginPIN').value='';
       setTimeout(()=>document.getElementById('loginPIN').focus(),120);
     }
-    // Fix—track if PIN was just set, to avoid double-prompt
-    let justSetPIN = false;
-
-    // Always require PIN on load -> do not auto-unlock directly
-    window.addEventListener('load', ()=> {
-      updatePINUI(getHasPIN());
-      // On initial load, if session active, skip PIN
-      if (!checkQuickAutoUnlock()) {
-        showLoginModal();
-      }
-      // Push dummy back state to help installs that open to blank
-      setTimeout(function() {
-        if ("serviceWorker" in navigator && window.matchMedia('(display-mode: standalone)').matches) {
-          try { history.replaceState({start:true}, document.title, window.location.href); } catch (e) {}
-        }
-      }, 180);
-    });
-
-    // --- Login UI update logic ---
-    const loginBtn = document.getElementById('loginBtn');
-    const loginForm = document.getElementById('loginForm');
-    const loginPIN = document.getElementById('loginPIN');
-    const loginError = document.getElementById('login-error');
-    const pinLabel = document.getElementById('pinLabel');
-    const keepLoggedInToggle = document.getElementById('keepLoggedInToggle');
-
-    // --- Show/hide password button logic ---
-    (function() {
-      const showBtn = document.getElementById('showLoginPINBtn');
-      const pinInput = document.getElementById('loginPIN');
-      const iconSpan = document.getElementById('showLoginPINBtnIcon');
-      let visible = false;
-      if (showBtn && pinInput) {
-        showBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          visible = !visible;
-          pinInput.type = visible ? 'text' : 'password';
-          // Update eye emoji/icon
-          iconSpan.textContent = visible ? '🙈' : '👁️'; // 👁️ open; 🙈 closed
-          showBtn.setAttribute('aria-label', visible ? "Hide PIN" : "Show PIN");
-        });
-        // For accessibility: pressing Escape should hide the PIN
-        pinInput.addEventListener('keydown', function(e) {
-          if (visible && e.key === "Escape") {
-            pinInput.type = 'password';
-            visible = false;
-            iconSpan.textContent = '👁️';
-            showBtn.setAttribute('aria-label', "Show PIN");
-          }
-        });
+    let justSetPIN=false;
+    window.addEventListener('load',()=>{updatePINUI(getHasPIN());if(!checkQuickAutoUnlock()){showLoginModal();}
+      setTimeout(function(){if("serviceWorker" in navigator && window.matchMedia('(display-mode:standalone)').matches){try{history.replaceState({start:true},document.title,window.location.href);}catch(e){}}},180);});
+    const loginBtn=document.getElementById('loginBtn'),loginForm=document.getElementById('loginForm'),loginPIN=document.getElementById('loginPIN'),pinLabel=document.getElementById('pinLabel'),keepLoggedInToggle=document.getElementById('keepLoggedInToggle');
+    (function(){
+      const showBtn=document.getElementById('showLoginPINBtn'),pinInput=document.getElementById('loginPIN'),iconSpan=document.getElementById('showLoginPINBtnIcon');
+      let visible=false;
+      if(showBtn&&pinInput){
+        showBtn.addEventListener('click',function(e){
+          e.preventDefault();visible=!visible;pinInput.type=visible?"text":"password";
+          iconSpan.textContent=visible?"🙈":"👁️";showBtn.setAttribute('aria-label', visible?"Hide PIN":"Show PIN");});
+        pinInput.addEventListener('keydown',function(e){if(visible&&e.key==="Escape"){pinInput.type='password';visible=false;iconSpan.textContent='👁️';showBtn.setAttribute('aria-label',"Show PIN");}});
       }
     })();
-
-    function updatePINUI(hasPIN) {
-      if (hasPIN) {
-        loginBtn.textContent = "Unlock";
-        pinLabel.textContent = "Enter your PIN / Password:";
-        loginPIN.placeholder = "Enter PIN or password";
-        loginPIN.autocomplete = "current-password";
-      } else {
-        loginBtn.textContent = "Set PIN";
-        pinLabel.textContent = "Create a secure PIN / Password:";
-        loginPIN.placeholder = "Set PIN or password";
-        loginPIN.autocomplete = "new-password";
+    function updatePINUI(hasPIN){
+      if(hasPIN){
+        loginBtn.textContent="Unlock";pinLabel.textContent="Enter your PIN / Password:";loginPIN.placeholder="Enter PIN";loginPIN.autocomplete="current-password";
+      }else{
+        loginBtn.textContent="Set PIN";pinLabel.textContent="Create PIN:";loginPIN.placeholder="Set PIN or password";loginPIN.autocomplete="new-password";
       }
-      loginError.textContent = '';
-      loginError.style.color = '';
+      document.getElementById('login-error').textContent='';
     }
-
-    loginForm.onsubmit = async function(e) {
+    loginForm.onsubmit=async function(e){
       e.preventDefault();
-      loginError.textContent = '';
-      loginError.style.color = '';
-      const pinVal = (loginPIN.value || '').trim();
-      const hasPIN = getHasPIN();
-      if (!pinVal || pinVal.length < 4) {
-        loginError.style.color = 'var(--danger)';
-        loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
-        return;
-      }
-      loginBtn.disabled = true;
-      try {
-        const hash = await hashPIN(pinVal);
-
-        // SET PIN (first time only)
-        if (!hasPIN) {
-          window.localStorage.setItem('dealer-hash', hash);
-          justSetPIN = true;
-          updatePINUI(true);
-          loginError.style.color = 'var(--success)';
-          loginError.textContent = "PIN set. Now use it to unlock.";
-          loginBtn.disabled = false;
-          loginPIN.value = '';
-          setTimeout(()=>{
-            loginError.textContent = '';
-            loginError.style.color='';
-          }, 1500);
-          // The first time user sets PIN, make sure the keep-logged-in toggle is unchecked
-          keepLoggedInToggle.checked = false;
-          return;
+      const pinVal=(loginPIN.value||'').trim(),hasPIN=getHasPIN();
+      if(!pinVal||pinVal.length<4){document.getElementById('login-error').textContent=hasPIN?"Enter your PIN.":"PIN must be at least 4 chars.";return;}
+      loginBtn.disabled=true;
+      try{
+        const hash=await hashPIN(pinVal);
+        // SET PIN (first time)
+        if(!hasPIN){
+          window.localStorage.setItem('dealer-hash',hash);justSetPIN=true;updatePINUI(true);document.getElementById('login-error').style.color='var(--success)';
+          document.getElementById('login-error').textContent="PIN set. Unlock now.";loginBtn.disabled=false;loginPIN.value='';
+          keepLoggedInToggle.checked=false;return;
         }
-
-        // UNLOCK (existing)
-        const userHash = window.localStorage.getItem('dealer-hash');
-        if (userHash === hash) {
-          // "Keep me logged in" logic (checkbox only visible after PIN has been set)
-          if (keepLoggedInToggle.checked) {
-            // Set session expiry only if explicitly checked now, not sticky
-            setKeepSessionActive(Date.now() + KEEP_LOGGED_TIMEOUT_MS);
-            startSessionTimeoutMonitor();
-          } else {
-            clearKeepSession();
-            stopSessionTimeoutMonitor();
-          }
-          showDealerApp();
-          loginBtn.disabled = false;
-          loginError.textContent = '';
-          loginError.style.color = '';
-          // Reset [justSetPIN] after first successful unlock, so next logout shows regular login
-          justSetPIN = false;
-        } else {
-          loginBtn.disabled = false;
-          loginError.style.color='var(--danger)';
-          loginError.textContent = 'Incorrect PIN / Password.';
+        // UNLOCK result
+        const userHash=window.localStorage.getItem('dealer-hash');
+        if(userHash===hash){
+          if(keepLoggedInToggle.checked){setKeepSessionActive(Date.now()+KEEP_LOGGED_TIMEOUT_MS);startSessionTimeoutMonitor();}
+          else{clearKeepSession();stopSessionTimeoutMonitor();}
+          showDealerApp();loginBtn.disabled=false;justSetPIN=false;
+        }else{
+          loginBtn.disabled=false;
+          document.getElementById('login-error').style.color='var(--danger)';
+          document.getElementById('login-error').textContent='Incorrect PIN / Password.';
         }
-      } catch (ex) {
-        loginBtn.disabled = false;
-        loginError.style.color='var(--danger)';
-        loginError.textContent = 'An error occurred. Try again.';
-      }
+      }catch(ex){loginBtn.disabled=false;document.getElementById('login-error').textContent='Error. Try again.';}
     };
-
-    // Hide session warning message on new login UI
-    keepLoggedInToggle.onchange = function() {
-      showTimeoutNotice("");
-      // If unchecked, forcibly clear any keep session
-      if (!this.checked) clearKeepSession();
-    };
-
-    // Security fix: always clear PIN field on show
-    document.getElementById('login-modal').addEventListener('transitionend', function() {
-      loginPIN.value = '';
-    });
-
-    // Handle manual logout or session expiration
-    function doLogout(showMsg) {
-      stopSessionTimeoutMonitor();
-      clearKeepSession();
-      document.getElementById('dealerApp').style.display = 'none';
-      showLoginModal(showMsg || 'You have been logged out.');
+    keepLoggedInToggle.onchange=function(){showTimeoutNotice("");if(!this.checked)clearKeepSession();};
+    // Session/Logout logic
+    function doLogout(showMsg){
+      stopSessionTimeoutMonitor();clearKeepSession();
+      document.getElementById('dealerApp').style.display='none';
+      showLoginModal(showMsg||'You have been logged out.');
       updatePINUI(getHasPIN());
     }
 
-    /**************************************************************
-     * Settings Modal Logic (Logout, PIN Reset) - PIN reset bugfix
-     **************************************************************/
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsBackdrop = document.getElementById('settingsBackdrop');
-    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const resetPinSubmit = document.getElementById('resetPinSubmit');
-    const resetPinCancel = document.getElementById('resetPinCancel');
-    const resetPinError = document.getElementById('resetPinError');
-
-    settingsBtn.onclick = () => {
-      settingsBackdrop.classList.remove('hide');
-      document.getElementById('oldPin').value = '';
-      document.getElementById('newPin').value = '';
-      document.getElementById('confirmPin').value = '';
-      resetPinError.textContent = '';
-      resetPinError.style.color = '';
+    // Settings Modal Logic
+    document.getElementById('settingsBtn').onclick = () => {
+      document.getElementById('settingsBackdrop').classList.remove('hide');
+      document.getElementById('oldPin').value='';document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
+      document.getElementById('resetPinError').textContent='';
     };
-    closeSettingsBtn.onclick = () => settingsBackdrop.classList.add('hide');
-
-    logoutBtn.onclick = () => {
-      settingsBackdrop.classList.add('hide');
-      doLogout();
-    };
-
-    resetPinCancel.onclick = () => {
-      resetPinError.textContent = '';
-      resetPinError.style.color = '';
-      settingsBackdrop.classList.add('hide');
+    document.getElementById('closeSettingsBtn').onclick=()=>document.getElementById('settingsBackdrop').classList.add('hide');
+    document.getElementById('logoutBtn').onclick=()=>{document.getElementById('settingsBackdrop').classList.add('hide');doLogout();}
+    document.getElementById('resetPinCancel').onclick=()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');};
+    document.getElementById('resetPinSubmit').onclick=async function(){
+      const oldPin=(document.getElementById('oldPin').value||'').trim(),newPin=(document.getElementById('newPin').value||'').trim(),confirmPin=(document.getElementById('confirmPin').value||'').trim();
+      if(!oldPin||oldPin.length<4) {document.getElementById('resetPinError').textContent="Enter current PIN (min 4 chars).";return;}
+      if(!newPin||newPin.length<4){document.getElementById('resetPinError').textContent="New PIN at least 4 chars.";return;}
+      if(newPin!==confirmPin){document.getElementById('resetPinError').textContent="PIN & confirm don't match.";return;}
+      if(oldPin===newPin){document.getElementById('resetPinError').textContent="New PIN must be different.";return;}
+      this.disabled=true;
+      try{
+        const oldHash=await hashPIN(oldPin),stored=window.localStorage.getItem('dealer-hash');
+        if(stored!==oldHash){document.getElementById('resetPinError').textContent="Current PIN incorrect.";this.disabled=false;return;}
+        const newHash=await hashPIN(newPin);
+        window.localStorage.setItem('dealer-hash',newHash);
+        document.getElementById('resetPinError').textContent="PIN updated!";
+        setTimeout(()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');},800);
+      }catch(e){document.getElementById('resetPinError').textContent="Update failed.";}
+      this.disabled=false;
     };
 
-    resetPinSubmit.onclick = async function() {
-      resetPinError.textContent = '';
-      resetPinError.style.color = '';
-      const oldPin = (document.getElementById('oldPin').value || '').trim();
-      const newPin = (document.getElementById('newPin').value || '').trim();
-      const confirmPin = (document.getElementById('confirmPin').value || '').trim();
-      if (!oldPin || oldPin.length < 4) { resetPinError.textContent = "Enter current PIN (min 4 chars)."; resetPinError.style.color='var(--danger)'; return; }
-      if (!newPin || newPin.length < 4) { resetPinError.textContent = "New PIN must be at least 4 characters."; resetPinError.style.color='var(--danger)'; return; }
-      if (newPin !== confirmPin) { resetPinError.textContent = "New PIN and confirmation do not match."; resetPinError.style.color='var(--danger)'; return; }
-      if (oldPin === newPin) { resetPinError.textContent = "New PIN cannot be same as old PIN."; resetPinError.style.color='var(--danger)'; return;}
-      resetPinSubmit.disabled = true;
-      try {
-        const oldHash = await hashPIN(oldPin);
-        const stored = window.localStorage.getItem('dealer-hash');
-        if (stored !== oldHash) {
-          resetPinError.textContent = "Current PIN is incorrect.";
-          resetPinError.style.color='var(--danger)';
-          resetPinSubmit.disabled = false;
-          return;
-        }
-        const newHash = await hashPIN(newPin);
-        window.localStorage.setItem('dealer-hash', newHash);
-        // feedback and close
-        resetPinError.style.color = 'var(--success)';
-        resetPinError.textContent = "PIN updated successfully.";
-        setTimeout(()=>{
-          resetPinError.textContent = '';
-          resetPinError.style.color = '';
-          settingsBackdrop.classList.add('hide');
-        }, 1000);
-      } catch (err) {
-        resetPinError.textContent = "Failed to update PIN.";
-        resetPinError.style.color='var(--danger)';
-      }
-      resetPinSubmit.disabled = false;
-    };
+    // --- Add/Edit Product modal ---
+    let productEditing=null,products=[],selectedProductIds=new Set(),multiSelectMode=false;
 
-    /**************************************************************
-     * All other app/product logic unchanged...
-     **************************************************************/
-    const productListElem = document.getElementById('productList');
-    const noProductsElem = document.getElementById('noProducts');
-    let products = [];
-    let multiSelectMode = false;
-    let selectedProductIds = new Set();
+    function saveProducts(){try{window.localStorage.setItem('dealer-products',JSON.stringify(products));}catch(e){}refreshProductList();}
+    function loadProducts(){products=[];try{const s=window.localStorage.getItem('dealer-products');if(s)products=JSON.parse(s)||[];}catch(e){products=[];}}
 
-    function saveProducts() {
-      try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){ console.error("Saving products failed",e); }
-      refreshProductList();
-    }
-    function loadProducts() {
-      products = [];
-      try {
-        const str = window.localStorage.getItem('dealer-products');
-        if (str) products = JSON.parse(str) || [];
-      } catch (e) { products = []; }
-    }
-    function escapeHTML(v) {
-      if (typeof v !== "string") return v === undefined || v === null ? "" : String(v);
-      return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c]));
+    function handleCheckboxChange(productId,checked){if(checked)selectedProductIds.add(productId);else selectedProductIds.delete(productId);updateMultiSelectControls();}
+    function updateMultiSelectControls(){
+      const multiSelectControls=document.getElementById('multiSelectControls'),deleteSelectedBtn=document.getElementById('deleteSelectedBtn'),selectedCountText=document.getElementById('selectedCountText'),selectAllCheckbox=document.getElementById('selectAllCheckbox');
+      if(selectedProductIds.size>0){multiSelectControls.classList.add('active');deleteSelectedBtn.disabled=false;selectedCountText.textContent=`${selectedProductIds.size} selected`;}
+      else{multiSelectControls.classList.remove('active');deleteSelectedBtn.disabled=true;selectedCountText.textContent="";}
+      if(products.length&&selectedProductIds.size===products.length){selectAllCheckbox.checked=true;selectAllCheckbox.indeterminate=false;}
+      else if(selectedProductIds.size>0){selectAllCheckbox.checked=false;selectAllCheckbox.indeterminate=true;}
+      else {selectAllCheckbox.checked=false;selectAllCheckbox.indeterminate=false;}
     }
 
-    function handleCheckboxChange(productId, checked) {
-      if (checked) selectedProductIds.add(productId);
-      else selectedProductIds.delete(productId);
-      updateMultiSelectControls();
-    }
-
-    function updateMultiSelectControls() {
-      const multiSelectControls = document.getElementById('multiSelectControls');
-      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-      const selectedCountText = document.getElementById('selectedCountText');
-      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-
-      // Show/hide controls only if there is at least 1 selected item
-      if (selectedProductIds.size > 0) {
-        multiSelectControls.classList.add('active');
-        deleteSelectedBtn.disabled = false;
-        selectedCountText.textContent = `${selectedProductIds.size} selected`;
-      } else {
-        multiSelectControls.classList.remove('active');
-        deleteSelectedBtn.disabled = true;
-        selectedCountText.textContent = "";
-      }
-
-      // Set "selectAllCheckbox" state
-      if (products.length && selectedProductIds.size === products.length) {
-        selectAllCheckbox.checked = true;
-        selectAllCheckbox.indeterminate = false;
-      } else if (selectedProductIds.size > 0) {
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = true;
-      } else {
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = false;
-      }
-    }
-
-    // --- PATCH: Removed category display from product name in product list ---
-    function createProductCard(product, idx) {
-      const li = document.createElement('li');
-      li.className = 'prod-card';
-      li.setAttribute('tabindex','0');
-      setTimeout(()=>li.classList.add('show'), 121+idx*64);
-      let imgHTML = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="Product Photo">` : `<span>📦</span>`;
-      const nameSafe = escapeHTML(product.name || "Unnamed");
-      // Removed the cat variable and its use below
-      const qtyNum = Number(product.qty) || 0;
-      const mrpNum = Number(product.mrp) || 0;
-
-      // Multi-select checkbox
-      let checkboxHTML = `<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" tabindex="0" ${selectedProductIds.has(product.id) ? "checked" : ""}/>`;
-
-      li.innerHTML = `
+    function createProductCard(product,idx){
+      const li=document.createElement('li');li.className='prod-card';
+      setTimeout(()=>li.classList.add('show'),121+idx*54);
+      let imgHTML=product.photo?`<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="">`:`<span>📦</span>`;
+      const nameSafe=escapeHTML(product.name||"Unnamed"),qtyNum=Number(product.qty)||0,mrpNum=Number(product.mrp)||0;
+      let checkboxHTML=`<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" ${selectedProductIds.has(product.id)?"checked":""}/>`;
+      li.innerHTML=`
         ${checkboxHTML}
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
@@ -1327,521 +586,228 @@
           ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
-          <button type="button" title="Edit" aria-label="Edit product" role="button" class="edit" data-id="${product.id}">✏️</button>
+          <button type="button" title="Edit" aria-label="Edit product" data-id="${product.id}">✏️</button>
         </div>
       `;
-
-      // highlight selection
-      if (selectedProductIds.has(product.id)) li.classList.add('selected');
-
-      // Checkboxes
-      const checkbox = li.querySelector('.prod-select-checkbox');
-      if (checkbox) {
-        checkbox.addEventListener('change', (e) => {
-          handleCheckboxChange(product.id, checkbox.checked);
-        });
-        checkbox.addEventListener('click', (e)=>e.stopPropagation()); // don't fire detail modal
-        checkbox.addEventListener('keydown', (e)=>e.stopPropagation());
+      if(selectedProductIds.has(product.id))li.classList.add('selected');
+      const checkbox=li.querySelector('.prod-select-checkbox');
+      if(checkbox){
+        checkbox.addEventListener('change',()=>{handleCheckboxChange(product.id,checkbox.checked);});
+        checkbox.addEventListener('click',e=>e.stopPropagation());
       }
-
-      const editBtn = li.querySelector('.edit');
-      if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
-
-      li.addEventListener('click', function(e){
-        if(e.target.classList.contains('prod-select-checkbox')) return;
-        if(!e.target.closest('.prod-actions')) showDetailModal(product);
-      });
-      li.addEventListener('keydown', function(e){
-        if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { e.preventDefault(); showDetailModal(product); }
-      });
+      li.querySelector('.prod-actions button').onclick=(e)=>{e.stopPropagation();showProductModal('edit',product);};
+      li.addEventListener('click',function(e){if(e.target.classList.contains('prod-select-checkbox'))return;showDetailModal(product);});
       return li;
     }
-    // --- END PATCH ---
-
-    /**************************************************************
-     * Multi-select controls
-     **************************************************************/
-
-    document.getElementById("selectAllCheckbox").addEventListener("change", function() {
-      if (this.checked) {
-        products.forEach(prod => selectedProductIds.add(prod.id));
-      } else {
-        selectedProductIds.clear();
-      }
-      refreshProductList();
-      updateMultiSelectControls();
+    document.getElementById("selectAllCheckbox").addEventListener("change",function(){
+      if(this.checked){products.forEach(prod=>selectedProductIds.add(prod.id));}
+      else{selectedProductIds.clear();}
+      refreshProductList();updateMultiSelectControls();
     });
-
-    document.getElementById("deleteSelectedBtn").onclick = function() {
-      if (selectedProductIds.size === 0) return;
-      if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return;
-      products = products.filter(p => !selectedProductIds.has(p.id));
-      selectedProductIds.clear();
-      saveProducts();
-      updateMultiSelectControls();
+    document.getElementById("deleteSelectedBtn").onclick=function(){
+      if(selectedProductIds.size===0)return;
+      if(!confirm(`Delete ${selectedProductIds.size} selected item(s)?`))return;
+      products=products.filter(p=>!selectedProductIds.has(p.id));
+      selectedProductIds.clear();saveProducts();updateMultiSelectControls();
     };
 
-    /**************************************************************
-     * Detail modal
-     **************************************************************/
-    const detailModalBackdrop = document.getElementById('detailModalBackdrop');
-    const detailModalBody = document.getElementById('detailModalBody');
-
-    function disableDetailBackgroundScroll() {
-      document.body.classList.add('detail-modal-open');
-      // Optionally also store scroll position if you ever want to restore it (not necessary with overflow:hidden)
-    }
-    function enableDetailBackgroundScroll() {
-      document.body.classList.remove('detail-modal-open');
-    }
-
-    function showDetailModal(product) {
-      const nameSafe = escapeHTML(product.name || 'Unnamed');
-      const photoBlock = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
-      const mrpNum = Number(product.mrp) || 0;
-      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
-
-      detailModalBody.innerHTML = `
+    // Details modal
+    function showDetailModal(product){
+      const nameSafe=escapeHTML(product.name||'Unnamed'),
+        photoBlock=product.photo?`<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>`:`<div class="prod-detail-photo" style="font-size:52px;padding:18px 0 9px 0;">📦</div>`,
+        mrpNum=Number(product.mrp)||0,costNum=(product.cost!==undefined&&product.cost!==null)?Number(product.cost):null;
+      document.getElementById('detailModalBody').innerHTML=`
         <div style="text-align:center;">${photoBlock}</div>
         <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
           <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
-          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
+          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(product.category)}</span></li>`:""}
           <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
           <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
           ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
         </ul>
-        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
+        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(product.notes)}</div>`:""}
       `;
-      detailModalBackdrop.classList.remove('hide');
-      disableDetailBackgroundScroll();
+      document.getElementById('detailModalBackdrop').classList.remove('hide');
+      document.body.classList.add('detail-modal-open');
       setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
     }
-
-    document.getElementById('closeDetailModalBtn').onclick = function(){
-      detailModalBackdrop.classList.add('hide');
-      detailModalBody.innerHTML = '';
-      enableDetailBackgroundScroll();
+    document.getElementById('closeDetailModalBtn').onclick=function(){
+      document.getElementById('detailModalBackdrop').classList.add('hide');
+      document.getElementById('detailModalBody').innerHTML='';
+      document.body.classList.remove('detail-modal-open');
     };
 
-    // Prevent scroll when detail modal is open (background locked when detail modal is NOT .hide)
-    // Also ensure it unlocks on other modal closes and Escape, and on navigation/back
+    // Search
+    document.getElementById('productSearch').addEventListener('input',refreshProductList);
+    document.getElementById('productSearch').addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';refreshProductList();}});
 
-    document.addEventListener('keydown', function(e){
-      if (e.key === "Escape") {
-        let closedAModal = false;
-        if (!detailModalBackdrop.classList.contains('hide')) { 
-          detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML='';
-          enableDetailBackgroundScroll();
-          closedAModal = true;
-        }
-        if (!productModalBackdrop.classList.contains('hide')) { productModalBackdrop.classList.add('hide'); closedAModal = true; }
-        if (!deleteModalBackdrop.classList.contains('hide')) { deleteModalBackdrop.classList.add('hide'); closedAModal = true; }
-        if (!settingsBackdrop.classList.contains('hide')) { settingsBackdrop.classList.add('hide'); closedAModal = true; }
-        // when closing detail modal, always enable scroll
-        if (closedAModal) enableDetailBackgroundScroll();
-      }
-    });
-
-    // Defensive: re-enable scroll on any click in the body if all modals are shut (e.g. browser back, unusual nav)
-    function maybeResetBodyScroll() {
-      if (
-        detailModalBackdrop.classList.contains('hide') &&
-        (!productModalBackdrop || productModalBackdrop.classList.contains('hide')) &&
-        (!settingsBackdrop || settingsBackdrop.classList.contains('hide')) &&
-        (!deleteModalBackdrop || deleteModalBackdrop.classList.contains('hide'))
-      ) {
-        enableDetailBackgroundScroll();
-      }
-    }
-    detailModalBackdrop.addEventListener('transitionend', maybeResetBodyScroll);
-    detailModalBackdrop.addEventListener('animationend', maybeResetBodyScroll);
-    window.addEventListener('popstate', maybeResetBodyScroll);
-
-    /**************************************************************
-     * Search
-     **************************************************************/
-    const searchInput = document.getElementById('productSearch');
-    searchInput.addEventListener('input', function(){ refreshProductList(); });
-    searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
-
-    /**************************************************************
-     * Refresh product list
-     **************************************************************/
-    function refreshProductList() {
+    // Product list refresh
+    function refreshProductList(){
       loadProducts();
-      productListElem.innerHTML = '';
-      let q = (searchInput.value || '').trim().toLowerCase();
-      let filtered = !q ? products : products.filter(prod =>
-        (String(prod.name||"").toLowerCase().includes(q)) ||
-        (String(prod.category||"").toLowerCase().includes(q)) ||
-        (String(prod.notes||"").toLowerCase().includes(q))
-      );
-      if (!filtered.length) {
-        noProductsElem.style.display = "";
-        document.getElementById('multiSelectControls').classList.remove('active');
-        return;
-      }
-      noProductsElem.style.display = "none";
-      filtered.sort((a,b) => (Number(b.qty)-Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
+      const productListElem=document.getElementById('productList');
+      productListElem.innerHTML='';
+      let q=(document.getElementById('productSearch').value||'').trim().toLowerCase();
+      let filtered=!q?products:products.filter(prod=>
+        (String(prod.name||"").toLowerCase().includes(q))||
+        (String(prod.category||"").toLowerCase().includes(q))||
+        (String(prod.notes||"").toLowerCase().includes(q)));
+      if(!filtered.length){document.getElementById('noProducts').style.display="";document.getElementById('multiSelectControls').classList.remove('active');return;}
+      document.getElementById('noProducts').style.display="none";
+      filtered.sort((a,b)=>(Number(b.qty)-Number(a.qty))||(String(a.name||'').localeCompare(String(b.name||''))));
       filtered.forEach((prod,i)=>productListElem.appendChild(createProductCard(prod,i)));
       updateMultiSelectControls();
     }
 
-    /**************************************************************
-     * Add / Edit product modal
-     **************************************************************/
-    let productEditing = null;
-    const prodName = document.getElementById('prodName');
-    const prodMrp = document.getElementById('prodMrp');
-    const prodCost = document.getElementById('prodCost');
-    const prodQty = document.getElementById('prodQty');
-    const prodCategory = document.getElementById('prodCategory');
-    const prodNotes = document.getElementById('prodNotes');
-    const prodPhoto = document.getElementById('prodPhoto');
-    const productModalBackdrop = document.getElementById('productModalBackdrop');
-    const productModal = document.getElementById('productModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalError = document.getElementById('modalError');
-    const prodPhotoFileName = document.getElementById('prodPhotoFileName');
-    const uploadBtnInnerText = document.getElementById('uploadBtnInnerText');
-    const prodPhotoFileContainer = document.getElementById('prodPhotoFileContainer');
-    const fileUploadWrap = document.getElementById('fileUploadWrap');
-    const imageCompressMsg = document.getElementById('imageCompressMsg');
-    // Store current selected photo preview (dataurl or null)
-    let currentProductPhotoDataUrl = null;
-
-    /**
-     * Compress image using <canvas>:
-     * - target max size: 260px width/height
-     * - medium quality (~0.7)
-     * - always converts to JPEG to save space
-     */
-    async function compressImageFile(file, maxDim = 260, quality = 0.72) {
-      return new Promise((resolve, reject) => {
-        if (!/^image\//.test(file.type)) return reject("Not an image file.");
-        let img = new window.Image();
-        let url = URL.createObjectURL(file);
-        img.onload = function() {
-          let [w, h] = [img.naturalWidth, img.naturalHeight];
-          // Calculate new size
-          if (w > maxDim || h > maxDim) {
-            if (w > h) {
-              h = Math.round(h * maxDim / w);
-              w = maxDim;
-            } else {
-              w = Math.round(w * maxDim / h);
-              h = maxDim;
-            }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          // Always use JPEG for size!
-          canvas.toBlob(blob => {
-            if (!blob) return reject("Compression error.");
-            const reader = new FileReader();
-            reader.onload = e => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          }, 'image/jpeg', quality);
-          URL.revokeObjectURL(url);
+    // Add/Edit Modal logic
+    let currentProductPhotoDataUrl=null,firstSubmitAttempt=true,prodPhotoLastPendingPromise=null;
+    function updatePhotoPreviewUI(){
+      const container=document.getElementById('prodPhotoFileContainer'),nameEl=document.getElementById('prodPhotoFileName'),uploadBtnInnerText=document.getElementById('uploadBtnInnerText'),imageCompressMsg=document.getElementById('imageCompressMsg');
+      container.innerHTML='';
+      if(currentProductPhotoDataUrl){
+        const img=document.createElement('img');
+        img.src=currentProductPhotoDataUrl;img.alt="Product Photo";img.className='photo-preview-img-thumb';
+        const removeBtn=document.createElement('button');
+        removeBtn.type='button';removeBtn.className='remove-photo-btn';removeBtn.title='Remove';removeBtn.innerHTML='✖';
+        removeBtn.onclick=function(){
+          currentProductPhotoDataUrl=null;document.getElementById('prodPhoto').value='';nameEl.textContent='';
+          uploadBtnInnerText.textContent='Choose Image';imageCompressMsg.style.display='none';updatePhotoPreviewUI();
         };
-        img.onerror = () => { URL.revokeObjectURL(url); reject("Invalid image"); };
-        img.src = url;
+        container.appendChild(img);container.appendChild(removeBtn);
+      }
+    }
+    async function compressImageFile(file,maxDim=260,quality=.76){
+      return new Promise((resolve,reject)=>{
+        if(!/^image\//.test(file.type))return reject("Not image");
+        let img=new window.Image();let url=URL.createObjectURL(file);
+        img.onload=function(){
+          let [w,h]=[img.naturalWidth,img.naturalHeight];
+          if(w>maxDim||h>maxDim){
+            if(w>h){h=Math.round(h*maxDim/w);w=maxDim;}
+            else{w=Math.round(w*maxDim/h);h=maxDim;}
+          }
+          const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+          const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
+          canvas.toBlob(blob=>{
+            if(!blob)return reject("Comp error");
+            const reader=new FileReader();
+            reader.onload=e=>resolve(reader.result);reader.onerror=reject;
+            reader.readAsDataURL(blob);
+          },'image/jpeg',quality);URL.revokeObjectURL(url);
+        };
+        img.onerror=()=>{URL.revokeObjectURL(url);reject("Invalid img");};
+        img.src=url;
       });
     }
-
-    function updatePhotoPreviewUI() {
-      prodPhotoFileContainer.innerHTML = '';
-      if (currentProductPhotoDataUrl) {
-        const img = document.createElement('img');
-        img.src = currentProductPhotoDataUrl;
-        img.alt = "Product Photo";
-        img.className = 'photo-preview-img-thumb';
-
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'remove-photo-btn';
-        removeBtn.title = 'Remove image';
-        removeBtn.innerHTML = '✖';
-        removeBtn.onclick = function() {
-          currentProductPhotoDataUrl = null;
-          prodPhoto.value = '';
-          prodPhotoFileName.textContent = '';
-          uploadBtnInnerText.textContent = 'Choose Image';
-          imageCompressMsg.style.display = 'none';
-          updatePhotoPreviewUI();
-        };
-
-        prodPhotoFileContainer.appendChild(img);
-        prodPhotoFileContainer.appendChild(removeBtn);
-      }
-    }
-
-    function showProductModal(mode, product) {
-      productModal.reset();
-      modalError.textContent = '';
-      prodPhotoFileName.textContent = '';
-      uploadBtnInnerText.textContent = 'Choose Image';
-      currentProductPhotoDataUrl = null;
-      imageCompressMsg.style.display = 'none';
-      updatePhotoPreviewUI();
-
-      if (mode === 'add') {
-        modalTitle.textContent = "Add Product";
-        productEditing = null;
-        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = ""; prodNotes.value = ""; prodPhoto.value = "";
-      } else {
-        modalTitle.textContent = "Edit Product";
-        productEditing = product;
-        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = "";
-
-        if (product.photo) {
-          currentProductPhotoDataUrl = product.photo;
-          updatePhotoPreviewUI();
-        }
-      }
-      productModalBackdrop.classList.remove('hide');
-      // Lock body scroll when opening modal
-      if (!document.body.classList.contains('modal-open')) {
-        document.body.dataset.scrollY = window.scrollY;
-        document.body.style.top = `-${window.scrollY}px`;
-        document.body.classList.add('modal-open');
-      }
-      setTimeout(()=>prodName.focus(),150);
-      // --- PATCH: Reset firstSubmitAttempt state ---
-      firstSubmitAttempt = true;
-    }
-
-    let firstSubmitAttempt = true;
-    let prodPhotoLastPendingPromise = null;
-
-    // --- REPLACEMENT: compress image before preview/save ---
-    prodPhoto.addEventListener('change', function () {
-      if (prodPhoto.files && prodPhoto.files.length) {
-        const file = prodPhoto.files[0];
-        prodPhotoFileName.textContent = file.name;
-        uploadBtnInnerText.textContent = "Image Selected";
-        imageCompressMsg.textContent = "Compressing image...";
-        imageCompressMsg.style.display = 'block';
-        const t0 = performance.now();
-        const filePromise = compressImageFile(file, 260, 0.72).then(dataUrl => {
-          const kb = Math.round((dataUrl.length * 3 / 4) / 1024);
-          currentProductPhotoDataUrl = dataUrl;
-          updatePhotoPreviewUI();
-          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB (max 260px, JPEG)`;
-          imageCompressMsg.style.display = 'block';
-        }).catch(err => {
-          modalError.textContent = "Image compression failed. Please select another file.";
-          prodPhoto.value = '';
-          prodPhotoFileName.textContent = '';
-          uploadBtnInnerText.textContent = 'Choose Image';
-          imageCompressMsg.textContent = '';
-          imageCompressMsg.style.display = 'none';
-          currentProductPhotoDataUrl = null;
-          updatePhotoPreviewUI();
+    document.getElementById('prodPhoto').addEventListener('change',function(){
+      if(this.files&&this.files.length){
+        const file=this.files[0];
+        document.getElementById('prodPhotoFileName').textContent=file.name;
+        document.getElementById('uploadBtnInnerText').textContent="Image Selected";
+        document.getElementById('imageCompressMsg').textContent="Compressing...";
+        document.getElementById('imageCompressMsg').style.display='block';
+        prodPhotoLastPendingPromise=compressImageFile(file,260,.71).then(dataUrl=>{
+          const kb=Math.round((dataUrl.length*3/4)/1024);
+          currentProductPhotoDataUrl=dataUrl;updatePhotoPreviewUI();
+          document.getElementById('imageCompressMsg').textContent=`~${kb} KB (max 260px, JPEG)`;
+        }).catch(err=>{
+          document.getElementById('modalError').textContent="Image compression failed.";this.value='';document.getElementById('prodPhotoFileName').textContent='';
+          document.getElementById('uploadBtnInnerText').textContent='Choose Image';document.getElementById('imageCompressMsg').style.display='none';currentProductPhotoDataUrl=null;updatePhotoPreviewUI();
         });
-        prodPhotoLastPendingPromise = filePromise;
-      } else {
-        prodPhotoFileName.textContent = '';
-        uploadBtnInnerText.textContent = 'Choose Image';
-        currentProductPhotoDataUrl = null;
-        imageCompressMsg.style.display = 'none';
-        updatePhotoPreviewUI();
-        prodPhotoLastPendingPromise = null;
+      }else{
+        document.getElementById('prodPhotoFileName').textContent='';
+        document.getElementById('uploadBtnInnerText').textContent='Choose Image';
+        currentProductPhotoDataUrl=null;document.getElementById('imageCompressMsg').style.display='none';updatePhotoPreviewUI();prodPhotoLastPendingPromise=null;
       }
     });
-
-    document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
-    document.getElementById('closeModalBtn').onclick = ()=>{
-      productModalBackdrop.classList.add('hide');
-      if (document.body.classList.contains('modal-open')) {
-        document.body.classList.remove('modal-open');
-        const scrollY = document.body.dataset.scrollY ? parseInt(document.body.dataset.scrollY, 10) : 0;
-        document.body.style.top = '';
-        window.scrollTo(0, scrollY);
-        delete document.body.dataset.scrollY;
-      }
-      imageCompressMsg.style.display = 'none';
+    document.getElementById('addProductBtn').onclick=()=>showProductModal('add');
+    document.getElementById('closeModalBtn').onclick=()=>{
+      document.getElementById('productModalBackdrop').classList.add('hide');
+      document.body.classList.remove('modal-open');
+      document.getElementById('imageCompressMsg').style.display='none';
     };
-
-    productModal.onsubmit = async function(e) {
-      e.preventDefault();
-      modalError.textContent = "";
-
-      // Only on first submit after opening modal, if user chose an image and preview not processed yet, wait for compression to finish
-      if (firstSubmitAttempt && prodPhoto.files && prodPhoto.files.length && !currentProductPhotoDataUrl && prodPhotoLastPendingPromise) {
-        try {
-          await prodPhotoLastPendingPromise;
-        } catch (err) {
-          modalError.textContent = "Image failed to load, please select again.";
-          return;
-        }
-        firstSubmitAttempt = false;
-        productModal.onsubmit(e);
-        return;
+    function showProductModal(mode,product){
+      document.getElementById('productModal').reset();document.getElementById('modalError').textContent='';
+      document.getElementById('prodPhotoFileName').textContent='';document.getElementById('uploadBtnInnerText').textContent='Choose Image';currentProductPhotoDataUrl=null;document.getElementById('imageCompressMsg').style.display='none';
+      updatePhotoPreviewUI();
+      if(mode==='add'){
+        document.getElementById('modalTitle').textContent="Add Product";productEditing=null;
+        document.getElementById('prodName').value="";document.getElementById('prodMrp').value="";document.getElementById('prodCost').value="";document.getElementById('prodQty').value="";document.getElementById('prodCategory').value="";document.getElementById('prodNotes').value="";document.getElementById('prodPhoto').value="";
+      }else{
+        document.getElementById('modalTitle').textContent="Edit Product";productEditing=product;
+        document.getElementById('prodName').value=product.name||"";document.getElementById('prodMrp').value=product.mrp!==undefined?product.mrp:"";document.getElementById('prodCost').value=product.cost!==undefined?product.cost:"";document.getElementById('prodQty').value=product.qty!==undefined?product.qty:"";document.getElementById('prodCategory').value=product.category||"";document.getElementById('prodNotes').value=product.notes||"";document.getElementById('prodPhoto').value="";
+        if(product.photo){currentProductPhotoDataUrl=product.photo;updatePhotoPreviewUI();}
       }
-      firstSubmitAttempt = false;
-
-      const name = (prodName.value || '').trim();
-      const mrpVal = prodMrp.value;
-      const costVal = prodCost.value;
-      const qtyVal = prodQty.value;
-      const category = (prodCategory.value || '').trim();
-      const notes = (prodNotes.value || '').trim();
-
-      if (!name) { modalError.textContent = "Name required."; return; }
-      if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
-      if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
-
-      let photoData = null;
-      // Use the dataUrl from preview (already compressed)
-      if (currentProductPhotoDataUrl) {
-        photoData = currentProductPhotoDataUrl;
-      }
-
-      const productObj = {
-        id: productEditing ? productEditing.id : genID(),
-        name,
-        mrp: Number(mrpVal),
-        cost: costVal !== "" ? Number(costVal) : null,
-        qty: Number(qtyVal),
-        category,
-        notes,
-        photo: photoData
-      };
-
-      if (!productEditing) products.push(productObj);
-      else {
-        const idx = products.findIndex(p => p.id === productEditing.id);
-        if (idx >= 0) products[idx] = productObj; else products.push(productObj);
-      }
-      saveProducts();
-      productModalBackdrop.classList.add('hide');
-      if (document.body.classList.contains('modal-open')) {
-        document.body.classList.remove('modal-open');
-        const scrollY = document.body.dataset.scrollY ? parseInt(document.body.dataset.scrollY, 10) : 0;
-        document.body.style.top = '';
-        window.scrollTo(0, scrollY);
-        delete document.body.dataset.scrollY;
-      }
-      selectedProductIds.clear();
-      updateMultiSelectControls();
-    };
-    // --- PATCH END ---
-
-    function readFileAsDataURL(file) {
-      return new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      document.getElementById('productModalBackdrop').classList.remove('hide');
+      document.body.classList.add('modal-open');
+      setTimeout(()=>document.getElementById('prodName').focus(),140);
+      firstSubmitAttempt=true;
     }
+    document.getElementById('productModal').onsubmit=async function(e){
+      e.preventDefault();document.getElementById('modalError').textContent="";
+      if(firstSubmitAttempt&&document.getElementById('prodPhoto').files.length&&!currentProductPhotoDataUrl&&prodPhotoLastPendingPromise){
+        try{await prodPhotoLastPendingPromise;}catch(err){document.getElementById('modalError').textContent="Image failed, select again.";return;}
+        firstSubmitAttempt=false;this.onsubmit(e);return;
+      }
+      firstSubmitAttempt=false;
+      const name=(document.getElementById('prodName').value||'').trim(),mrpVal=document.getElementById('prodMrp').value,costVal=document.getElementById('prodCost').value,qtyVal=document.getElementById('prodQty').value,category=(document.getElementById('prodCategory').value||'').trim(),
+        notes=(document.getElementById('prodNotes').value||'').trim(),photoData=currentProductPhotoDataUrl||null;
+      if(!name){document.getElementById('modalError').textContent="Name required.";return;}
+      if(mrpVal===""||isNaN(Number(mrpVal))||Number(mrpVal)<0){document.getElementById('modalError').textContent="Valid MRP required.";return;}
+      if(qtyVal===""||isNaN(Number(qtyVal))||Number(qtyVal)<0){document.getElementById('modalError').textContent="Valid Stock required.";return;}
+      const productObj={
+        id:productEditing?productEditing.id:genID(),name,mrp:Number(mrpVal),cost:costVal!==""?Number(costVal):null,qty:Number(qtyVal),category,notes,photo:photoData
+      };
+      if(!productEditing)products.push(productObj);else{const idx=products.findIndex(p=>p.id===productEditing.id);if(idx>=0)products[idx]=productObj;else products.push(productObj);}
+      saveProducts();document.getElementById('productModalBackdrop').classList.add('hide');
+      document.body.classList.remove('modal-open');selectedProductIds.clear();updateMultiSelectControls();
+    };
 
-    /**************************************************************
-     * Delete modal
-     **************************************************************/
-    const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
-    const deleteModal = document.getElementById('deleteModal');
-    const deleteName = document.getElementById('deleteName');
-    let productToDelete = null;
-
-    function showDeleteModal(product) {
-      deleteModalBackdrop.classList.remove('hide');
-      deleteName.textContent = product.name || '';
-      productToDelete = product;
+    // --- Delete Product Modal ---
+    let productToDelete=null;
+    function showDeleteModal(product){
+      document.getElementById('deleteModalBackdrop').classList.remove('hide');
+      document.getElementById('deleteName').textContent=product.name||'';productToDelete=product;
       setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60);
     }
-
-    document.getElementById('closeDeleteBtn').onclick =
-    document.getElementById('cancelDeleteBtn').onclick = () => {
-      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
-    };
-
-    deleteModal.onsubmit = function(e){
+    document.getElementById('closeDeleteBtn').onclick=document.getElementById('cancelDeleteBtn').onclick=()=>{document.getElementById('deleteModalBackdrop').classList.add('hide');productToDelete=null;};
+    document.getElementById('deleteModal').onsubmit=function(e){
       e.preventDefault();
-      if (!productToDelete) return;
-      products = products.filter(p => p.id !== productToDelete.id);
-      saveProducts();
-      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
-      // Remove from multi-select, if any
-      selectedProductIds.delete(productToDelete.id);
-      updateMultiSelectControls();
+      if(!productToDelete)return;
+      products=products.filter(p=>p.id!==productToDelete.id);saveProducts();document.getElementById('deleteModalBackdrop').classList.add('hide');
+      selectedProductIds.delete(productToDelete.id);updateMultiSelectControls();productToDelete=null;
     };
 
-    function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
-
-    /**************************************************************
-     * Export / Import
-     **************************************************************/
-    document.getElementById('exportBtn').onclick = function() {
-      const dataStr = JSON.stringify(products || [], null, 2);
-      const blob = new Blob([dataStr], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = 'dealer-products-backup.json'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url);
-      setTimeout(()=>{ document.body.removeChild(a); },200);
+    // --- Export/Import ---
+    document.getElementById('exportBtn').onclick=function(){
+      const dataStr=JSON.stringify(products||[],null,2);
+      const blob=new Blob([dataStr],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.style.display='none';a.href=url;a.download='dealer-products-backup.json';document.body.appendChild(a);a.click();
+      URL.revokeObjectURL(url);setTimeout(()=>{document.body.removeChild(a);},150);
     };
-
-    // Fix error and merge with existing import logic
-    document.getElementById('importBtn').onclick = function () {
-      // trigger hidden file input
-      let fileInput = document.getElementById('hiddenImport');
-      if (fileInput) fileInput.value = ''; // clear any previous selection for consistent behavior
-      if (fileInput) fileInput.click();
+    document.getElementById('importBtn').onclick=function(){
+      let fileInput=document.getElementById('hiddenImport');if(fileInput)fileInput.value='';if(fileInput)fileInput.click();
     };
-
-    document.getElementById('hiddenImport').onchange = async function (e) {
-      const fileInput = e.target;
-      if (!fileInput.files || !fileInput.files.length) return;
-      const file = fileInput.files[0];
-      // Accept only json or with .json name
-      if (!(file && (file.type === 'application/json' || /\.json$/i.test(file.name)))) {
-        alert('Please select a .json backup/export file.');
-        return;
+    document.getElementById('hiddenImport').onchange=async function(e){
+      const file=e.target.files[0];
+      if(!file||!(file.type=='application/json'||/\.json$/i.test(file.name))){
+        alert('Please select a .json backup/export file.');return;
       }
-      try {
-        // Try to read content as text
-        let text = '';
-        if (file.text) {
-          text = await file.text();
-        } else {
-          // fallback for old browsers
-          text = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = e => resolve(e.target.result);
-            reader.onerror = reject;
-            reader.readAsText(file);
-          });
-        }
-        let arr = JSON.parse(text);
-        if (!Array.isArray(arr)) throw new Error('Invalid file - data not array');
-        // Validate at least 'name' and 'qty' fields on entries
-        arr = arr.filter(prod => prod && typeof prod === 'object' && 'name' in prod && 'qty' in prod);
-        if (!arr.length) throw new Error('No valid products in file!');
-        if (!confirm(`Import will OVERWRITE your current products with ${arr.length} product(s).\nAre you sure?`)) return;
-        window.localStorage.setItem('dealer-products', JSON.stringify(arr));
-        products = arr;
-        refreshProductList();
-        selectedProductIds.clear();
-        updateMultiSelectControls();
-        alert('Import successful. Product list replaced.');
-      } catch (ex) {
-        alert("Failed to import products: " + (ex.message || ex));
-      }
+      try{
+        let text=file.text?await file.text():await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=e=>resolve(e.target.result);reader.onerror=reject;reader.readAsText(file);});
+        let arr=JSON.parse(text);
+        if(!Array.isArray(arr))throw new Error('Invalid file');
+        arr=arr.filter(prod=>prod&&typeof prod==='object'&&'name'in prod&&'qty'in prod);
+        if(!arr.length)throw new Error('No valid products.');
+        if(!confirm(`Import WILL OVERWRITE current list (${arr.length} products). Are you SURE?`))return;
+        window.localStorage.setItem('dealer-products',JSON.stringify(arr));products=arr;refreshProductList();selectedProductIds.clear();updateMultiSelectControls();alert('Import done. List replaced.');
+      }catch(ex){alert("Import failed: "+(ex.message||ex));}
     };
 
-    // Remove old readFileAsDataURL; not used in main flow anymore
-
-    /**************************************************************
-     * Delete modal, Export/Import, etc. unchanged...
-     **************************************************************/
-    window.addEventListener('load', function() {
-      loadProducts();
-      // do not auto-show app; user must login each time
+    // --- Fade up cards on page load ---
+    window.addEventListener('DOMContentLoaded',function(){
+      setTimeout(function(){document.querySelectorAll(".card").forEach((el,i)=>{setTimeout(()=>{el.classList.add('show')},170+52*i);});},120);
     });
-</script>
+    window.addEventListener('load',function(){loadProducts();});
+  </script>
 </body>
 </html>
