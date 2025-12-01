@@ -125,9 +125,20 @@
 </head>
 <body class="min-h-screen">
 
+  <!-- DEDICATED INITIAL LOADING OVERLAY -->
+  <div id="initial-loading" class="fixed inset-0 bg-bg-dark flex items-center justify-center z-[100]">
+      <div class="flex flex-col items-center space-y-4">
+          <svg class="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="text-slate-300">Initializing Authentication...</p>
+      </div>
+  </div>
+  
   <!-- PWA Status Indicator -->
   <div id="pwa-status" class="fixed top-0 right-0 m-4 p-2 text-xs font-semibold rounded-full shadow-lg z-50 transition-colors"
-       style="background-color: #10B981; color: white;">
+       style="background-color: #10B981; color: white; opacity: 0;">
       LOADING...
   </div>
 
@@ -230,8 +241,8 @@
     </main>
   </div>
 
-  <!-- Login/Auth Screen -->
-  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+  <!-- Login/Auth Screen (Hidden initially, controlled by script) -->
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 hidden">
     <div class="bg-bg-light p-8 md:p-12 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-700">
       <h2 class="text-3xl font-bold text-center text-primary mb-6">Welcome Back</h2>
       <p class="text-center text-slate-400 mb-8">Sign in to manage your inventory.</p>
@@ -301,6 +312,11 @@
     let userId = null;
     let isAuthReady = false;
 
+    // UI elements
+    const loadingOverlay = document.getElementById('initial-loading');
+    const authScreen = document.getElementById('auth-screen');
+    const appScreen = document.getElementById('app');
+    
     // --- FIREBASE INITIALIZATION AND AUTH ---
 
     setLogLevel('Debug');
@@ -362,27 +378,35 @@
         auth = getAuth(app);
 
         onAuthStateChanged(auth, async (user) => {
+            // Hide the initial loading spinner once auth state is determined
+            loadingOverlay.classList.add('hidden');
+            isAuthReady = true;
+
             if (user) {
                 userId = user.uid;
-                isAuthReady = true;
                 document.getElementById('user-id-display').textContent = userId;
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
+                
+                // Show the main application
+                authScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
+                
                 console.log("Firebase Auth Ready. User ID:", userId);
                 // Start listening to data
                 listenToProducts();
             } else {
                 // Not authenticated, show login screen
                 userId = null;
-                isAuthReady = true; // Still ready, just not logged in
-                document.getElementById('app').classList.add('hidden');
-                document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('user-id-display').textContent = 'N/A';
+                
+                // Show the authentication screen
+                appScreen.classList.add('hidden');
+                authScreen.classList.remove('hidden');
             }
         });
 
         const initialAuth = async () => {
             try {
+                // This will trigger the onAuthStateChanged listener above
                 const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                 if (initialToken) {
                     await signInWithCustomToken(auth, initialToken);
@@ -393,13 +417,15 @@
                 }
             } catch (error) {
                 console.error("Firebase Auth Error:", error);
-                await showModal('Authentication Failed', 'Could not establish connection to Firebase: ' + error.message);
-                document.getElementById('app').classList.add('hidden');
+                loadingOverlay.classList.add('hidden'); // Ensure loading is hidden even on error
+                authScreen.classList.remove('hidden');
+                showModal('Authentication Failed', 'Could not establish connection to Firebase: ' + error.message);
             }
         };
         initialAuth();
 
     } else {
+        loadingOverlay.classList.add('hidden');
         showModal('Error', 'Firebase Configuration missing. App cannot save/load data persistently.', false);
         document.getElementById('app').innerHTML = '<p class="text-red-500 text-center mt-20">FIREBASE CONFIGURATION MISSING. Cannot proceed with data operations.</p>';
     }
@@ -710,6 +736,7 @@
 
     function registerServiceWorker() {
         const statusElement = document.getElementById('pwa-status');
+        statusElement.style.opacity = 1; // Make status visible after load
         statusElement.textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE (Cached)';
         statusElement.style.backgroundColor = navigator.onLine ? '#10B981' : '#F59E0B';
         statusElement.style.animation = navigator.onLine ? 'none' : 'pulse 1.5s infinite';
@@ -753,20 +780,29 @@
 
         // Hardcoded Credentials Check (Existing Feature Retained)
         if (username === 'admin' && password === '123') {
-            await showModal('Login Success', 'Redirecting to dashboard...');
-
-            // On successful hardcoded login, we enable biometric registration.
+            document.getElementById('fingerprint-login-btn').disabled = true; // Disable login button temporarily
             document.getElementById('register-fingerprint-btn').classList.remove('hidden');
 
-            // Ensure the user is signed in to Firebase to proceed to the app
+            // 1. Ensure user is signed into Firebase (FIXED: Added await for sync)
             if (!auth.currentUser) {
-                // If not signed in (e.g., initial auth failed), try anonymous sign-in now
-                await signInAnonymously(auth);
+                try {
+                    await signInAnonymously(auth); 
+                } catch (error) {
+                    console.error("Anonymous Sign-in failed after manual login:", error);
+                    await showModal('Error', 'Failed to authenticate with Firebase: ' + error.message);
+                    document.getElementById('fingerprint-login-btn').disabled = false;
+                    return;
+                }
             }
+            
+            // 2. onAuthStateChanged will handle the UI transition
+            await showModal('Login Success', 'Redirecting to dashboard...');
+
 
         } else {
             await showModal('Login Failed', 'Invalid username or password.', false);
         }
+        document.getElementById('fingerprint-login-btn').disabled = false;
     });
 
     window.logout = async function() {
@@ -906,11 +942,14 @@
             // 2. Simulate login success based on stored user ID
             if (assertion) {
                 // Since assertion succeeded, we assume the user is authenticated.
-                // We rely on the initial Firebase sign-in state, but if we had a backend,
-                // we would use the storedUserId to fetch a new token for the user.
+                // We attempt to sign in anonymously (or with storedUserId if we had a proper backend)
+                // This will trigger the onAuthStateChanged listener to flip the UI.
+                
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth); 
+                }
+                
                 await showModal('Login Successful', 'Fingerprint verified. Welcome back!');
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
             }
 
         } catch (err) {
