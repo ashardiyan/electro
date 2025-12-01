@@ -3,1080 +3,929 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Al Rehman Electronics</title>
-  <meta name="theme-color" content="#161B22" />
-  <!-- Add PWA meta for mobile -->
+  <title>Al Rehman Electronics Inventory</title>
+  <meta name="theme-color" content="#3B82F6" />
+  <!-- PWA Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
-  <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg1: #0C1220;
-      --bg2: #161B22;
-      --bg3: #212936;
-      --accent: #2563EB;
-      --accent-hover: #164eab;
-      --accent2: #06B6D4;
-      --accent2-hover: #1095b7;
-      --gray: #AEB9C7;
-      --text: #F3F7FF;
-      --text-muted: #B0B9C6;
-      --radius: 16px;
-      --radius-card: 13px;
-      --shadow: 0 8px 32px 0 rgba(60,120,220,0.17);
-      --shadow-soft: 0 2px 8px rgba(40,98,180,.11);
-      --danger: #ef4444;
-      --success: #10b981;
-      --rounded-btn: 10px;
-      --button-skyblue: #06B6D4;
-      --button-gradient: linear-gradient(90deg, #06B6D4 40%, #2563EB 100%);
-    }
-    html, body {
-      padding: 0;
-      margin: 0;
-      font-family: 'Inter', system-ui, Arial, sans-serif;
-      font-size: 17px;
-      background: linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
-      color: var(--text);
-      min-height: 100vh;
-    }
-    body { display:flex; flex-direction:column; min-height:100vh; }
-    .container { max-width:640px; margin:0 auto; padding:34px 12px 54px; width:100%; box-sizing:border-box; }
-    header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; gap:10px; }
-    .logo-wrap { display:flex; align-items:center; gap:14px; }
-    .app-logo { width:50px; height:50px; border-radius:18px; background:linear-gradient(135deg,var(--accent),var(--accent2)75%); display:flex; align-items:center; justify-content:center; font-size:2.11rem; box-shadow:var(--shadow-soft); color:#fff; font-weight:700; overflow: hidden; }
-    .app-title { font-weight:900; font-size:1.7rem; line-height:1.13; letter-spacing:-1px; color:var(--text); margin-left:2px; }
-    .top-controls { display:flex; align-items:center; gap:10px; }
-    button.icon-btn { background:none; border:none; color:var(--accent2); font-size:1.23rem; padding:8px 10px; border-radius:9px; cursor:pointer; outline:none; }
-    button#settingsBtn { font-size:1.33rem; color:var(--text); background:#1b2430; padding:8px 11px; border-radius:9px; box-shadow:0 1px 6px #0008; }
-    #installPromptBtn, #installAsAppBtn { display:none; margin-left:12px; font-size:.99em; padding:8px 14px; border-radius:8px; background:linear-gradient(91deg,var(--accent2),var(--accent)); color:#fff; font-weight:700; border:none; cursor:pointer; box-shadow:0 1px 11px #2e5fad23; }
-    #mobileInstallInstructions { display:none; margin-left:10px; padding:8px 10px; border-radius:8px; background:#1a2233; color:var(--accent2); font-size:.93em; font-style:italic; box-shadow:0 2px 8px #222c3d22; max-width:310px; line-height:1.45; }
 
-    .main-content { display:flex; flex-direction:column; gap:0; align-items:stretch; width:100%; }
-    .card { background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); margin-bottom:32px; padding:1.6rem 1.6rem 1.3rem; animation:fadeUp .7s cubic-bezier(.43,.8,.52,1.18); opacity:0; transform:translateY(36px); animation-fill-mode:forwards; border:none; transition:box-shadow .15s, background .16s; }
-    .card.show { opacity:1; transform:none; }
-    @keyframes fadeUp { 0%{opacity:0;transform:translateY(45px);}65%{opacity:.6;}100%{opacity:1;transform:translateY(0);} }
-    .products-top-actions { display:flex; align-items:flex-end; gap:11px; margin-bottom:17px; flex-wrap:wrap; }
-    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; }
-    #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 38px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
-    #productSearch:focus { border-color:var(--accent); }
-    .search-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
+  <!-- Restored User Icon URL for PWA and favicon -->
+  <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" onerror="this.onerror=null;this.href='https://placehold.co/192x192/0C1220/ffffff?text=ARE'">
+  <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" onerror="this.onerror=null;this.href='https://placehold.co/192x192/0C1220/ffffff?text=ARE'">
 
-    /* Multi-select controls */
-    #multiSelectControls {
-      display: none;
-      width: 100%;
-      margin: 8px 0 2px 0;
-      padding: 9px 0;
-      border: none;
-      border-radius: 10px;
-      font-size: 1em;
-      font-weight: 700;
-      background: linear-gradient(90deg, #06B6D4 40%, #2563EB 100%);
-      color: #fff;
-      box-shadow: 0 1.5px 10px #2eb9f733;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-    }
-    .biometric-btn .fingerprint-ico {
-      font-size: 1.27em;
-      vertical-align: -0.14em;
-      margin-right: 5px;
-    }
-    .biometric-err {
-      color: var(--danger);
-      font-size: 0.98em;
-      margin-top: 4px;
-      min-height: 17px;
-      text-align: center;
-      display: none;
-    }
-    /* Hide the original input */
-    .modal-file-upload-btn input[type="file"] {
-      position: absolute;
-      left: 0; right: 0; top: 0; bottom: 0;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-
-    .prod-card { background:var(--bg3); border-radius:13px; margin-bottom:16px; box-shadow:0 2px 10px #2c345128; display:flex; gap:19px; align-items:center; padding:18px 20px; position:relative; animation:fadeUp .35s; opacity:0; transform:translateY(25px); animation-fill-mode:forwards; cursor:pointer; border:2px solid transparent; transition:box-shadow .14s, border-color .16s; }
-    .prod-card.show { opacity:1; transform:none; }
-    .prod-card:hover { border-color:var(--accent2); box-shadow:0 6px 24px #18346023; }
-    .prod-img { min-width:43px; width:43px; height:43px; border-radius:10px; background:#21293f; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--accent2); font-size:1.45em; overflow:hidden; }
-    .prod-photo-thumb { max-width:100%; max-height:43px; border-radius:8px; object-fit:cover; background:#232b36; display:block; }
-    .prod-name { font-weight:700; font-size:1.15em; color:var(--text); letter-spacing:-0.5px; margin-bottom:1.5px; }
-    .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
-    .prod-actions { margin-left:auto; display:flex; gap:7px; align-items:center; }
-    .prod-actions button { background:none; border:none; color:var(--accent2); font-size:1.32em; cursor:pointer; transition:color .13s; border-radius:5px; padding:3px 5px; outline:none; }
-    .prod-select-checkbox {
-      margin-right: 18px;
-      transform: scale(1.25);
-      accent-color: var(--accent2);
-      cursor:pointer;
-    }
-    .prod-card.selected { border-color: var(--danger); background: #1b1d2d; box-shadow: 0 4px 16px #ef44441a;}
-    .prod-card .prod-select-checkbox:focus { outline: 2px solid var(--accent2); outline-offset:1px;}
-
-    .no-products { text-align:center; color:var(--text-muted); font-size:1.12em; margin:34px 0 14px 0; letter-spacing:.01em; }
-    .modal-backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(18,23,32,0.92); z-index:4999; display:flex; align-items:center; justify-content:center; opacity:1; visibility:visible; transition:opacity .21s; }
-    .modal-backdrop.hide { opacity:0; visibility:hidden; pointer-events:none; }
-    .modal { min-width:320px; max-width:98vw; background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); z-index:6000; padding:36px 22px 23px 22px; animation:fadeUp .4s; display:flex; flex-direction:column; align-items:stretch; position:relative; }
-    .modal h3 { margin:0 0 18px 0; color:var(--accent2); text-align:center; font-weight:800; font-size:1.26em; letter-spacing:-.2px; }
-    .modal-close { position:absolute; top:13px; right:14px; background:none; border:none; color:var(--accent2); font-size:1.24em; cursor:pointer; font-weight:bold; outline:none; }
-    .modal label { font-weight:600; font-size:.96em; color:var(--text-muted); margin-bottom:4px; }
-    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal textarea { border-radius:7px; border:1.5px solid #253048; background:var(--bg3); color:var(--text); font-size:1em; padding:8px 11px; margin-bottom:13px; margin-top:2px; outline:none; width:100%; box-sizing:border-box; transition:border .13s; }
-    .modal textarea { min-height:54px; resize:vertical; }
-    .modal-btnbar { display:flex; align-items:center; justify-content:flex-end; gap:13px; margin-top:6px; }
-    .modal button[type=submit] { background:linear-gradient(95deg,var(--accent2),var(--accent)); color:#fff; padding:11px 22px; font-size:1em; border:none; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px #1b314e28; margin:6px 0; transition:background .14s; outline:none; }
-    .modal .error { font-size:.98em; color:var(--danger); margin-bottom:7px; min-height:18px; text-align:left; }
-    #detailModal .prod-detail-photo { display:block; width:124px; height:124px; object-fit:cover; border-radius:19px; margin:6px auto 0 auto; box-shadow:0 2px 12px #1b314e22; background:#21293f; }
-    @media (max-width:650px){
-      .container{padding:14px 1vw 23px 1vw;}
-      .card{padding:.8rem .4rem 1.05rem .75rem;}
-      .app-title{font-size:1.2rem;}
-      .prod-card{padding:12px 7px;}
-      .modal{padding:14vw 3vw 7vw 3vw; min-width:unset;}
-      #detailModal .prod-detail-photo{ width:74px; height:74px;}
-      #mobileInstallInstructions{max-width:94vw;font-size:0.96em;}
-      #multiSelectControls{font-size:0.99em; flex-wrap:wrap;}
-    }
-    ::selection{background:var(--accent2); color:#fff;}
-    a{color:var(--accent);}
-    .hidden { display:none !important; }
-  </style>
-</head>
-<body>
-  <!-- LOGIN / SET PIN modal - always shown on load (no auto login) -->
-  <div id="login-modal" style="position:fixed; inset:0; z-index:7000; background:rgba(22,27,34,0.89); display:flex; justify-content:center; align-items:center;">
-    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
-      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" style="display:none">✖</button>
-      <h3 style="text-align:center;color:var(--accent2);margin-bottom:12px">🔐 Dealer Login</h3>
-      <div class="error input-error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
-
-      <label id="pinLabel" for="loginPIN">Create a secure PIN / Password</label>
-      <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" />
-      <!-- FINGERPRINT BUTTON FOR ANDROID/STANDALONE -->
-      <button type="button" id="biometricBtn" class="biometric-btn"><span class="fingerprint-ico">👆🏻</span>Unlock with Fingerprint</button>
-      <div id="biometricErr" class="biometric-err"></div>
-
-      <div style="display:flex; gap:8px; align-items:center;">
-        <button type="submit" id="loginBtn" style="flex:1;">Set PIN</button>
-        <button type="button" id="forgotBtn" style="display:none; background:transparent; border:1px solid #253048; color:var(--text); padding:9px 12px; border-radius:8px; cursor:pointer;">Forgot</button>
-      </div>
-      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data is stored locally in your browser. PIN is hashed before saving.</small>
-    </form>
-  </div>
-  <!-- ...rest of page unchanged... -->
-  <!-- Main app container ... -->
-  <div id="dealerApp" class="" style="display:none;">
-    <div class="container">
-      <header>
-        <div class="logo-wrap">
-          <div class="app-logo" title="Al Rahman Electronics" style="padding:0;">
-            <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" alt="App Logo" style="width:100%;height:100%;border-radius:16px;object-fit:cover;background:#fff;border:none;"/>
-          </div>
-          <span class="app-title">Al Rahman Electronics</span>
-        </div>
-        <div class="top-controls">
-          <button id="installPromptBtn" title="Install as App">📲 Install</button>
-          <button id="installAsAppBtn" title="Install as App (force)">🛠️</button>
-          <button id="settingsBtn" title="Settings (⋮)">⋮</button>
-          <span id="mobileInstallInstructions"></span>
-        </div>
-      </header>
-
-      <div class="main-content">
-        <section class="card" style="animation-delay:.06s">
-          <div class="products-top-actions">
-            <div class="product-search-wrap">
-              <input type="search" placeholder="🔍 Search by name, category, or note..." id="productSearch" autocomplete="off" />
-              <span class="search-icon">&#128269;</span>
-            </div>
-            <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
-            <button type="button" id="exportBtn" class="rounded-sky-btn">Export</button>
-            <button type="button" id="importBtn" class="rounded-sky-btn">Import</button>
-            <input type="file" id="importFile" accept="application/json" style="display:none"/>
-          </div>
-          <div id="multiSelectControls">
-            <label style="display:flex;align-items:center;gap:4px;">
-              <input type="checkbox" id="selectAllCheckbox" title="Select all" />
-              <span style="user-select:none;">Select all</span>
-            </label>
-            <button type="button" id="deleteSelectedBtn" disabled>🗑️ Delete Selected</button>
-            <span id="selectedCountText" style="color:var(--danger);font-weight:600;font-size:0.99em;"></span>
-          </div>
-          <ul class="product-list" id="productList"></ul>
-          <div class="no-products" id="noProducts" style="display:none">No products yet. Click <b>+ Add</b> to get started!</div>
-        </section>
-      </div>
-    </div>
-  </div>
-
-  <!-- Product Add/Edit Modal -->
-  <div class="modal-backdrop hide" id="productModalBackdrop">
-    <form class="modal" id="productModal" autocomplete="off">
-      <button class="modal-close" type="button" id="closeModalBtn" title="Close">✖</button>
-      <h3 id="modalTitle">Add Product</h3>
-      <div class="error" id="modalError" style="min-height:18px"></div>
-      <label for="prodName">Name</label>
-      <input type="text" id="prodName" required maxlength="64" />
-      <label for="prodMrp">MRP (₨)</label>
-      <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
-      <label for="prodCost">Cost Price (₨)</label>
-      <input type="number" id="prodCost" min="0" max="100000" step="0.01"/>
-      <label for="prodQty">Quantity</label>
-      <input type="number" id="prodQty" min="0" max="100000" required />
-      <label for="prodCategory">Category</label>
-      <input type="text" id="prodCategory" maxlength="32" />
-      <label for="prodNotes">Notes</label>
-      <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
-      <span class="modal-file-label">Photo</span>
-      <div class="modal-file-upload-wrap">
-        <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText">
-          <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span id="uploadBtnInnerText">Choose Image</span>
-          <input type="file" id="prodPhoto" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
-        </span>
-        <span id="prodPhotoFileName" style="color:var(--text-muted);font-size:.99em;"></span>
-      </div>
-      <div class="modal-btnbar">
-        <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Delete confirmation modal -->
-  <div class="modal-backdrop hide" id="deleteModalBackdrop">
-    <form class="modal" id="deleteModal">
-      <button class="modal-close" type="button" id="closeDeleteBtn" title="Close">✖</button>
-      <h3>Delete Product</h3>
-      <div style="margin:11px 0 17px 0">Are you sure you want to delete <b id="deleteName"></b>?</div>
-      <div class="modal-btnbar">
-        <button type="button" id="cancelDeleteBtn" class="rounded-sky-btn cancel">Cancel</button>
-        <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px #1b314e28;transition:background .14s;outline:none;">Yes, Delete</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Product Detail Modal -->
-  <div class="modal-backdrop hide" id="detailModalBackdrop">
-    <div class="modal" id="detailModal" tabindex="-1">
-      <button class="modal-close" type="button" id="closeDetailModalBtn" title="Close">✖</button>
-      <h3>Product Details</h3>
-      <div id="detailModalBody"></div>
-    </div>
-  </div>
-
-  <!-- Settings Modal (contains Logout + Reset PIN) -->
-  <div class="modal-backdrop hide" id="settingsBackdrop">
-    <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <button class="modal-close" type="button" id="closeSettingsBtn" title="Close">✖</button>
-      <h3 id="settingsTitle">Settings</h3>
-
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-weight:700">Account</div>
-            <div style="color:var(--text-muted);font-size:.94em;">Logout or reset your PIN</div>
-          </div>
-        </div>
-
-        <button id="logoutBtn" style="padding:10px;border-radius:8px;border:none;background:#2b2f3a;color:var(--text);cursor:pointer;">🔒 Logout</button>
-
-        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;" />
-
-        <div style="font-weight:700">Reset PIN</div>
-        <div style="color:var(--text-muted);font-size:.93em;margin-bottom:6px;">Enter your current PIN, then choose a new one.</div>
-
-        <label for="oldPin">Current PIN</label>
-        <input type="password" id="oldPin" placeholder="Current PIN" maxlength="32" />
-
-        <label for="newPin">New PIN</label>
-        <input type="password" id="newPin" placeholder="New PIN (min 4 chars)" maxlength="32" />
-
-        <label for="confirmPin">Confirm New PIN</label>
-        <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="32" />
-
-        <div class="error" id="resetPinError" style="min-height:18px;"></div>
-
-        <div style="display:flex;justify-content:flex-end;gap:8px;">
-          <button id="resetPinCancel" class="rounded-sky-btn cancel">Cancel</button>
-          <button id="resetPinSubmit" class="rounded-sky-btn">Reset PIN</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <input type="file" id="hiddenImport" accept="application/json" style="display:none">
-
+  <!-- PWA Manifest (Embedded via Data URL) for Chrome Installation -->
   <script>
-    /****************************************************************
-     * PWA manifest & service worker (dynamically created)
-     ****************************************************************/
-    (function createManifestAndServiceWorker() {
-      // ...all the manifest/service worker logic unchanged...
-      const imgIcon = "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true";
-      const manifestObj = {
-        name: "Al Rahman Electronics",
-        short_name: "ARE",
-        description: "Local-only dealer product listing (offline-first)",
-        start_url: "/index.html",
+    const manifestContent = JSON.stringify({
+        name: "Al Rehman Electronics",
+        short_name: "ARE Inventory",
+        description: "Al Rehman Electronics Inventory Management App",
+        start_url: "./index.html",
         display: "standalone",
-        background_color: "#161B22",
-        theme_color: "#161B22",
+        background_color: "#0C1220",
+        theme_color: "#3B82F6",
         icons: [
-          { src: imgIcon, sizes: "192x192", type: "image/png" },
-          { src: imgIcon, sizes: "512x512", type: "image/png" }
+            {
+                src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true",
+                sizes: "192x192",
+                type: "image/png"
+            },
+            {
+                src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true",
+                sizes: "512x512",
+                type: "image/png"
+            }
         ]
-      };
-      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-      const manifestURL = URL.createObjectURL(manifestBlob);
-      (function setManifestLink() {
-        let existing = document.querySelector('link[rel="manifest"]');
-        if (!existing) {
-          existing = document.createElement('link');
-          existing.rel = 'manifest';
-          document.head.appendChild(existing);
-        }
-        existing.href = manifestURL;
-      })();
-      // ...rest of SW creation unchanged...
-      const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v2';
-        const FILES_TO_CACHE = [
-          '/',
-          '/index.html',
-          location.pathname.endsWith('.html') ? location.pathname : '/index.html'
-        ];
-        self.addEventListener('install', event => {
-          event.waitUntil(
-            caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
-          );
-          self.skipWaiting();
-        });
-        self.addEventListener('activate', event => {
-          event.waitUntil(clients.claim());
-        });
-        self.addEventListener('fetch', event => {
-          if (event.request.method !== 'GET') return;
-          event.respondWith(
-            caches.match(event.request).then(response => {
-              return response || fetch(event.request).then(resp => {
-                // Cache new file
-                if (resp && resp.status === 200 && resp.type === 'basic') {
-                  const respClone = resp.clone();
-                  caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, respClone);
-                  });
-                }
-                return resp;
-              }).catch(() => {
-                // If HTML navigation request, fallback to offline page
-                if (event.request.mode === 'navigate' || (event.request.destination === 'document')) {
-                  return caches.match('/index.html');
-                }
-                return undefined;
-              });
-            })
-          );
-        });
-      `;
-      try {
-        const swBlob = new Blob([swScript], { type: 'text/javascript' });
-        const swURL = URL.createObjectURL(swBlob);
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register(swURL).catch(()=>{});
-          });
-        }
-      } catch (e) {}
-    })();
+    });
+    const manifestDataUrl = `data:application/json;base64,${btoa(manifestContent)}`;
+  </script>
+  <link rel="manifest" id="pwa-manifest" href="" />
+  <script>
+    // Set the manifest href using the generated data URL
+    document.getElementById('pwa-manifest').href = manifestDataUrl;
+  </script>
 
-    /**************************************************************
-     * Biometric Auth (Android Fingerprint in standalone PWA)
-     **************************************************************/
-    // Check if WebAuthn & fingerprint is possible (browser + Android + PWA)
-    function isAndroidStandalone() {
-      // Only enable if Chrome/AOSP Chrome, Android and running as PWA
-      return (typeof window !== 'undefined' &&
-        /Android/i.test(navigator.userAgent || "") &&
-        (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) &&
-        /Chrome/.test(navigator.userAgent || "")
-      );
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* Custom style overrides and initialization */
+    :root {
+      --primary-color: #3B82F6; /* blue-500 */
+      --bg-dark: #0C1220; /* Deep Blue/Black */
+      --bg-light: #1E293B; /* slate-800 */
+      --text-light: #F8FAFC; /* slate-50 */
     }
-    // Storage helpers for biometric
-    function setBiometricPINHash(hash) { try { window.localStorage.setItem('dealer-fingerprint-hash', hash); } catch(e){} }
-    function getBiometricPINHash() { try { return window.localStorage.getItem('dealer-fingerprint-hash'); } catch(e){return null;} }
-    function removeBiometricPINHash() { try { window.localStorage.removeItem('dealer-fingerprint-hash'); } catch(e){} }
 
-    // UI elements
-    const biometricBtn = document.getElementById('biometricBtn');
-    const biometricErr = document.getElementById('biometricErr');
-
-    // Helper: on first successful login via PIN, register fingerprint for next logins
-    async function setupBiometricAfterPIN(hash) {
-      // Call this only if in Android PWA and browser/OS allows
-      if (!isAndroidStandalone() || !window.PublicKeyCredential) return;
-      try {
-        // Store the PIN hash for biometric "unlock"
-        setBiometricPINHash(hash);
-      } catch (e) {}
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
     }
-    // Try to unlock with fingerprint
-    async function biometricAttemptUnlock() {
-      biometricErr.style.display = "none";
-      biometricErr.textContent = "";
-      if (!window.PublicKeyCredential || !window.credentials || !isAndroidStandalone()) {
-        biometricErr.textContent = "Device biometric unavailable.";
-        biometricErr.style.display = "";
-        return false;
-      }
-      try {
-        // Simple check using navigator.credentials.get for conditional mediation
-        // (Passkeys not used; just using as biometric prompt only)
-        // For our app, we'll just show the system biometric prompt and trust success for unlock (not passkey)
-        // Only for local auth! (not using publicKey for remote verification)
-        await navigator.credentials.get({
-          publicKey: {
-            challenge: new Uint8Array([21, 31, 41, 51, 61, 71, 81, 91, 101, 111]),
-            timeout: 70000,
-            userVerification: "required",
-            allowCredentials: [] // Let browser/platform pick, prompt biometric/fingerprint
-          },
-          mediation: "conditional" // Only shows biometric if available
-        }).then(
-          function(res) {
-            // Success (fingerprint touch or unlock)
-          },
-          function(err) {
-            if (err && err.name === 'AbortError') return; // user cancelled
-            throw err;
+
+    /* Scrollbar for dark theme */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-light);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    /* Modal Fade In */
+    .modal-enter {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    .modal-enter-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 150ms ease-out, transform 150ms ease-out;
+    }
+    .modal-exit {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .modal-exit-active {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 150ms ease-in, transform 150ms ease-in;
+    }
+
+    /* Service worker status */
+    #pwa-status {
+      transition: opacity 0.3s ease;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-dark': '#0C1220',
+            'bg-light': '#1E293B',
+            'primary': '#3B82F6',
+            'text-light': '#F8FAFC',
           }
-        );
-        // Check stored hash
-        let storedHash = getBiometricPINHash() || window.localStorage.getItem('dealer-hash');
-        if (!storedHash) throw new Error("No PIN set.");
-        // Biometric "unlocked"! Show dealer app
-        showDealerApp();
-        return true;
-      } catch (err) {
-        biometricErr.textContent = "Fingerprint unlock failed" + (err && err.message ? ": " + err.message : ".");
-        biometricErr.style.display = "";
-        return false;
-      }
-    }
-
-    // Show biometric login button only if supported on this device/mode
-    function showBiometricOptionIfSupported() {
-      if (isAndroidStandalone() && window.PublicKeyCredential) {
-        biometricBtn.style.display = "flex";
-        biometricBtn.disabled = false;
-      } else {
-        biometricBtn.style.display = "none";
-      }
-    }
-
-    biometricBtn && (biometricBtn.onclick = function() {
-      biometricBtn.disabled = true;
-      biometricAttemptUnlock().finally(()=>{biometricBtn.disabled = false;});
-    });
-
-    // Remove PIN hash from biometric store on PIN reset
-    function clearBiometricAfterResetPIN() {
-      removeBiometricPINHash();
-    }
-
-    /**************************************************************
-     * PIN hashing & auth helpers
-     **************************************************************/
-    async function hashPIN(pin) {
-      let salt = window.localStorage.getItem('dealer-app-salt');
-      if (!salt) {
-        const arr = new Uint8Array(16);
-        window.crypto.getRandomValues(arr);
-        salt = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-        window.localStorage.setItem('dealer-app-salt', salt);
-      }
-      const encoder = new TextEncoder();
-      try {
-        const baseKey = await window.crypto.subtle.importKey('raw', encoder.encode(pin), 'PBKDF2', false, ['deriveBits']);
-        const rawBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" }, baseKey, 256);
-        const hashArr = new Uint8Array(rawBits);
-        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
-      } catch (e) {
-        const data = encoder.encode(pin + salt);
-        const arrBuf = await window.crypto.subtle.digest('SHA-256', data);
-        const hashArr = new Uint8Array(arrBuf);
-        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
-      }
-    }
-
-    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
-    function showDealerApp() {
-      document.getElementById('dealerApp').style.display = '';
-      document.getElementById('login-modal').style.display = 'none';
-      setTimeout(refreshProductList, 220);
-      if (typeof window.__enablePwaBackHandler === 'function') window.__enablePwaBackHandler();
-    }
-    function showLoginModal(msg) {
-      document.getElementById('dealerApp').style.display = 'none';
-      const loginModal = document.getElementById('login-modal');
-      loginModal.style.display = 'flex';
-      if (msg) { document.getElementById('login-error').textContent = msg; } else { document.getElementById('login-error').textContent = ''; }
-      document.getElementById('loginPIN').value = '';
-      setTimeout(()=>document.getElementById('loginPIN').focus(),120);
-      showBiometricOptionIfSupported();
-    }
-
-    // Always require PIN on load -> do not auto-unlock
-    window.addEventListener('load', ()=> {
-      updatePINUI(getHasPIN());
-      showLoginModal();
-      setTimeout(function() {
-        if ("serviceWorker" in navigator && window.matchMedia('(display-mode: standalone)').matches) {
-          try { history.replaceState({start:true}, document.title, window.location.href); } catch (e) {}
         }
-      }, 180);
-    });
-
-    // Update login UI depending on whether PIN exists
-    const loginBtn = document.getElementById('loginBtn');
-    const loginForm = document.getElementById('loginForm');
-    const loginPIN = document.getElementById('loginPIN');
-    const loginError = document.getElementById('login-error');
-    const pinLabel = document.getElementById('pinLabel');
-
-    function updatePINUI(hasPIN) {
-      if (hasPIN) {
-        loginBtn.textContent = "Unlock";
-        pinLabel.textContent = "Enter your PIN / Password:";
-        loginPIN.placeholder = "Enter PIN or password";
-        loginPIN.autocomplete = "current-password";
-        biometricBtn && (biometricBtn.textContent = "Unlock with Fingerprint");
-      } else {
-        loginBtn.textContent = "Set PIN";
-        pinLabel.textContent = "Create a secure PIN / Password:";
-        loginPIN.placeholder = "Set PIN or password";
-        loginPIN.autocomplete = "new-password";
-        biometricBtn && (biometricBtn.textContent = "Enable Fingerprint (after PIN)");
       }
-      loginError.textContent = '';
-      biometricErr && (biometricErr.textContent = '');
-      showBiometricOptionIfSupported();
     }
+  </script>
+</head>
+<body class="min-h-screen">
 
-    loginForm.onsubmit = async function(e) {
-      e.preventDefault();
-      loginError.textContent = '';
-      const pinVal = (loginPIN.value || '').trim();
-      const hasPIN = getHasPIN();
-      if (!pinVal || pinVal.length < 4) {
-        loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters.";
-        return;
-      }
-      loginBtn.disabled = true;
-      try {
-        const hash = await hashPIN(pinVal);
-        if (!hasPIN) {
-          window.localStorage.setItem('dealer-hash', hash);
-          updatePINUI(true);
-          // On first set, allow storing hash for biometric (Android+standalone only)
-          setupBiometricAfterPIN(hash);
-          loginError.style.color = 'var(--success)';
-          loginError.textContent = "PIN set. Now use it to unlock.";
-          setTimeout(()=>{ loginError.textContent = ''; loginError.style.color=''; },1500);
-          loginBtn.disabled = false;
-          loginPIN.value = '';
-          return;
-        }
-        const userHash = window.localStorage.getItem('dealer-hash');
-        if (userHash === hash) {
-          loginBtn.disabled = false;
-          loginError.textContent = '';
-          // On correct PIN, keep hash in biometric store if Android PWA
-          setupBiometricAfterPIN(hash);
-          showDealerApp();
-        } else {
-          loginBtn.disabled = false;
-          loginError.style.color = '';
-          loginError.textContent = 'Incorrect PIN / Password.';
-        }
-      } catch (ex) {
-        loginBtn.disabled = false;
-        loginError.textContent = 'An error occurred.';
-      }
-    };
+  <!-- PWA Status Indicator -->
+  <div id="pwa-status" class="fixed top-0 right-0 m-4 p-2 text-xs font-semibold rounded-full shadow-lg z-50 transition-colors"
+       style="background-color: #10B981; color: white;">
+      LOADING...
+  </div>
 
-    // from here, rest of app logic unchanged -- settings modal, product list etc
+  <!-- Main Application Container -->
+  <div id="app" class="p-4 md:p-8 max-w-7xl mx-auto hidden">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-slate-700 mb-6">
+      <h1 class="text-4xl font-black text-primary mb-2 md:mb-0">Al Rehman Electronics</h1>
+      <div class="text-sm">
+        <span class="text-slate-400">User ID:</span>
+        <span id="user-id-display" class="font-mono text-text-light text-xs bg-bg-light p-1 rounded-md cursor-help" title="Your unique user ID for persistent storage">
+          Loading...
+        </span>
+        <button onclick="logout()" class="ml-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg transition duration-150">
+            Logout
+        </button>
+      </div>
+    </header>
 
-    /**************************************************************
-     * Settings modal logic: logout + reset PIN
-     **************************************************************/
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsBackdrop = document.getElementById('settingsBackdrop');
-    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const resetPinSubmit = document.getElementById('resetPinSubmit');
-    const resetPinCancel = document.getElementById('resetPinCancel');
-    const resetPinError = document.getElementById('resetPinError');
+    <!-- Product List Section -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-text-light mb-4 md:mb-0">Product Inventory</h2>
+          <div id="multi-select-controls" class="space-x-2 flex hidden">
+            <button onclick="deleteSelectedProducts()" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition duration-150 flex items-center">
+              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Delete Selected (<span id="selected-count">0</span>)
+            </button>
+            <button onclick="clearSelection()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition duration-150">
+              Clear Selection
+            </button>
+          </div>
+        </div>
 
-    settingsBtn.onclick = () => {
-      settingsBackdrop.classList.remove('hide');
-      document.getElementById('oldPin').value = '';
-      document.getElementById('newPin').value = '';
-      document.getElementById('confirmPin').value = '';
-      resetPinError.textContent = '';
-    };
-    closeSettingsBtn.onclick = () => settingsBackdrop.classList.add('hide');
+        <!-- Product Table -->
+        <div class="bg-bg-light rounded-2xl shadow-2xl overflow-hidden">
+          <table class="min-w-full divide-y divide-slate-700">
+            <thead class="bg-slate-700">
+              <tr>
+                <th class="w-10 px-4 py-3 text-left text-xs font-bold text-slate-300 uppercase tracking-wider"></th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-300 uppercase tracking-wider">Product Name</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-300 uppercase tracking-wider">Qty</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-slate-300 uppercase tracking-wider">Price (PKR)</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-slate-300 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="product-list" class="divide-y divide-slate-800">
+              <!-- Products will be injected here -->
+            </tbody>
+          </table>
+          <div id="empty-list-message" class="p-6 text-center text-slate-400 italic hidden">
+            No products found. Add a new product to get started!
+          </div>
+        </div>
 
-    logoutBtn.onclick = () => {
-      settingsBackdrop.classList.add('hide');
-      showLoginModal('You have been logged out.');
-      updatePINUI(getHasPIN());
-    };
+        <!-- Utility Controls: Export/Import -->
+        <div class="mt-6 flex flex-wrap gap-4 justify-start">
+            <button onclick="exportProducts()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition duration-150 flex items-center">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Export JSON
+            </button>
+            <label for="import-file" class="cursor-pointer bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition duration-150 flex items-center">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Import JSON
+            </label>
+            <input type="file" id="import-file" accept="application/json" onchange="importProducts(event.target.files[0])" class="hidden">
+        </div>
 
-    resetPinCancel.onclick = () => {
-      resetPinError.textContent = '';
-      settingsBackdrop.classList.add('hide');
-    };
+      </div>
 
-    resetPinSubmit.onclick = async function() {
-      resetPinError.textContent = '';
-      const oldPin = (document.getElementById('oldPin').value || '').trim();
-      const newPin = (document.getElementById('newPin').value || '').trim();
-      const confirmPin = (document.getElementById('confirmPin').value || '').trim();
+      <!-- Add/Edit Form Section -->
+      <div class="lg:col-span-1 bg-bg-light p-6 rounded-2xl shadow-2xl h-fit sticky top-8">
+        <h2 id="form-title" class="text-2xl font-bold text-primary mb-6">Add New Product</h2>
+        <form id="product-form">
+          <input type="hidden" id="product-id" value="">
 
-      if (!oldPin || oldPin.length < 4) { resetPinError.textContent = "Enter current PIN (min 4 chars)."; return; }
-      if (!newPin || newPin.length < 4) { resetPinError.textContent = "New PIN must be at least 4 characters."; return; }
-      if (newPin !== confirmPin) { resetPinError.textContent = "New PIN and confirmation do not match."; return; }
+          <div class="mb-4">
+            <label for="product-name" class="block text-sm font-medium text-slate-300 mb-1">Product Name</label>
+            <input type="text" id="product-name" required class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g., LED TV 42 inch">
+          </div>
 
-      resetPinSubmit.disabled = true;
-      try {
-        const oldHash = await hashPIN(oldPin);
-        const stored = window.localStorage.getItem('dealer-hash');
-        if (stored !== oldHash) {
-          resetPinError.textContent = "Current PIN is incorrect.";
-          resetPinSubmit.disabled = false;
-          return;
-        }
-        const newHash = await hashPIN(newPin);
-        window.localStorage.setItem('dealer-hash', newHash);
-        // Also update fingerprinted hash
-        setBiometricPINHash(newHash);
-        // feedback and close
-        resetPinError.style.color = 'var(--success)';
-        resetPinError.textContent = "PIN updated successfully.";
-        setTimeout(()=>{
-          resetPinError.textContent = '';
-          resetPinError.style.color = '';
-          settingsBackdrop.classList.add('hide');
-        }, 1000);
-      } catch (err) {
-        resetPinError.textContent = "Failed to update PIN.";
-      }
-      resetPinSubmit.disabled = false;
-    };
+          <div class="mb-4">
+            <label for="product-qty" class="block text-sm font-medium text-slate-300 mb-1">Quantity</label>
+            <input type="number" id="product-qty" required min="1" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g., 50">
+          </div>
 
-    // The rest of your JavaScript unchanged (product UI, modals, etc)
-    /**************************************************************
-     * Products store & UI (same as previous working code)
-     **************************************************************/
-    const productListElem = document.getElementById('productList');
-    const noProductsElem = document.getElementById('noProducts');
+          <div class="mb-6">
+            <label for="product-price" class="block text-sm font-medium text-slate-300 mb-1">Price (PKR)</label>
+            <input type="number" id="product-price" required min="0" step="0.01" class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-text-light focus:outline-none focus:ring-2 focus:ring-primary" placeholder="e.g., 55000.00">
+          </div>
+
+          <button type="submit" id="form-submit-btn" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-150">
+            Add Product
+          </button>
+          <button type="button" onclick="cancelEdit()" id="form-cancel-btn" class="w-full mt-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-xl transition duration-150 hidden">
+            Cancel Edit
+          </button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Login/Auth Screen -->
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-bg-light p-8 md:p-12 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-700">
+      <h2 class="text-3xl font-bold text-center text-primary mb-6">Welcome Back</h2>
+      <p class="text-center text-slate-400 mb-8">Sign in to manage your inventory.</p>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-medium text-slate-300 mb-1">Username</label>
+          <input type="text" id="username" value="admin" required class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+          <input type="password" id="password" value="123" required class="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 text-text-light focus:outline-none focus:ring-2 focus:ring-primary">
+        </div>
+        <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-150">
+          Log In
+        </button>
+      </form>
+
+      <div class="relative flex justify-center items-center my-6">
+          <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-slate-700"></div>
+          </div>
+          <div class="relative bg-bg-light px-4 text-sm text-slate-400">OR</div>
+      </div>
+
+      <!-- Fingerprint Auth Button -->
+      <div class="text-center">
+          <button id="fingerprint-login-btn" onclick="startBiometricLogin()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition duration-150 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+              <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 1.657-1.343 3-3 3s-3-1.343-3-3V7a3 3 0 013-3h3a3 3 0 013 3v4z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15.5l-2.5-2.5m-3 3l-2.5-2.5m8 0l-3-3"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17a5 5 0 01-10 0"></path></svg>
+              Scan Fingerprint to Unlock
+          </button>
+          <button id="register-fingerprint-btn" onclick="startBiometricRegistration()" class="mt-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition duration-150 hidden">
+            Register Fingerprint for Next Time
+          </button>
+      </div>
+
+      <p id="biometric-status" class="mt-4 text-sm text-center text-red-400 hidden">
+        Biometric authentication is not supported or configured on this device/browser.
+      </p>
+
+    </div>
+  </div>
+
+  <!-- Custom Modal Container -->
+  <div id="custom-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+    <div id="custom-modal-content" class="bg-bg-light p-6 rounded-xl shadow-2xl max-w-sm w-full modal-enter border border-primary transition-all duration-300">
+      <h3 id="modal-title" class="text-xl font-bold text-primary mb-4"></h3>
+      <p id="modal-message" class="text-slate-300 mb-6"></p>
+      <div id="modal-actions" class="flex justify-end space-x-3">
+        <!-- Actions here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase/PWA/App Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global Firebase/App Variables
+    let app, db, auth;
     let products = [];
-
-    // -- Multi-select state
-    let multiSelectMode = false;
     let selectedProductIds = new Set();
+    let currentEditingProductId = null;
+    let userId = null;
+    let isAuthReady = false;
 
-    function saveProducts() {
-      try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){ console.error("Saving products failed",e); }
-      refreshProductList();
-    }
-    function loadProducts() {
-      products = [];
-      try {
-        const str = window.localStorage.getItem('dealer-products');
-        if (str) products = JSON.parse(str) || [];
-      } catch (e) { products = []; }
-    }
-    function escapeHTML(v) {
-      if (typeof v !== "string") return v === undefined || v === null ? "" : String(v);
-      return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c]));
+    // --- FIREBASE INITIALIZATION AND AUTH ---
+
+    setLogLevel('Debug');
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+    // Custom Modal Functions (Replacing alert/confirm)
+    const modalBackdrop = document.getElementById('custom-modal-backdrop');
+    const modalContent = document.getElementById('custom-modal-content');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalActions = document.getElementById('modal-actions');
+
+    /**
+     * Shows a custom modal dialog (alert/confirmation replacement).
+     * @param {string} title
+     * @param {string} message
+     * @param {boolean} isConfirm - If true, shows OK and Cancel. If false, shows only OK.
+     * @returns {Promise<boolean>} Resolves true for OK, false/rejects for Cancel/close.
+     */
+    function showModal(title, message, isConfirm = false) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalActions.innerHTML = ''; // Clear previous actions
+
+        modalContent.classList.remove('modal-exit-active', 'modal-exit');
+        modalContent.classList.add('modal-enter');
+        modalBackdrop.classList.remove('hidden');
+
+        return new Promise(resolve => {
+            const okButton = document.createElement('button');
+            okButton.textContent = isConfirm ? 'Confirm' : 'OK';
+            okButton.className = 'bg-primary hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150';
+            okButton.onclick = () => {
+                modalBackdrop.classList.add('hidden');
+                resolve(true);
+            };
+            modalActions.appendChild(okButton);
+
+            if (isConfirm) {
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.className = 'bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-150';
+                cancelButton.onclick = () => {
+                    modalBackdrop.classList.add('hidden');
+                    resolve(false);
+                };
+                modalActions.prepend(cancelButton); // Prepend so Cancel is on the left
+            }
+        });
     }
 
-    function handleCheckboxChange(productId, checked) {
-      if (checked) selectedProductIds.add(productId);
-      else selectedProductIds.delete(productId);
-      updateMultiSelectControls();
+    // --- FIREBASE SETUP & AUTH ---
+
+    if (Object.keys(firebaseConfig).length) {
+        app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                isAuthReady = true;
+                document.getElementById('user-id-display').textContent = userId;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                console.log("Firebase Auth Ready. User ID:", userId);
+                // Start listening to data
+                listenToProducts();
+            } else {
+                // Not authenticated, show login screen
+                userId = null;
+                isAuthReady = true; // Still ready, just not logged in
+                document.getElementById('app').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('user-id-display').textContent = 'N/A';
+            }
+        });
+
+        const initialAuth = async () => {
+            try {
+                const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialToken) {
+                    await signInWithCustomToken(auth, initialToken);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+                await showModal('Authentication Failed', 'Could not establish connection to Firebase: ' + error.message);
+                document.getElementById('app').classList.add('hidden');
+            }
+        };
+        initialAuth();
+
+    } else {
+        showModal('Error', 'Firebase Configuration missing. App cannot save/load data persistently.', false);
+        document.getElementById('app').innerHTML = '<p class="text-red-500 text-center mt-20">FIREBASE CONFIGURATION MISSING. Cannot proceed with data operations.</p>';
+    }
+
+    // --- FIRESTORE OPERATIONS ---
+
+    function getProductsCollectionRef() {
+        if (!db || !userId) throw new Error("Database not ready or User not logged in.");
+        // Private data path for this app: /artifacts/{appId}/users/{userId}/products
+        return collection(db, `artifacts/${appId}/users/${userId}/products`);
+    }
+
+    function listenToProducts() {
+        if (!isAuthReady || !userId) return;
+
+        // Note: Avoiding orderBy for simplicity, as per instructions. Data will be sorted in-memory.
+        const q = query(getProductsCollectionRef());
+
+        onSnapshot(q, (snapshot) => {
+            const fetchedProducts = [];
+            snapshot.forEach((doc) => {
+                fetchedProducts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            // Sort in-memory (e.g., by name)
+            products = fetchedProducts.sort((a, b) => a.name.localeCompare(b.name));
+            refreshProductList();
+        }, (error) => {
+            console.error("Error listening to products:", error);
+            showModal('Data Error', 'Failed to load real-time data: ' + error.message, false);
+        });
+    }
+
+    // --- PRODUCT CRUD FUNCTIONS ---
+
+    document.getElementById('product-form').addEventListener('submit', handleProductSubmit);
+
+    async function handleProductSubmit(event) {
+        event.preventDefault();
+        const name = document.getElementById('product-name').value.trim();
+        const qty = parseInt(document.getElementById('product-qty').value, 10);
+        const price = parseFloat(document.getElementById('product-price').value);
+        const productId = document.getElementById('product-id').value;
+
+        const productData = {
+            name: name,
+            qty: qty,
+            price: price,
+            updatedAt: Date.now()
+        };
+
+        try {
+            if (productId) {
+                // Edit existing product
+                await updateDoc(doc(db, getProductsCollectionRef().path, productId), productData);
+                await showModal('Success', `${name} updated successfully!`);
+            } else {
+                // Add new product
+                await addDoc(getProductsCollectionRef(), productData);
+                await showModal('Success', `${name} added successfully!`);
+            }
+            // Reset form
+            document.getElementById('product-form').reset();
+            cancelEdit();
+        } catch (error) {
+            console.error("CRUD Error:", error);
+            await showModal('Error', `Failed to save product: ${error.message}`);
+        }
+    }
+
+    function refreshProductList() {
+        const listElement = document.getElementById('product-list');
+        listElement.innerHTML = '';
+        document.getElementById('empty-list-message').classList.toggle('hidden', products.length > 0);
+
+        products.forEach(product => {
+            const isSelected = selectedProductIds.has(product.id);
+            const row = document.createElement('tr');
+            row.className = `border-b border-slate-800 hover:bg-slate-700 transition duration-100 ${isSelected ? 'bg-slate-700' : 'bg-bg-light'}`;
+            row.innerHTML = `
+                <td class="px-4 py-3">
+                    <input type="checkbox" data-id="${product.id}" onchange="toggleSelection('${product.id}')" ${isSelected ? 'checked' : ''}
+                           class="form-checkbox h-5 w-5 text-primary bg-slate-600 border-slate-500 rounded focus:ring-primary cursor-pointer">
+                </td>
+                <td class="px-6 py-3 font-semibold text-text-light">${product.name}</td>
+                <td class="px-6 py-3 text-slate-300">${product.qty}</td>
+                <td class="px-6 py-3 font-mono text-emerald-400">${product.price ? product.price.toFixed(2) : '0.00'}</td>
+                <td class="px-6 py-3 text-right whitespace-nowrap space-x-2">
+                    <button onclick="editProduct('${product.id}')" class="text-primary hover:text-blue-400 font-medium transition duration-150">Edit</button>
+                    <button onclick="deleteProduct('${product.id}')" class="text-red-500 hover:text-red-400 font-medium transition duration-150">Delete</button>
+                </td>
+            `;
+            listElement.appendChild(row);
+        });
+
+        updateMultiSelectControls();
+    }
+
+    function editProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+
+        document.getElementById('product-id').value = id;
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-qty').value = product.qty;
+        document.getElementById('product-price').value = product.price;
+
+        document.getElementById('form-title').textContent = `Edit Product: ${product.name}`;
+        document.getElementById('form-submit-btn').textContent = 'Update Product';
+        document.getElementById('form-cancel-btn').classList.remove('hidden');
+        currentEditingProductId = id;
+    }
+
+    function cancelEdit() {
+        document.getElementById('product-form').reset();
+        document.getElementById('product-id').value = '';
+        document.getElementById('form-title').textContent = 'Add New Product';
+        document.getElementById('form-submit-btn').textContent = 'Add Product';
+        document.getElementById('form-cancel-btn').classList.add('hidden');
+        currentEditingProductId = null;
+    }
+
+    async function deleteProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+
+        const confirmed = await showModal('Confirm Deletion', `Are you sure you want to permanently delete product: ${product.name}?`, true);
+
+        if (confirmed) {
+            try {
+                await deleteDoc(doc(db, getProductsCollectionRef().path, id));
+                selectedProductIds.delete(id);
+                await showModal('Success', `${product.name} deleted.`);
+            } catch (error) {
+                console.error("Delete Error:", error);
+                await showModal('Error', 'Failed to delete product: ' + error.message);
+            }
+        }
+    }
+
+    // --- MULTI-SELECT AND BATCH DELETE ---
+
+    window.toggleSelection = function (id) {
+        if (selectedProductIds.has(id)) {
+            selectedProductIds.delete(id);
+        } else {
+            selectedProductIds.add(id);
+        }
+        refreshProductList(); // Re-render to update checkbox status and controls
+    }
+
+    window.clearSelection = function () {
+        selectedProductIds.clear();
+        refreshProductList();
     }
 
     function updateMultiSelectControls() {
-      const multiSelectControls = document.getElementById('multiSelectControls');
-      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-      const selectedCountText = document.getElementById('selectedCountText');
-      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-
-      if (selectedProductIds.size > 0) {
-        multiSelectMode = true;
-        multiSelectControls.classList.add('active');
-        deleteSelectedBtn.disabled = false;
-        selectedCountText.textContent = `${selectedProductIds.size} selected`;
-      } else {
-        deleteSelectedBtn.disabled = true;
-        selectedCountText.textContent = "";
-      }
-
-      // Decide whether hide controls if none selected
-      if (!multiSelectMode && selectedProductIds.size === 0) {
-        multiSelectControls.classList.remove('active');
-      } else {
-        multiSelectControls.classList.add('active');
-      }
-
-      // Select all checkbox indeterminate
-      if (products.length && selectedProductIds.size === products.length) {
-        selectAllCheckbox.checked = true;
-        selectAllCheckbox.indeterminate = false;
-      } else if (selectedProductIds.size > 0) {
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = true;
-      } else {
-        selectAllCheckbox.checked = false;
-        selectAllCheckbox.indeterminate = false;
-      }
+        const count = selectedProductIds.size;
+        document.getElementById('selected-count').textContent = count;
+        document.getElementById('multi-select-controls').classList.toggle('hidden', count === 0);
     }
 
-    function createProductCard(product, idx) {
-      const li = document.createElement('li');
-      li.className = 'prod-card';
-      li.setAttribute('tabindex','0');
-      setTimeout(()=>li.classList.add('show'), 121+idx*64);
-      let imgHTML = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="Product Photo">` : `<span>📦</span>`;
-      const nameSafe = escapeHTML(product.name || "Unnamed");
-      const cat = product.category ? `<span class="prod-cat">${escapeHTML(String(product.category)).slice(0,18)}</span>` : '';
-      const qtyNum = Number(product.qty) || 0;
-      const mrpNum = Number(product.mrp) || 0;
-      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
+    window.deleteSelectedProducts = async function () {
+        if (selectedProductIds.size === 0) return;
 
-      // Multi-select checkbox
-      let checkboxHTML = `<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" tabindex="0" ${selectedProductIds.has(product.id) ? "checked" : ""}/>`;
+        const confirmed = await showModal('Confirm Batch Delete', `Are you sure you want to permanently delete ${selectedProductIds.size} selected products?`, true);
 
-      li.innerHTML = `
-        ${checkboxHTML}
-        <div class="prod-img">${imgHTML}</div>
-        <div class="prod-main-details">
-          <div class="prod-name">${nameSafe}${cat}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}${costNum!==null?` <span style="color:var(--text-muted);font-size:.928em;">(Cost: ₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})})</span>`:""}</div>
-          ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
-        </div>
-        <div class="prod-actions">
-          <button type="button" title="Edit" class="edit" data-id="${product.id}">✏️</button>
-        </div>
-      `;
-
-      // highlight selection
-      if (selectedProductIds.has(product.id)) li.classList.add('selected');
-
-      // Checkboxes
-      const checkbox = li.querySelector('.prod-select-checkbox');
-      if (checkbox) {
-        checkbox.addEventListener('change', (e) => {
-          handleCheckboxChange(product.id, checkbox.checked);
-        });
-        checkbox.addEventListener('click', (e)=>e.stopPropagation()); // don't fire detail modal
-        checkbox.addEventListener('keydown', (e)=>e.stopPropagation());
-      }
-
-      const editBtn = li.querySelector('.edit');
-      if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
-
-      li.addEventListener('click', function(e){
-        if(e.target.classList.contains('prod-select-checkbox')) return;
-        if(!e.target.closest('.prod-actions')) showDetailModal(product);
-      });
-      li.addEventListener('keydown', function(e){
-        if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { e.preventDefault(); showDetailModal(product); }
-      });
-      return li;
-    }
-
-    /**************************************************************
-     * Multi-select controls
-     **************************************************************/
-
-    document.getElementById("selectAllCheckbox").addEventListener("change", function() {
-      if (this.checked) {
-        products.forEach(prod => selectedProductIds.add(prod.id));
-      } else {
-        selectedProductIds.clear();
-      }
-      refreshProductList();
-      updateMultiSelectControls();
-    });
-
-    document.getElementById("deleteSelectedBtn").onclick = function() {
-      if (selectedProductIds.size === 0) return;
-      if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return;
-      products = products.filter(p => !selectedProductIds.has(p.id));
-      selectedProductIds.clear();
-      saveProducts();
-      updateMultiSelectControls();
-    };
-
-    /**************************************************************
-     * Detail modal
-     **************************************************************/
-    const detailModalBackdrop = document.getElementById('detailModalBackdrop');
-    const detailModalBody = document.getElementById('detailModalBody');
-
-    function showDetailModal(product) {
-      const nameSafe = escapeHTML(product.name || 'Unnamed');
-      const photoBlock = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
-      const mrpNum = Number(product.mrp) || 0;
-      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
-
-      detailModalBody.innerHTML = `
-        <div style="text-align:center;">${photoBlock}</div>
-        <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
-          <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
-          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
-          <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
-          <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
-          ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
-        </ul>
-        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
-      `;
-      detailModalBackdrop.classList.remove('hide');
-      setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
-    }
-
-    document.getElementById('closeDetailModalBtn').onclick = function(){ detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML = ''; };
-
-    document.addEventListener('keydown', function(e){
-      if (e.key === "Escape") {
-        if (!detailModalBackdrop.classList.contains('hide')) { detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML=''; }
-        if (!productModalBackdrop.classList.contains('hide')) productModalBackdrop.classList.add('hide');
-        if (!deleteModalBackdrop.classList.contains('hide')) deleteModalBackdrop.classList.add('hide');
-        if (!settingsBackdrop.classList.contains('hide')) settingsBackdrop.classList.add('hide');
-      }
-    });
-
-    /**************************************************************
-     * Search
-     **************************************************************/
-    const searchInput = document.getElementById('productSearch');
-    searchInput.addEventListener('input', function(){ refreshProductList(); });
-    searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
-
-    /**************************************************************
-     * Refresh product list
-     **************************************************************/
-    function refreshProductList() {
-      loadProducts();
-      productListElem.innerHTML = '';
-      let q = (searchInput.value || '').trim().toLowerCase();
-      let filtered = !q ? products : products.filter(prod =>
-        (String(prod.name||"").toLowerCase().includes(q)) ||
-        (String(prod.category||"").toLowerCase().includes(q)) ||
-        (String(prod.notes||"").toLowerCase().includes(q))
-      );
-      if (!filtered.length) {
-        noProductsElem.style.display = "";
-        document.getElementById('multiSelectControls').classList.remove('active');
-        return;
-      }
-      noProductsElem.style.display = "none";
-      filtered.sort((a,b) => (Number(b.qty)-Number(a.qty)) || (String(a.name||'').localeCompare(String(b.name||''))));
-      filtered.forEach((prod,i)=>productListElem.appendChild(createProductCard(prod,i)));
-      updateMultiSelectControls();
-    }
-
-    /**************************************************************
-     * Add / Edit product modal
-     **************************************************************/
-    let productEditing = null;
-    const prodName = document.getElementById('prodName');
-    const prodMrp = document.getElementById('prodMrp');
-    const prodCost = document.getElementById('prodCost');
-    const prodQty = document.getElementById('prodQty');
-    const prodCategory = document.getElementById('prodCategory');
-    const prodNotes = document.getElementById('prodNotes');
-    const prodPhoto = document.getElementById('prodPhoto');
-    const productModalBackdrop = document.getElementById('productModalBackdrop');
-    const productModal = document.getElementById('productModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalError = document.getElementById('modalError');
-    const prodPhotoFileName = document.getElementById('prodPhotoFileName');
-    const uploadBtnInnerText = document.getElementById('uploadBtnInnerText');
-
-    function showProductModal(mode, product) {
-      productModal.reset();
-      modalError.textContent = '';
-      // Clear the file input display
-      prodPhotoFileName.textContent = '';
-      uploadBtnInnerText.textContent = 'Choose Image';
-      if (mode === 'add') {
-        modalTitle.textContent = "Add Product";
-        productEditing = null;
-        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = ""; prodNotes.value = ""; prodPhoto.value = "";
-      } else {
-        modalTitle.textContent = "Edit Product";
-        productEditing = product;
-        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = "";
-      }
-      productModalBackdrop.classList.remove('hide');
-      setTimeout(()=>prodName.focus(),150);
-    }
-
-    // Show file chosen name (if any)
-    prodPhoto.addEventListener('change', function() {
-      if (prodPhoto.files && prodPhoto.files.length) {
-        prodPhotoFileName.textContent = prodPhoto.files[0].name;
-        uploadBtnInnerText.textContent = "Image Selected";
-      } else {
-        prodPhotoFileName.textContent = '';
-        uploadBtnInnerText.textContent = 'Choose Image';
-      }
-    });
-
-    document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
-    document.getElementById('closeModalBtn').onclick = ()=>productModalBackdrop.classList.add('hide');
-
-    productModal.onsubmit = async function(e) {
-      e.preventDefault();
-      modalError.textContent = "";
-      const name = (prodName.value || '').trim();
-      const mrpVal = prodMrp.value;
-      const costVal = prodCost.value;
-      const qtyVal = prodQty.value;
-      const category = (prodCategory.value || '').trim();
-      const notes = (prodNotes.value || '').trim();
-
-      if (!name) { modalError.textContent = "Name required."; return; }
-      if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
-      if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
-
-      let photoData = null;
-      if (prodPhoto && prodPhoto.files && prodPhoto.files[0]) {
-        try { photoData = await readFileAsDataURL(prodPhoto.files[0]); } catch (err) {}
-      } else if (productEditing && productEditing.photo) {
-        photoData = productEditing.photo;
-      }
-
-      const productObj = {
-        id: productEditing ? productEditing.id : genID(),
-        name,
-        mrp: Number(mrpVal),
-        cost: costVal !== "" ? Number(costVal) : null,
-        qty: Number(qtyVal),
-        category,
-        notes,
-        photo: photoData
-      };
-
-      if (!productEditing) products.push(productObj);
-      else {
-        const idx = products.findIndex(p => p.id === productEditing.id);
-        if (idx >= 0) products[idx] = productObj; else products.push(productObj);
-      }
-      saveProducts();
-      productModalBackdrop.classList.add('hide');
-      // Exit multi-select
-      selectedProductIds.clear();
-      updateMultiSelectControls();
-    };
-
-    function readFileAsDataURL(file) {
-      return new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    /**************************************************************
-     * Delete modal
-     **************************************************************/
-    const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
-    const deleteModal = document.getElementById('deleteModal');
-    const deleteName = document.getElementById('deleteName');
-    let productToDelete = null;
-
-    function showDeleteModal(product) {
-      deleteModalBackdrop.classList.remove('hide');
-      deleteName.textContent = product.name || '';
-      productToDelete = product;
-      setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60);
-    }
-
-    document.getElementById('closeDeleteBtn').onclick =
-    document.getElementById('cancelDeleteBtn').onclick = () => {
-      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
-    };
-
-    deleteModal.onsubmit = function(e){
-      e.preventDefault();
-      if (!productToDelete) return;
-      products = products.filter(p => p.id !== productToDelete.id);
-      saveProducts();
-      deleteModalBackdrop.classList.add('hide'); productToDelete = null;
-      // Remove from multi-select, if any
-      selectedProductIds.delete(productToDelete.id);
-      updateMultiSelectControls();
-    };
-
-    function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
-
-    /**************************************************************
-     * Export / Import
-     **************************************************************/
-    document.getElementById('exportBtn').onclick = function() {
-      const dataStr = JSON.stringify(products || [], null, 2);
-      const blob = new Blob([dataStr], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = 'dealer-products-backup.json'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url);
-      setTimeout(()=>{ document.body.removeChild(a); },200);
-    };
-
-    document.getElementById('importBtn').onclick = ()=>document.getElementById('importFile').click();
-    document.getElementById('importFile').onchange = function(evt) {
-      let file = evt.target.files[0];
-      if (!file) return;
-      let reader = new FileReader();
-      reader.onload = function(e){
-        try {
-          let arr = JSON.parse(e.target.result);
-          if (Array.isArray(arr)) {
-            arr.forEach(prod => { if (!prod.id) prod.id = genID(); });
-            products = arr;
-            saveProducts();
-          } else throw new Error("Not an array");
-        } catch (err) {
-          alert("Invalid file - import failed.");
+        if (confirmed) {
+            try {
+                const deletePromises = Array.from(selectedProductIds).map(id =>
+                    deleteDoc(doc(db, getProductsCollectionRef().path, id))
+                );
+                await Promise.all(deletePromises);
+                selectedProductIds.clear();
+                await showModal('Success', `${deletePromises.length} products deleted successfully.`);
+            } catch (error) {
+                console.error("Batch Delete Error:", error);
+                await showModal('Error', 'Failed to delete one or more products: ' + error.message);
+            }
         }
-      };
-      reader.readAsText(file);
-      evt.target.value = '';
+    }
+
+    // --- EXPORT/IMPORT FEATURES ---
+
+    window.exportProducts = function () {
+        if (products.length === 0) {
+            showModal('Export Failed', 'No products to export.', false);
+            return;
+        }
+        const dataStr = JSON.stringify(products.map(p => ({
+            name: p.name,
+            qty: p.qty,
+            price: p.price
+        })), null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'al-rehman-electronics-inventory.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
-    /**************************************************************
-     * Initial load
-     **************************************************************/
-    window.addEventListener('load', function() {
-      loadProducts();
-      // do not auto-show app; user must login each time
+    window.importProducts = async function (file) {
+        if (!file) return;
+
+        try {
+            // Helper to read file as text
+            const text = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+
+            let arr = JSON.parse(text);
+            if (!Array.isArray(arr)) throw new Error('Invalid file - data not array');
+
+            // Validate and clean up imported data
+            arr = arr.filter(prod => prod && typeof prod === 'object' && 'name' in prod && 'qty' in prod && 'price' in prod);
+            if (!arr.length) throw new Error('No valid products in file!');
+
+            const confirmed = await showModal('Confirm Import', `Import will OVERWRITE your current inventory with ${arr.length} product(s). Are you sure?`, true);
+
+            if (!confirmed) return;
+
+            // 1. Delete all current products
+            const currentDocs = await getDocs(getProductsCollectionRef());
+            const deletePromises = currentDocs.docs.map(d => deleteDoc(d.ref));
+            await Promise.all(deletePromises);
+
+            // 2. Add all imported products
+            const addPromises = arr.map(product => addDoc(getProductsCollectionRef(), product));
+            await Promise.all(addPromises);
+
+            // Data listener (onSnapshot) will handle the UI update.
+            document.getElementById('import-file').value = ''; // Clear file input
+            await showModal('Import Successful', 'Your inventory has been replaced with the imported data.');
+
+        } catch (ex) {
+            console.error("Import Failed:", ex);
+            document.getElementById('import-file').value = '';
+            await showModal('Import Failed', "Could not import products: " + (ex.message || ex));
+        }
+    };
+
+    // --- PWA SERVICE WORKER REGISTRATION (IMPROVED) ---
+
+    // Define the Service Worker content as a Blob/URL
+    const swCode = `
+        const CACHE_NAME = 'are-inventory-cache-v1';
+        const urlsToCache = [
+            './index.html',
+            'https://cdn.tailwindcss.com',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap',
+            // Add other critical static assets here if needed, like the Firebase JS files
+        ];
+
+        self.addEventListener('install', event => {
+            console.log('Service Worker: Installing...');
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(cache => {
+                        return cache.addAll(urlsToCache);
+                    })
+            );
+        });
+
+        self.addEventListener('fetch', event => {
+            // Prioritize cache, fall back to network for all requests
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => {
+                        // Cache hit - return response
+                        if (response) {
+                            return response;
+                        }
+                        // Not in cache - fetch from network
+                        return fetch(event.request);
+                    })
+                    .catch(() => {
+                        // If both cache and network fail (e.g., offline)
+                        // For a SPA like this, returning the cached index.html is the best fallback
+                        return caches.match('./index.html');
+                    })
+            );
+        });
+
+        self.addEventListener('activate', event => {
+            console.log('Service Worker: Activating...');
+            // Clean up old caches
+            event.waitUntil(
+                caches.keys().then(cacheNames => {
+                    return Promise.all(
+                        cacheNames.filter(name => name !== CACHE_NAME)
+                                  .map(name => caches.delete(name))
+                    );
+                })
+            );
+        });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+
+    function registerServiceWorker() {
+        const statusElement = document.getElementById('pwa-status');
+        statusElement.textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE (Cached)';
+        statusElement.style.backgroundColor = navigator.onLine ? '#10B981' : '#F59E0B';
+        statusElement.style.animation = navigator.onLine ? 'none' : 'pulse 1.5s infinite';
+
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Register the Service Worker using the generated Blob URL
+                navigator.serviceWorker.register(swUrl, { scope: './' })
+                    .then(reg => {
+                        console.log('Service Worker Registered. Scope is ' + reg.scope);
+                        // Listen for online/offline changes
+                        window.addEventListener('online', () => updatePWAStatus(true));
+                        window.addEventListener('offline', () => updatePWAStatus(false));
+                    })
+                    .catch(err => console.error('Service Worker registration failed: ', err));
+            });
+        }
+    }
+
+    function updatePWAStatus(isOnline) {
+        const statusElement = document.getElementById('pwa-status');
+        if (isOnline) {
+            statusElement.textContent = 'ONLINE';
+            statusElement.style.backgroundColor = '#10B981'; // green-500
+            statusElement.style.animation = 'none';
+        } else {
+            statusElement.textContent = 'OFFLINE (Cached)';
+            statusElement.style.backgroundColor = '#F59E0B'; // amber-500
+            statusElement.style.animation = 'pulse 1.5s infinite';
+            showModal('Offline Mode', 'You are now offline. The app is running from the cache. Data changes will sync when you regain connection.', false);
+        }
+    }
+
+    // --- STANDARD LOGIN / LOGOUT ---
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Hardcoded Credentials Check (Existing Feature Retained)
+        if (username === 'admin' && password === '123') {
+            await showModal('Login Success', 'Redirecting to dashboard...');
+
+            // On successful hardcoded login, we enable biometric registration.
+            document.getElementById('register-fingerprint-btn').classList.remove('hidden');
+
+            // Ensure the user is signed in to Firebase to proceed to the app
+            if (!auth.currentUser) {
+                // If not signed in (e.g., initial auth failed), try anonymous sign-in now
+                await signInAnonymously(auth);
+            }
+
+        } else {
+            await showModal('Login Failed', 'Invalid username or password.', false);
+        }
     });
+
+    window.logout = async function() {
+        const confirmed = await showModal('Confirm Logout', 'Are you sure you want to log out?', true);
+        if (confirmed) {
+            try {
+                await signOut(auth);
+                await showModal('Logged Out', 'You have been successfully logged out.');
+                document.getElementById('register-fingerprint-btn').classList.add('hidden'); // Hide register button until next login
+            } catch (error) {
+                console.error("Logout error:", error);
+                await showModal('Error', 'Failed to log out: ' + error.message);
+            }
+        }
+    }
+
+    // --- BIOMETRIC FINGERPRINT (WEBAUTHN) IMPLEMENTATION ---
+
+    const CRED_KEY = 'dealer-biometric-credential';
+
+    function checkBiometricSupport() {
+        const btn = document.getElementById('fingerprint-login-btn');
+        const status = document.getElementById('biometric-status');
+        if (window.isSecureContext && navigator.credentials && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
+             PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(isAvailable => {
+                if (isAvailable) {
+                    btn.disabled = false;
+                    status.classList.add('hidden');
+                    // Check if credential is already registered locally
+                    if (localStorage.getItem(CRED_KEY)) {
+                        document.getElementById('register-fingerprint-btn').classList.add('hidden'); // Already registered, hide button
+                    } else {
+                        // User needs to log in first before registering, so leave the register button hidden initially
+                    }
+                } else {
+                    btn.disabled = true;
+                    status.textContent = 'Biometric hardware not detected or verified by the platform.';
+                    status.classList.remove('hidden');
+                }
+             });
+        } else {
+            btn.disabled = true;
+            status.textContent = 'Biometric authentication API (WebAuthn) is not supported in this browser or is not secure (requires HTTPS).';
+            status.classList.remove('hidden');
+        }
+    }
+
+    window.startBiometricRegistration = async function () {
+        if (!isAuthReady || !userId) {
+            return showModal('Error', 'Please log in with username/password first to register biometrics.');
+        }
+
+        try {
+            const userName = document.getElementById('username').value || 'admin';
+            const userDisplayName = 'Al Rehman Inventory User';
+
+            // 1. Generate a challenge (simulated server-side)
+            const challenge = new Uint8Array(32);
+            window.crypto.getRandomValues(challenge);
+
+            const publicKeyCredentialCreationOptions = {
+                challenge: challenge,
+                rp: { name: "Al Rehman Electronics" }, // Relying Party
+                user: {
+                    // Convert Firebase UID to an ArrayBuffer for the WebAuthn API
+                    id: new TextEncoder().encode(userId),
+                    name: userName,
+                    displayName: userDisplayName
+                },
+                pubKeyCredParams: [{ alg: -7, type: "public-key" }], // ES256
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform",
+                    userVerification: "required",
+                    requireResidentKey: false
+                },
+                timeout: 60000,
+                attestation: "none" // Changed from 'direct' to 'none' for simplicity in a single-file environment
+            };
+
+            await showModal('Registering Biometric', 'Please use your fingerprint/face ID to register this device.');
+            const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+
+            // 2. Store credential ID locally for lookup
+            const credentialData = {
+                id: credential.id, // Base64URL-encoded credential ID
+                userId: userId // Link to the current Firebase user ID
+            };
+            localStorage.setItem(CRED_KEY, JSON.stringify(credentialData));
+            document.getElementById('register-fingerprint-btn').classList.add('hidden');
+            await showModal('Registration Success', 'Your fingerprint has been successfully registered for quick login!');
+
+        } catch (err) {
+            console.error('Biometric Registration Failed:', err);
+            await showModal('Registration Failed', 'Could not register biometric: ' + (err.message || 'Operation cancelled by user or timed out.'));
+        }
+    }
+
+    window.startBiometricLogin = async function () {
+        const credDataString = localStorage.getItem(CRED_KEY);
+        if (!credDataString) {
+            return showModal('Login Error', 'No biometric credential registered on this device. Please log in with credentials first and register your fingerprint.');
+        }
+        const { id, userId: storedUserId } = JSON.parse(credDataString);
+
+        try {
+            // 1. Generate a challenge (simulated server-side)
+            const challenge = new Uint8Array(32);
+            window.crypto.getRandomValues(challenge);
+
+            // Helper to convert Base64 URL string to ArrayBuffer
+            const urlBase64ToUint8Array = (base64Url) => {
+                const padding = '='.repeat((4 - base64Url.length % 4) % 4);
+                const base64 = (base64Url + padding)
+                    .replace(/\-/g, '+')
+                    .replace(/_/g, '/');
+                const rawData = window.atob(base64);
+                const outputArray = new Uint8Array(rawData.length);
+                for (let i = 0; i < rawData.length; ++i) {
+                    outputArray[i] = rawData.charCodeAt(i);
+                }
+                return outputArray;
+            };
+
+            const publicKeyCredentialRequestOptions = {
+                challenge: challenge,
+                allowCredentials: [{
+                    id: urlBase64ToUint8Array(id), // Convert stored credential ID back to ArrayBuffer
+                    type: 'public-key'
+                }],
+                userVerification: "required",
+                timeout: 60000
+            };
+
+            await showModal('Biometric Login', 'Please scan your fingerprint/face ID to unlock the app.');
+            const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+
+            // 2. Simulate login success based on stored user ID
+            if (assertion) {
+                // Since assertion succeeded, we assume the user is authenticated.
+                // We rely on the initial Firebase sign-in state, but if we had a backend,
+                // we would use the storedUserId to fetch a new token for the user.
+                await showModal('Login Successful', 'Fingerprint verified. Welcome back!');
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            }
+
+        } catch (err) {
+            console.error('Biometric Login Failed:', err);
+            await showModal('Login Failed', 'Biometric scan failed or was cancelled: ' + (err.message || 'Authentication failed.'));
+        }
+    }
+
+    // --- INITIALIZATION ---
+
+    window.addEventListener('load', function() {
+        registerServiceWorker();
+        checkBiometricSupport(); // Check if fingerprint option can be displayed
+    });
+
   </script>
 </body>
 </html>
