@@ -97,15 +97,9 @@
       transition: opacity 150ms ease-in, transform 150ms ease-in;
     }
 
-    /* Service worker status */
+    /* PWA Status */
     #pwa-status {
       transition: opacity 0.3s ease;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
     }
   </style>
   <script>
@@ -125,31 +119,21 @@
 </head>
 <body class="min-h-screen">
 
-  <!-- DEDICATED INITIAL LOADING OVERLAY -->
-  <div id="initial-loading" class="fixed inset-0 bg-bg-dark flex items-center justify-center z-[100]">
-      <div class="flex flex-col items-center space-y-4">
-          <svg class="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p class="text-slate-300">Initializing Authentication...</p>
-      </div>
-  </div>
-  
   <!-- PWA Status Indicator -->
   <div id="pwa-status" class="fixed top-0 right-0 m-4 p-2 text-xs font-semibold rounded-full shadow-lg z-50 transition-colors"
-       style="background-color: #10B981; color: white; opacity: 0;">
-      LOADING...
+       style="background-color: #10B981; color: white;">
+      ONLINE
   </div>
 
   <!-- Main Application Container -->
+  <!-- Initially hidden, will show after successful local login -->
   <div id="app" class="p-4 md:p-8 max-w-7xl mx-auto hidden">
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-slate-700 mb-6">
       <h1 class="text-4xl font-black text-primary mb-2 md:mb-0">Al Rehman Electronics</h1>
       <div class="text-sm">
-        <span class="text-slate-400">User ID:</span>
-        <span id="user-id-display" class="font-mono text-text-light text-xs bg-bg-light p-1 rounded-md cursor-help" title="Your unique user ID for persistent storage">
-          Loading...
+        <span class="text-slate-400">Status:</span>
+        <span id="user-id-display" class="font-mono text-text-light text-xs bg-bg-light p-1 rounded-md cursor-help" title="Data is stored locally in your browser">
+          Local Storage
         </span>
         <button onclick="logout()" class="ml-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg transition duration-150">
             Logout
@@ -241,8 +225,8 @@
     </main>
   </div>
 
-  <!-- Login/Auth Screen (Hidden initially, controlled by script) -->
-  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 hidden">
+  <!-- Login/Auth Screen -->
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-bg-light p-8 md:p-12 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-700">
       <h2 class="text-3xl font-bold text-center text-primary mb-6">Welcome Back</h2>
       <p class="text-center text-slate-400 mb-8">Sign in to manage your inventory.</p>
@@ -260,29 +244,9 @@
           Log In
         </button>
       </form>
-
-      <div class="relative flex justify-center items-center my-6">
-          <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-slate-700"></div>
-          </div>
-          <div class="relative bg-bg-light px-4 text-sm text-slate-400">OR</div>
-      </div>
-
-      <!-- Fingerprint Auth Button -->
-      <div class="text-center">
-          <button id="fingerprint-login-btn" onclick="startBiometricLogin()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition duration-150 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
-              <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 1.657-1.343 3-3 3s-3-1.343-3-3V7a3 3 0 013-3h3a3 3 0 013 3v4z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15.5l-2.5-2.5m-3 3l-2.5-2.5m8 0l-3-3"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17a5 5 0 01-10 0"></path></svg>
-              Scan Fingerprint to Unlock
-          </button>
-          <button id="register-fingerprint-btn" onclick="startBiometricRegistration()" class="mt-4 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition duration-150 hidden">
-            Register Fingerprint for Next Time
-          </button>
-      </div>
-
-      <p id="biometric-status" class="mt-4 text-sm text-center text-red-400 hidden">
-        Biometric authentication is not supported or configured on this device/browser.
+      <p class="mt-6 text-sm text-slate-500 text-center">
+          Username: admin, Password: 123 (Hardcoded)
       </p>
-
     </div>
   </div>
 
@@ -297,34 +261,19 @@
     </div>
   </div>
 
-  <!-- Firebase/PWA/App Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Global Firebase/App Variables
-    let app, db, auth;
+  <!-- Local Storage and App Logic -->
+  <script>
+    // Global App Variables
     let products = [];
     let selectedProductIds = new Set();
     let currentEditingProductId = null;
-    let userId = null;
-    let isAuthReady = false;
-
+    
     // UI elements
-    const loadingOverlay = document.getElementById('initial-loading');
     const authScreen = document.getElementById('auth-screen');
     const appScreen = document.getElementById('app');
-    
-    // --- FIREBASE INITIALIZATION AND AUTH ---
 
-    setLogLevel('Debug');
+    // --- CUSTOM MODAL FUNCTIONS (Replacing alert/confirm) ---
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
-    // Custom Modal Functions (Replacing alert/confirm)
     const modalBackdrop = document.getElementById('custom-modal-backdrop');
     const modalContent = document.getElementById('custom-modal-content');
     const modalTitle = document.getElementById('modal-title');
@@ -370,95 +319,72 @@
         });
     }
 
-    // --- FIREBASE SETUP & AUTH ---
+    // --- LOCAL STORAGE DATA OPERATIONS ---
 
-    if (Object.keys(firebaseConfig).length) {
-        app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
+    function saveProducts() {
+        // Save the current state of products to local storage
+        localStorage.setItem('dealer-products', JSON.stringify(products));
+    }
 
-        onAuthStateChanged(auth, async (user) => {
-            // Hide the initial loading spinner once auth state is determined
-            loadingOverlay.classList.add('hidden');
-            isAuthReady = true;
-
-            if (user) {
-                userId = user.uid;
-                document.getElementById('user-id-display').textContent = userId;
-                
-                // Show the main application
-                authScreen.classList.add('hidden');
-                appScreen.classList.remove('hidden');
-                
-                console.log("Firebase Auth Ready. User ID:", userId);
-                // Start listening to data
-                listenToProducts();
-            } else {
-                // Not authenticated, show login screen
-                userId = null;
-                document.getElementById('user-id-display').textContent = 'N/A';
-                
-                // Show the authentication screen
-                appScreen.classList.add('hidden');
-                authScreen.classList.remove('hidden');
-            }
-        });
-
-        const initialAuth = async () => {
+    function loadProducts() {
+        // Load products from local storage and assign a unique ID if missing
+        const storedProducts = localStorage.getItem('dealer-products');
+        if (storedProducts) {
             try {
-                // This will trigger the onAuthStateChanged listener above
-                const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (initialToken) {
-                    await signInWithCustomToken(auth, initialToken);
-                    console.log("Signed in with custom token.");
-                } else {
-                    await signInAnonymously(auth);
-                    console.log("Signed in anonymously.");
-                }
-            } catch (error) {
-                console.error("Firebase Auth Error:", error);
-                loadingOverlay.classList.add('hidden'); // Ensure loading is hidden even on error
-                authScreen.classList.remove('hidden');
-                showModal('Authentication Failed', 'Could not establish connection to Firebase: ' + error.message);
+                products = JSON.parse(storedProducts).map(p => ({
+                    // Ensure every product has a unique ID, generating one if imported data lacks it
+                    id: p.id || crypto.randomUUID(),
+                    ...p
+                }));
+            } catch (e) {
+                console.error("Error parsing local storage data:", e);
+                products = [];
             }
-        };
-        initialAuth();
-
-    } else {
-        loadingOverlay.classList.add('hidden');
-        showModal('Error', 'Firebase Configuration missing. App cannot save/load data persistently.', false);
-        document.getElementById('app').innerHTML = '<p class="text-red-500 text-center mt-20">FIREBASE CONFIGURATION MISSING. Cannot proceed with data operations.</p>';
+        } else {
+            products = [];
+        }
+        // Initial sorting by name
+        products.sort((a, b) => a.name.localeCompare(b.name));
+        refreshProductList();
     }
 
-    // --- FIRESTORE OPERATIONS ---
+    // --- AUTHENTICATION LOGIC (Local Storage based) ---
 
-    function getProductsCollectionRef() {
-        if (!db || !userId) throw new Error("Database not ready or User not logged in.");
-        // Private data path for this app: /artifacts/{appId}/users/{userId}/products
-        return collection(db, `artifacts/${appId}/users/${userId}/products`);
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (isLoggedIn) {
+            appScreen.classList.remove('hidden');
+            authScreen.classList.add('hidden');
+            loadProducts(); // Load data only after login success
+        } else {
+            appScreen.classList.add('hidden');
+            authScreen.classList.remove('hidden');
+        }
     }
 
-    function listenToProducts() {
-        if (!isAuthReady || !userId) return;
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-        // Note: Avoiding orderBy for simplicity, as per instructions. Data will be sorted in-memory.
-        const q = query(getProductsCollectionRef());
+        // Hardcoded Credentials Check
+        if (username === 'admin' && password === '123') {
+            localStorage.setItem('isLoggedIn', 'true');
+            await showModal('Login Success', 'Redirecting to inventory dashboard...');
+            checkLoginStatus(); // Change UI state
+        } else {
+            await showModal('Login Failed', 'Invalid username or password.', false);
+        }
+    });
 
-        onSnapshot(q, (snapshot) => {
-            const fetchedProducts = [];
-            snapshot.forEach((doc) => {
-                fetchedProducts.push({
-                    id: doc.id,
-                    ...doc.data()
-                });
-            });
-            // Sort in-memory (e.g., by name)
-            products = fetchedProducts.sort((a, b) => a.name.localeCompare(b.name));
-            refreshProductList();
-        }, (error) => {
-            console.error("Error listening to products:", error);
-            showModal('Data Error', 'Failed to load real-time data: ' + error.message, false);
-        });
+    window.logout = async function() {
+        const confirmed = await showModal('Confirm Logout', 'Are you sure you want to log out?', true);
+        if (confirmed) {
+            localStorage.removeItem('isLoggedIn');
+            products = []; // Clear current products from memory
+            checkLoginStatus(); // Change UI state
+            await showModal('Logged Out', 'You have been successfully logged out.');
+        }
     }
 
     // --- PRODUCT CRUD FUNCTIONS ---
@@ -476,26 +402,32 @@
             name: name,
             qty: qty,
             price: price,
+            // Use local UUID for unique ID generation
+            id: productId || crypto.randomUUID(),
             updatedAt: Date.now()
         };
 
-        try {
-            if (productId) {
-                // Edit existing product
-                await updateDoc(doc(db, getProductsCollectionRef().path, productId), productData);
-                await showModal('Success', `${name} updated successfully!`);
-            } else {
-                // Add new product
-                await addDoc(getProductsCollectionRef(), productData);
-                await showModal('Success', `${name} added successfully!`);
+        let message = '';
+        if (productId) {
+            // Edit existing product
+            const index = products.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                products[index] = productData;
+                message = `${name} updated successfully!`;
             }
-            // Reset form
-            document.getElementById('product-form').reset();
-            cancelEdit();
-        } catch (error) {
-            console.error("CRUD Error:", error);
-            await showModal('Error', `Failed to save product: ${error.message}`);
+        } else {
+            // Add new product
+            products.push(productData);
+            message = `${name} added successfully!`;
         }
+
+        saveProducts();
+        products.sort((a, b) => a.name.localeCompare(b.name)); // Re-sort
+        refreshProductList();
+
+        await showModal('Success', message);
+        document.getElementById('product-form').reset();
+        cancelEdit();
     }
 
     function refreshProductList() {
@@ -557,14 +489,11 @@
         const confirmed = await showModal('Confirm Deletion', `Are you sure you want to permanently delete product: ${product.name}?`, true);
 
         if (confirmed) {
-            try {
-                await deleteDoc(doc(db, getProductsCollectionRef().path, id));
-                selectedProductIds.delete(id);
-                await showModal('Success', `${product.name} deleted.`);
-            } catch (error) {
-                console.error("Delete Error:", error);
-                await showModal('Error', 'Failed to delete product: ' + error.message);
-            }
+            products = products.filter(p => p.id !== id);
+            selectedProductIds.delete(id);
+            saveProducts();
+            refreshProductList();
+            await showModal('Success', `${product.name} deleted.`);
         }
     }
 
@@ -596,17 +525,15 @@
         const confirmed = await showModal('Confirm Batch Delete', `Are you sure you want to permanently delete ${selectedProductIds.size} selected products?`, true);
 
         if (confirmed) {
-            try {
-                const deletePromises = Array.from(selectedProductIds).map(id =>
-                    deleteDoc(doc(db, getProductsCollectionRef().path, id))
-                );
-                await Promise.all(deletePromises);
-                selectedProductIds.clear();
-                await showModal('Success', `${deletePromises.length} products deleted successfully.`);
-            } catch (error) {
-                console.error("Batch Delete Error:", error);
-                await showModal('Error', 'Failed to delete one or more products: ' + error.message);
-            }
+            const initialSize = products.length;
+            products = products.filter(p => !selectedProductIds.has(p.id));
+            const deletedCount = initialSize - products.length;
+
+            saveProducts();
+            selectedProductIds.clear();
+            refreshProductList();
+
+            await showModal('Success', `${deletedCount} products deleted successfully.`);
         }
     }
 
@@ -656,16 +583,18 @@
 
             if (!confirmed) return;
 
-            // 1. Delete all current products
-            const currentDocs = await getDocs(getProductsCollectionRef());
-            const deletePromises = currentDocs.docs.map(d => deleteDoc(d.ref));
-            await Promise.all(deletePromises);
-
-            // 2. Add all imported products
-            const addPromises = arr.map(product => addDoc(getProductsCollectionRef(), product));
-            await Promise.all(addPromises);
-
-            // Data listener (onSnapshot) will handle the UI update.
+            // Assign new IDs to imported products to avoid conflicts
+            products = arr.map(p => ({
+                id: crypto.randomUUID(),
+                ...p
+            }));
+            
+            saveProducts();
+            products.sort((a, b) => a.name.localeCompare(b.name));
+            refreshProductList();
+            selectedProductIds.clear();
+            updateMultiSelectControls();
+            
             document.getElementById('import-file').value = ''; // Clear file input
             await showModal('Import Successful', 'Your inventory has been replaced with the imported data.');
 
@@ -676,7 +605,7 @@
         }
     };
 
-    // --- PWA SERVICE WORKER REGISTRATION (IMPROVED) ---
+    // --- PWA SERVICE WORKER REGISTRATION ---
 
     // Define the Service Worker content as a Blob/URL
     const swCode = `
@@ -685,7 +614,6 @@
             './index.html',
             'https://cdn.tailwindcss.com',
             'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap',
-            // Add other critical static assets here if needed, like the Firebase JS files
         ];
 
         self.addEventListener('install', event => {
@@ -699,20 +627,15 @@
         });
 
         self.addEventListener('fetch', event => {
-            // Prioritize cache, fall back to network for all requests
             event.respondWith(
                 caches.match(event.request)
                     .then(response => {
-                        // Cache hit - return response
                         if (response) {
                             return response;
                         }
-                        // Not in cache - fetch from network
                         return fetch(event.request);
                     })
                     .catch(() => {
-                        // If both cache and network fail (e.g., offline)
-                        // For a SPA like this, returning the cached index.html is the best fallback
                         return caches.match('./index.html');
                     })
             );
@@ -720,7 +643,6 @@
 
         self.addEventListener('activate', event => {
             console.log('Service Worker: Activating...');
-            // Clean up old caches
             event.waitUntil(
                 caches.keys().then(cacheNames => {
                     return Promise.all(
@@ -736,19 +658,24 @@
 
     function registerServiceWorker() {
         const statusElement = document.getElementById('pwa-status');
-        statusElement.style.opacity = 1; // Make status visible after load
-        statusElement.textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE (Cached)';
-        statusElement.style.backgroundColor = navigator.onLine ? '#10B981' : '#F59E0B';
-        statusElement.style.animation = navigator.onLine ? 'none' : 'pulse 1.5s infinite';
-
+        
+        function updatePWAStatus(isOnline) {
+            if (isOnline) {
+                statusElement.textContent = 'ONLINE';
+                statusElement.style.backgroundColor = '#10B981'; // green-500
+            } else {
+                statusElement.textContent = 'OFFLINE (Cached)';
+                statusElement.style.backgroundColor = '#F59E0B'; // amber-500
+            }
+        }
+        
+        updatePWAStatus(navigator.onLine);
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Register the Service Worker using the generated Blob URL
                 navigator.serviceWorker.register(swUrl, { scope: './' })
                     .then(reg => {
                         console.log('Service Worker Registered. Scope is ' + reg.scope);
-                        // Listen for online/offline changes
                         window.addEventListener('online', () => updatePWAStatus(true));
                         window.addEventListener('offline', () => updatePWAStatus(false));
                     })
@@ -757,212 +684,11 @@
         }
     }
 
-    function updatePWAStatus(isOnline) {
-        const statusElement = document.getElementById('pwa-status');
-        if (isOnline) {
-            statusElement.textContent = 'ONLINE';
-            statusElement.style.backgroundColor = '#10B981'; // green-500
-            statusElement.style.animation = 'none';
-        } else {
-            statusElement.textContent = 'OFFLINE (Cached)';
-            statusElement.style.backgroundColor = '#F59E0B'; // amber-500
-            statusElement.style.animation = 'pulse 1.5s infinite';
-            showModal('Offline Mode', 'You are now offline. The app is running from the cache. Data changes will sync when you regain connection.', false);
-        }
-    }
-
-    // --- STANDARD LOGIN / LOGOUT ---
-
-    document.getElementById('login-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        // Hardcoded Credentials Check (Existing Feature Retained)
-        if (username === 'admin' && password === '123') {
-            document.getElementById('fingerprint-login-btn').disabled = true; // Disable login button temporarily
-            document.getElementById('register-fingerprint-btn').classList.remove('hidden');
-
-            // 1. Ensure user is signed into Firebase (FIXED: Added await for sync)
-            if (!auth.currentUser) {
-                try {
-                    await signInAnonymously(auth); 
-                } catch (error) {
-                    console.error("Anonymous Sign-in failed after manual login:", error);
-                    await showModal('Error', 'Failed to authenticate with Firebase: ' + error.message);
-                    document.getElementById('fingerprint-login-btn').disabled = false;
-                    return;
-                }
-            }
-            
-            // 2. onAuthStateChanged will handle the UI transition
-            await showModal('Login Success', 'Redirecting to dashboard...');
-
-
-        } else {
-            await showModal('Login Failed', 'Invalid username or password.', false);
-        }
-        document.getElementById('fingerprint-login-btn').disabled = false;
-    });
-
-    window.logout = async function() {
-        const confirmed = await showModal('Confirm Logout', 'Are you sure you want to log out?', true);
-        if (confirmed) {
-            try {
-                await signOut(auth);
-                await showModal('Logged Out', 'You have been successfully logged out.');
-                document.getElementById('register-fingerprint-btn').classList.add('hidden'); // Hide register button until next login
-            } catch (error) {
-                console.error("Logout error:", error);
-                await showModal('Error', 'Failed to log out: ' + error.message);
-            }
-        }
-    }
-
-    // --- BIOMETRIC FINGERPRINT (WEBAUTHN) IMPLEMENTATION ---
-
-    const CRED_KEY = 'dealer-biometric-credential';
-
-    function checkBiometricSupport() {
-        const btn = document.getElementById('fingerprint-login-btn');
-        const status = document.getElementById('biometric-status');
-        if (window.isSecureContext && navigator.credentials && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
-             PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(isAvailable => {
-                if (isAvailable) {
-                    btn.disabled = false;
-                    status.classList.add('hidden');
-                    // Check if credential is already registered locally
-                    if (localStorage.getItem(CRED_KEY)) {
-                        document.getElementById('register-fingerprint-btn').classList.add('hidden'); // Already registered, hide button
-                    } else {
-                        // User needs to log in first before registering, so leave the register button hidden initially
-                    }
-                } else {
-                    btn.disabled = true;
-                    status.textContent = 'Biometric hardware not detected or verified by the platform.';
-                    status.classList.remove('hidden');
-                }
-             });
-        } else {
-            btn.disabled = true;
-            status.textContent = 'Biometric authentication API (WebAuthn) is not supported in this browser or is not secure (requires HTTPS).';
-            status.classList.remove('hidden');
-        }
-    }
-
-    window.startBiometricRegistration = async function () {
-        if (!isAuthReady || !userId) {
-            return showModal('Error', 'Please log in with username/password first to register biometrics.');
-        }
-
-        try {
-            const userName = document.getElementById('username').value || 'admin';
-            const userDisplayName = 'Al Rehman Inventory User';
-
-            // 1. Generate a challenge (simulated server-side)
-            const challenge = new Uint8Array(32);
-            window.crypto.getRandomValues(challenge);
-
-            const publicKeyCredentialCreationOptions = {
-                challenge: challenge,
-                rp: { name: "Al Rehman Electronics" }, // Relying Party
-                user: {
-                    // Convert Firebase UID to an ArrayBuffer for the WebAuthn API
-                    id: new TextEncoder().encode(userId),
-                    name: userName,
-                    displayName: userDisplayName
-                },
-                pubKeyCredParams: [{ alg: -7, type: "public-key" }], // ES256
-                authenticatorSelection: {
-                    authenticatorAttachment: "platform",
-                    userVerification: "required",
-                    requireResidentKey: false
-                },
-                timeout: 60000,
-                attestation: "none" // Changed from 'direct' to 'none' for simplicity in a single-file environment
-            };
-
-            await showModal('Registering Biometric', 'Please use your fingerprint/face ID to register this device.');
-            const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
-
-            // 2. Store credential ID locally for lookup
-            const credentialData = {
-                id: credential.id, // Base64URL-encoded credential ID
-                userId: userId // Link to the current Firebase user ID
-            };
-            localStorage.setItem(CRED_KEY, JSON.stringify(credentialData));
-            document.getElementById('register-fingerprint-btn').classList.add('hidden');
-            await showModal('Registration Success', 'Your fingerprint has been successfully registered for quick login!');
-
-        } catch (err) {
-            console.error('Biometric Registration Failed:', err);
-            await showModal('Registration Failed', 'Could not register biometric: ' + (err.message || 'Operation cancelled by user or timed out.'));
-        }
-    }
-
-    window.startBiometricLogin = async function () {
-        const credDataString = localStorage.getItem(CRED_KEY);
-        if (!credDataString) {
-            return showModal('Login Error', 'No biometric credential registered on this device. Please log in with credentials first and register your fingerprint.');
-        }
-        const { id, userId: storedUserId } = JSON.parse(credDataString);
-
-        try {
-            // 1. Generate a challenge (simulated server-side)
-            const challenge = new Uint8Array(32);
-            window.crypto.getRandomValues(challenge);
-
-            // Helper to convert Base64 URL string to ArrayBuffer
-            const urlBase64ToUint8Array = (base64Url) => {
-                const padding = '='.repeat((4 - base64Url.length % 4) % 4);
-                const base64 = (base64Url + padding)
-                    .replace(/\-/g, '+')
-                    .replace(/_/g, '/');
-                const rawData = window.atob(base64);
-                const outputArray = new Uint8Array(rawData.length);
-                for (let i = 0; i < rawData.length; ++i) {
-                    outputArray[i] = rawData.charCodeAt(i);
-                }
-                return outputArray;
-            };
-
-            const publicKeyCredentialRequestOptions = {
-                challenge: challenge,
-                allowCredentials: [{
-                    id: urlBase64ToUint8Array(id), // Convert stored credential ID back to ArrayBuffer
-                    type: 'public-key'
-                }],
-                userVerification: "required",
-                timeout: 60000
-            };
-
-            await showModal('Biometric Login', 'Please scan your fingerprint/face ID to unlock the app.');
-            const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
-
-            // 2. Simulate login success based on stored user ID
-            if (assertion) {
-                // Since assertion succeeded, we assume the user is authenticated.
-                // We attempt to sign in anonymously (or with storedUserId if we had a proper backend)
-                // This will trigger the onAuthStateChanged listener to flip the UI.
-                
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth); 
-                }
-                
-                await showModal('Login Successful', 'Fingerprint verified. Welcome back!');
-            }
-
-        } catch (err) {
-            console.error('Biometric Login Failed:', err);
-            await showModal('Login Failed', 'Biometric scan failed or was cancelled: ' + (err.message || 'Authentication failed.'));
-        }
-    }
-
     // --- INITIALIZATION ---
 
     window.addEventListener('load', function() {
         registerServiceWorker();
-        checkBiometricSupport(); // Check if fingerprint option can be displayed
+        checkLoginStatus(); // Check if user has already logged in
     });
 
   </script>
