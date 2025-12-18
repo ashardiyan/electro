@@ -763,14 +763,22 @@
       <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
       <span class="modal-file-label">Photo <span title="Base64 photos use much more space than compressed images. Large images may slow the app. Compressed automatically." style="font-size:1.1em;color:var(--accent2)">[auto-compressed]</span></span>
       <div class="modal-file-upload-wrap" id="fileUploadWrap">
-        <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText">
+        <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText" style="flex:1; text-align:center;">
           <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span id="uploadBtnInnerText">Choose Image</span>
+          <span id="uploadBtnInnerText">Gallery</span>
           <input type="file" id="prodPhoto" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
-        <span id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em;"></span>
+        
+        <span class="modal-file-upload-btn rounded-sky-btn" id="cameraBtnText" style="flex:1; text-align:center; background: var(--accent2); margin-left: 8px;">
+          <span style="font-size:1.15em; margin-right:4px;">📷</span>
+          <span>Camera</span>
+          <input type="file" id="prodCamera" accept="image/*" capture="environment" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
+        </span>
+      </div>
+      <div id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em; margin-bottom: 8px;">
         <span id="prodPhotoFileName" style="color:var(--text-muted);font-size:.99em;"></span>
       </div>
+      
       <div class="modal-btnbar">
         <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
       </div>
@@ -1102,7 +1110,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v9';
+        const CACHE_NAME = 'local-dealer-cache-v10';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
@@ -1818,6 +1826,7 @@
     const prodCategory = document.getElementById('prodCategory');
     const prodNotes = document.getElementById('prodNotes');
     const prodPhoto = document.getElementById('prodPhoto');
+    const prodCamera = document.getElementById('prodCamera');
     const productModalBackdrop = document.getElementById('productModalBackdrop');
     const productModal = document.getElementById('productModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -1865,19 +1874,32 @@
         img.src = currentProductPhotoDataUrl; img.alt = "Product Photo"; img.className = 'photo-preview-img-thumb';
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button'; removeBtn.className = 'remove-photo-btn'; removeBtn.title = 'Remove image'; removeBtn.innerHTML = '✖';
-        removeBtn.onclick = function() { currentProductPhotoDataUrl = null; prodPhoto.value = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI(); };
+        removeBtn.onclick = function() { 
+            currentProductPhotoDataUrl = null; 
+            prodPhoto.value = ''; 
+            prodCamera.value = '';
+            prodPhotoFileName.textContent = ''; 
+            imageCompressMsg.style.display = 'none'; 
+            updatePhotoPreviewUI(); 
+        };
         prodPhotoFileContainer.appendChild(img); prodPhotoFileContainer.appendChild(removeBtn);
       }
     }
 
     function showProductModal(mode, product) {
-      productModal.reset(); modalError.textContent = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; currentProductPhotoDataUrl = null; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI();
+      productModal.reset(); 
+      modalError.textContent = ''; 
+      prodPhotoFileName.textContent = ''; 
+      currentProductPhotoDataUrl = null; 
+      imageCompressMsg.style.display = 'none'; 
+      updatePhotoPreviewUI();
+      
       if (mode === 'add') {
         modalTitle.textContent = "Add Product"; productEditing = null;
-        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = "";
+        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = ""; prodCamera.value = "";
       } else {
         modalTitle.textContent = "Edit Product"; productEditing = product;
-        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = "";
+        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = ""; prodCamera.value = "";
         if (product.photo) { currentProductPhotoDataUrl = product.photo; updatePhotoPreviewUI(); }
       }
       productModalBackdrop.classList.remove('hide');
@@ -1889,16 +1911,47 @@
     let firstSubmitAttempt = true;
     let prodPhotoLastPendingPromise = null;
 
+    // --- SHARED IMAGE HANDLER FOR BOTH BUTTONS ---
+    function handleImageSelection(file) {
+        if(!file) return;
+        prodPhotoFileName.textContent = file.name; 
+        imageCompressMsg.textContent = "Compressing image..."; 
+        imageCompressMsg.style.display = 'block';
+        
+        const filePromise = compressImageFile(file, 800, 0.82).then(dataUrl => {
+          const kb = Math.round((dataUrl.length * 3 / 4) / 1024); 
+          currentProductPhotoDataUrl = dataUrl; 
+          updatePhotoPreviewUI();
+          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB (max 800px, JPEG)`; 
+          imageCompressMsg.style.display = 'block';
+        }).catch(err => { 
+            modalError.textContent = "Image compression failed. Please select another file."; 
+            prodPhoto.value = ''; 
+            prodCamera.value = '';
+            prodPhotoFileName.textContent = ''; 
+            imageCompressMsg.textContent = ''; 
+            imageCompressMsg.style.display = 'none'; 
+            currentProductPhotoDataUrl = null; 
+            updatePhotoPreviewUI(); 
+        });
+        prodPhotoLastPendingPromise = filePromise;
+    }
+
+    // GALLERY BUTTON LISTENER
     prodPhoto.addEventListener('change', function () {
       if (prodPhoto.files && prodPhoto.files.length) {
-        const file = prodPhoto.files[0]; prodPhotoFileName.textContent = file.name; uploadBtnInnerText.textContent = "Image Selected"; imageCompressMsg.textContent = "Compressing image..."; imageCompressMsg.style.display = 'block';
-        const filePromise = compressImageFile(file, 800, 0.82).then(dataUrl => {
-          const kb = Math.round((dataUrl.length * 3 / 4) / 1024); currentProductPhotoDataUrl = dataUrl; updatePhotoPreviewUI();
-          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB (max 800px, JPEG)`; imageCompressMsg.style.display = 'block';
-        }).catch(err => { modalError.textContent = "Image compression failed. Please select another file."; prodPhoto.value = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; imageCompressMsg.textContent = ''; imageCompressMsg.style.display = 'none'; currentProductPhotoDataUrl = null; updatePhotoPreviewUI(); });
-        prodPhotoLastPendingPromise = filePromise;
+          handleImageSelection(prodPhoto.files[0]);
       } else {
-        prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; currentProductPhotoDataUrl = null; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI(); prodPhotoLastPendingPromise = null;
+          // Cleared selection
+          currentProductPhotoDataUrl = null; 
+          updatePhotoPreviewUI();
+      }
+    });
+    
+    // CAMERA BUTTON LISTENER
+    prodCamera.addEventListener('change', function () {
+      if (prodCamera.files && prodCamera.files.length) {
+          handleImageSelection(prodCamera.files[0]);
       }
     });
 
@@ -1911,7 +1964,7 @@
 
     productModal.onsubmit = async function(e) {
       e.preventDefault(); modalError.textContent = "";
-      if (firstSubmitAttempt && prodPhoto.files && prodPhoto.files.length && !currentProductPhotoDataUrl && prodPhotoLastPendingPromise) {
+      if (firstSubmitAttempt && (prodPhoto.files.length || prodCamera.files.length) && !currentProductPhotoDataUrl && prodPhotoLastPendingPromise) {
         try { await prodPhotoLastPendingPromise; } catch (err) { modalError.textContent = "Image failed to load, please select again."; return; }
         firstSubmitAttempt = false; productModal.onsubmit(e); return;
       }
