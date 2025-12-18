@@ -1601,20 +1601,88 @@
         }
     };
 
-    const exportSelectedBtn = document.getElementById('exportSelectedBtn');
-    if (exportSelectedBtn) {
-        exportSelectedBtn.onclick = function() {
-            if (selectedProductIds.size === 0) return;
-            const itemsToExport = products.filter(p => selectedProductIds.has(p.id));
-            const now = new Date();
-            const dateStr = now.toISOString().slice(0,10);
-            const filename = `dealer-shared-${itemsToExport.length}-items-${dateStr}.json`;
-            const dataStr = JSON.stringify(itemsToExport, null, 2);
-            const blob = new Blob([dataStr], {type:"application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); setTimeout(()=>{ document.body.removeChild(a); }, 200);
-        };
-    }
+    // --- UPDATED EXPORT LOGIC: CONVERT BLOBS TO BASE64 STRINGS ---
+    document.getElementById('exportBtn').onclick = async function() {
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0,10);
+      const timeStr = now.toTimeString().slice(0,5).replace(':','-');
+      const filename = `dealer-backup-${dateStr}_${timeStr}.json`;
+      
+      // Convert Blobs to Base64 for JSON storage
+      const dataToExport = await Promise.all(products.map(async (p) => {
+          let photoData = p.photo;
+          if (p.photo instanceof Blob) {
+              photoData = await new Promise((resolve) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result);
+                  reader.readAsDataURL(p.photo);
+              });
+          }
+          return { ...p, photo: photoData };
+      }));
+
+      const dataStr = JSON.stringify(dataToExport, null, 2);
+      const blob = new Blob([dataStr], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); setTimeout(()=>{ document.body.removeChild(a); }, 200);
+    };
+
+    document.getElementById('importBtn').onclick = function () { 
+        let fileInput = document.getElementById('hiddenImport'); 
+        if (fileInput) fileInput.value = ''; 
+        if (fileInput) fileInput.click(); 
+    };
+
+    // --- UPDATED IMPORT LOGIC: CONVERT BASE64 STRINGS BACK TO BLOBS ---
+    document.getElementById('hiddenImport').onchange = async function (e) {
+      const fileInput = e.target;
+      if (!fileInput.files || !fileInput.files.length) return;
+      const file = fileInput.files[0];
+
+      if (!(file && (file.type === 'application/json' || /\.json$/i.test(file.name)))) { alert('Please select a valid .json backup file.'); return; }
+
+      try {
+        let text = await file.text();
+        let importedArr = JSON.parse(text); 
+        if (!Array.isArray(importedArr)) throw new Error('Invalid file format. Data must be an array.');
+        
+        // Convert Base64 strings back to Blobs for efficiency
+        importedArr = await Promise.all(importedArr.map(async (p) => {
+            if (p.photo && typeof p.photo === 'string' && p.photo.startsWith('data:')) {
+                try {
+                    const res = await fetch(p.photo);
+                    const blob = await res.blob();
+                    p.photo = blob;
+                } catch(err) { /* fallback to string */ }
+            }
+            return p;
+        }));
+
+        importedArr = importedArr.filter(p => p && typeof p === 'object' && p.name);
+        if (!importedArr.length) throw new Error('No valid products found in this file.');
+
+        const userWantsToMerge = confirm(`Found ${importedArr.length} products in file.\n\n• Click [OK] to MERGE.\n(Adds new items and updates existing ones. Safe.)\n\n• Click [Cancel] to REPLACE.\n(Deletes everything currently in app and restores backup.)`);
+
+        if (userWantsToMerge) {
+            const productMap = new Map();
+            products.forEach(p => productMap.set(p.id, p));
+            let addedCount = 0;
+            let updatedCount = 0;
+            importedArr.forEach(p => {
+                if (!p.id) p.id = genID();
+                if (productMap.has(p.id)) { productMap.set(p.id, p); updatedCount++; } else { productMap.set(p.id, p); addedCount++; }
+            });
+            products = Array.from(productMap.values());
+            alert(`Import Successful!\n\n🆕 Added: ${addedCount}\n🔄 Updated: ${updatedCount}`);
+        } else {
+            if(!confirm("⚠️ WARNING: This will DELETE all current products and replace them with the backup.\n\nAre you sure?")) { return; }
+            products = importedArr;
+            products.forEach(p => { if(!p.id) p.id = genID(); });
+            alert(`Restore Successful! App now has ${products.length} products.`);
+        }
+        saveProducts(); selectedProductIds.clear(); updateMultiSelectControls(); 
+      } catch (ex) { alert("Failed to import: " + (ex.message || ex)); }
+    };
 
     const detailModalBackdrop = document.getElementById('detailModalBackdrop');
     const detailModalBody = document.getElementById('detailModalBody');
