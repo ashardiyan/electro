@@ -1110,7 +1110,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v10';
+        const CACHE_NAME = 'local-dealer-cache-v11';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
@@ -1838,9 +1838,47 @@
     const imageCompressMsg = document.getElementById('imageCompressMsg');
     let currentProductPhotoDataUrl = null;
 
-    async function compressImageFile(file, maxDim = 800, quality = 0.82) {
+    /****************************************************************
+     * MEMORY-OPTIMIZED IMAGE COMPRESSION
+     ****************************************************************/
+    async function compressImageFile(file, maxDim = 700, quality = 0.75) { // Reduced defaults
+      if (!/^image\//.test(file.type)) return Promise.reject("Not an image file.");
+      
+      // Attempt to use createImageBitmap (Very fast & low memory)
+      if ('createImageBitmap' in window) {
+          try {
+              const bitmap = await createImageBitmap(file);
+              let { width, height } = bitmap;
+              if (width > maxDim || height > maxDim) {
+                  const scale = maxDim / Math.max(width, height);
+                  width = Math.round(width * scale);
+                  height = Math.round(height * scale);
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(bitmap, 0, 0, width, height);
+              bitmap.close(); // Immediate memory release
+              
+              return new Promise((resolve, reject) => {
+                  canvas.toBlob(blob => {
+                      // Destroy canvas references immediately
+                      canvas.width = 1; canvas.height = 1; 
+                      if (!blob) return reject("Compression error.");
+                      const reader = new FileReader();
+                      reader.onload = e => resolve(reader.result);
+                      reader.onerror = reject;
+                      reader.readAsDataURL(blob);
+                  }, 'image/jpeg', quality);
+              });
+          } catch(e) {
+              console.warn("createImageBitmap failed, falling back to standard load.", e);
+          }
+      }
+
+      // Fallback: Standard Image Load (High Memory, risky for 12MP+ on weak phones)
       return new Promise((resolve, reject) => {
-        if (!/^image\//.test(file.type)) return reject("Not an image file.");
         let img = new window.Image();
         let url = URL.createObjectURL(file);
         img.onload = function() {
@@ -1853,16 +1891,26 @@
           canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
+          
+          // Cleanup source immediately
+          URL.revokeObjectURL(url);
+          img.src = "";
+          img = null;
+
           canvas.toBlob(blob => {
+            canvas.width = 1; canvas.height = 1; // shrink canvas
             if (!blob) return reject("Compression error.");
             const reader = new FileReader();
             reader.onload = e => resolve(reader.result);
             reader.onerror = reject;
             reader.readAsDataURL(blob);
           }, 'image/jpeg', quality);
-          URL.revokeObjectURL(url);
         };
-        img.onerror = () => { URL.revokeObjectURL(url); reject("Invalid image"); };
+        img.onerror = () => { 
+            URL.revokeObjectURL(url); 
+            img = null; 
+            reject("Invalid image"); 
+        };
         img.src = url;
       });
     }
@@ -1918,14 +1966,16 @@
         imageCompressMsg.textContent = "Compressing image..."; 
         imageCompressMsg.style.display = 'block';
         
-        const filePromise = compressImageFile(file, 800, 0.82).then(dataUrl => {
+        // 700px max width/height, 0.75 quality = GOOD COMPROMISE
+        const filePromise = compressImageFile(file, 700, 0.75).then(dataUrl => {
           const kb = Math.round((dataUrl.length * 3 / 4) / 1024); 
           currentProductPhotoDataUrl = dataUrl; 
           updatePhotoPreviewUI();
-          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB (max 800px, JPEG)`; 
+          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB`; 
           imageCompressMsg.style.display = 'block';
         }).catch(err => { 
-            modalError.textContent = "Image compression failed. Please select another file."; 
+            console.error(err);
+            modalError.textContent = "Photo processing failed (Low Memory). Try a smaller image."; 
             prodPhoto.value = ''; 
             prodCamera.value = '';
             prodPhotoFileName.textContent = ''; 
