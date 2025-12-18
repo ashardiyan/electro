@@ -1,307 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Al Rehman Electronics</title>
-  <meta name="theme-color" content="#161B22"/>
+  <meta name="theme-color" content="#161B22" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
   <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
   <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg1: #0D1C2F;
+      --bg1: #0C1220;
       --bg2: #161B22;
-      --bg3: #202A3F;
-      --accent: #297EFF;
-      --accent-hover: #1856b4;
+      --bg3: #212936;
+      --accent: #2563EB;
+      --accent-hover: #164eab;
       --accent2: #06B6D4;
+      --accent2-hover: #1095b7;
       --gray: #AEB9C7;
       --text: #F3F7FF;
-      --text-muted: #A4ADC5;
+      --text-muted: #B0B9C6;
       --radius: 16px;
-      --shadow: 0 8px 32px 0 rgba(60,130,250,0.13);
-      --shadow-soft: 0 2px 8px #18486311;
+      --radius-card: 13px;
+      --shadow: 0 8px 32px 0 rgba(60,120,220,0.17);
+      --shadow-soft: 0 2px 8px rgba(40,98,180,.11);
       --danger: #ef4444;
       --success: #10b981;
-      --skyb: #06B6D4;
-      --gradient: linear-gradient(90deg,#0FC3F0 16%,#297EFF 80%);
+      --rounded-btn: 10px;
+      --button-skyblue: #06B6D4;
+      --button-gradient: linear-gradient(90deg, #06B6D4 40%, #2563EB 100%);
     }
-    html,body {padding:0;margin:0;font-family:'Inter',Arial,sans-serif;
-      font-size:16.1px;background:var(--bg1);color:var(--text);}
-    body {display:flex;flex-direction:column;min-height:100vh;}
+    html, body {
+      padding: 0;
+      margin: 0;
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      font-size: 17px;
+      background: linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    body { display:flex; flex-direction:column; min-height:100vh; }
+    .container { max-width:640px; margin:0 auto; padding:34px 12px 54px; width:100%; box-sizing:border-box; }
+    header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; gap:10px; }
+    .logo-wrap { display:flex; align-items:center; gap:14px; }
+    .app-logo { width:50px; height:50px; border-radius:18px; background:linear-gradient(135deg,var(--accent),var(--accent2)75%); display:flex; align-items:center; justify-content:center; font-size:2.11rem; box-shadow:var(--shadow-soft); color:#fff; font-weight:700; overflow: hidden; }
+    .app-title { font-weight:900; font-size:1.7rem; line-height:1.13; letter-spacing:-1px; color:var(--text); margin-left:2px; }
+    .top-controls { display:flex; align-items:center; gap:10px; }
+    button.icon-btn { background:none; border:none; color:var(--accent2); font-size:1.23rem; padding:8px 10px; border-radius:9px; cursor:pointer; outline:none; }
+    button#settingsBtn { font-size:1.33rem; color:var(--text); background:#1b2430; padding:8px 11px; border-radius:9px; box-shadow:0 1px 6px #0008; }
+    #installPromptBtn, #installAsAppBtn { display:none; margin-left:12px; font-size:.99em; padding:8px 14px; border-radius:8px; background:linear-gradient(91deg,var(--accent2),var(--accent)); color:#fff; font-weight:700; border:none; cursor:pointer; box-shadow:0 1px 11px #2e5fad23; }
+    #mobileInstallInstructions { display:none; margin-left:10px; padding:8px 10px; border-radius:8px; background:#1a2233; color:var(--accent2); font-size:.93em; font-style:italic; box-shadow:0 2px 8px #222c3d22; max-width:310px; line-height:1.45; }
 
-    /* Login Modal Modern Improvements */
-    #login-modal {
-      position:fixed;
-      inset:0;
-      z-index:7000;
-      background:rgba(22,27,34,0.95);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      min-width:100vw;
-      transition:opacity .25s;
-      animation:loginfadein .70s cubic-bezier(.61,.12,.38,1.07);
-      /* For mobile overscroll */
-      overscroll-behavior:contain;
-    }
-    @keyframes loginfadein {
-      0% {opacity:0;}
-      100%{opacity:1;}
-    }
-    .login-dialog {
-      box-shadow:0 8px 38px 0 rgba(9,19,49,0.23),0 0 0 #0002;
-      background:var(--bg2);
-      border-radius:1.2em;
-      max-width:100vw;
-      min-width:315px;
-      padding:36px 20px 24px 20px !important;
-      margin:0 3vw;
-      display:flex;
-      flex-direction:column;
-      align-items:stretch;
-      position:relative;
-    }
-    .login-dialog h3 {
-      font-size:1.35em;
-      font-weight:900;
-      margin-bottom:14px;
-      letter-spacing:-.07em;
-    }
-    .login-dialog label {
-      margin-top:5px;
-      margin-bottom:5px;
-      color:var(--text-muted);
-      font-size:1.02em;
-      font-weight:600;
-      letter-spacing:-.02em;
-    }
-    .login-dialog input[type=password],
-    .login-dialog input[type=text] {
-      width:100%;
-      border-radius:8px;
-      border:1.5px solid #253048;
-      background:var(--bg3);
-      color:var(--text);
-      font-size:1.09em;
-      padding:8.5px 38px 8.5px 13px;
-      margin-bottom:11px;
-      box-sizing:border-box;
-      outline:none;
-      transition:border-color .14s;
-      /* Remove blue highlight on focus/tap */
-      box-shadow:none !important;
-      caret-color:var(--accent2);
-    }
-    .login-dialog input[type=password]:focus,
-    .login-dialog input[type=text]:focus {
-      border-color:var(--accent2);
-    }
-    /* Remove blue highlight for buttons and inputs when clicked (remove "blue box") */
-    *:focus {
-      outline:none !important;
-      box-shadow:none !important;
-    }
-    button, .rounded-sky-btn:not(:active) {
-      outline:none !important;
-      box-shadow:none !important;
-    }
-    .login-password-toggle {
-      position:absolute;
-      right:7px;
-      top:50%;
-      transform:translateY(-50%);
-      background:none;
-      border:none;
-      color:var(--accent2);
-      font-size:1.18em;
-      cursor:pointer;
-      padding:2px 8px 2px 2px;
-      border-radius:7px;
-      transition:background .09s;
-    }
-    .login-password-toggle:active {
-      background:rgba(92,120,169,0.11);
-    }
-    /* Add fingerprint icon style */
-    #fingerprintBtn {
-      margin-top:10px;
-      background:none;
-      border:none;
-      color:var(--accent2);
-      font-size:1.7em;
-      align-self:center;
-      cursor:pointer;
-      transition:color .12s;
-      border-radius:10px;
-      padding:5px 12px;
-      line-height:1.1em;
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      outline:none !important;
-      box-shadow:none !important;
-    }
-    #fingerprintBtn:active,
-    #fingerprintBtn:focus { color:var(--accent); background:rgba(47, 127, 255, 0.08);}
-    /* Hide blue tap highlight on all */
-    * {
-      -webkit-tap-highlight-color:rgba(0,0,0,0);
-    }
+    .main-content { display:flex; flex-direction:column; gap:0; align-items:stretch; width:100%; }
+    
+    .card { background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); margin-bottom:32px; padding:1.6rem 1.6rem 1.3rem; animation:fadeUp .5s ease-out; opacity:0; transform:translateY(20px); animation-fill-mode:forwards; border:none; transition:box-shadow .15s, background .16s; }
+    .card.show { opacity:1; transform:none; }
+    @keyframes fadeUp { 0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);} }
+    
+    .products-top-actions { display:flex; align-items:flex-end; gap:11px; margin-bottom:17px; flex-wrap:wrap; }
+    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; }
+    #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 38px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
+    #productSearch:focus { border-color:var(--accent); }
+    .search-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
 
-    /* Hide close button for login modal (if desired) */
-    #loginCloseBtn {
-      display: none !important;
+    /* Multi-select controls */
+    #multiSelectControls {
+      display: none;
+      gap: 8px;
+      margin-top: 6px;
+      margin-left: 2px;
+      align-items: center;
+      flex-wrap: wrap;
     }
+    #multiSelectControls.active { display: flex; }
+    #deleteSelectedBtn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: var(--rounded-btn);
+      padding: 10px 18px;
+      font-size: 0.97em;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 1px 7px #ef444433;
+      transition: background .14s, box-shadow .13s;
+      margin-left: 0;
+    }
+    #shareSelectedBtn {
+      background: #2b3548;
+      color: var(--accent2);
+      border: 1px solid #364052;
+      border-radius: var(--rounded-btn);
+      padding: 10px 16px;
+      font-size: 0.95em;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 0;
+    }
+    #exportSelectedBtn {
+      background: #18313c;
+      color: var(--button-skyblue);
+      border: 1.5px solid var(--button-skyblue);
+      border-radius: var(--rounded-btn);
+      padding: 10px 16px;
+      font-size: 0.95em;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 0;
+    }
+    #exportSelectedBtn:disabled { background:#333; color:#777; border-color:transparent; cursor:not-allowed;}
+    
+    #deleteSelectedBtn:disabled, #shareSelectedBtn:disabled { background: #333; color:#777; cursor: not-allowed; border-color:transparent;}
+    #selectAllCheckbox { accent-color: var(--accent2); margin-left:4px; margin-right:0; transform: scale(1.1); }
 
-    .container {max-width:540px;margin:0 auto;padding:1.8em 1em 6em;width:100%;box-sizing:border-box;}
+    .product-list { margin:0; padding:0; list-style:none; }
 
-    header {display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-    .logo-wrap {display:flex;align-items:center;gap:14px;}
-    .app-logo {width:52px;height:52px;border-radius:16px;box-shadow:var(--shadow-soft);
-      background:var(--gradient);display:flex;align-items:center;justify-content:center;}
-    .app-logo img {width:100%;height:100%;border-radius:16px;}
-    .app-title {font-weight:900;font-size:1.22rem;letter-spacing:-.5px;}
-
-    .top-controls {display:flex;align-items:center;gap:10px;}
-    button.icon-btn,#settingsBtn {background:none;border:none;font-size:1.1rem;color:var(--accent2);padding:8px;border-radius:9px;cursor:pointer;}
-    #installPromptBtn,#installAsAppBtn {display:none;margin-left:9px;padding:7px 15px;
-      border-radius:8px;background:var(--gradient);color:#fff;font-weight:700;border:none;cursor:pointer;box-shadow:0 1px 7px #18486314;}
-    #mobileInstallInstructions {display:none;margin-left:10px;padding:6px 10px;border-radius:8px;background:#212841;color:var(--accent2);font-size:.96em;}
-
-    .card {background:var(--bg2);border-radius:var(--radius);box-shadow:var(--shadow);
-      margin-bottom:2em;padding:1.45em;animation:fadeUp .7s cubic-bezier(.43,.8,.52,1.18);opacity:0;transform:translateY(36px);animation-fill-mode:forwards;}
-    .card.show {opacity:1;transform:none;}
-    @keyframes fadeUp {0%{opacity:0;transform:translateY(45px);}65%{opacity:.6;}100%{opacity:1;transform:translateY(0);}}
-
-    .products-top-actions {display:flex;align-items:flex-end;gap:12px;margin-bottom:17px;flex-wrap:wrap;}
-    .product-search-wrap {position:relative;flex:1 1 200px; max-width:340px;}
-    #productSearch {width:100%;border-radius:8px;border:1.5px solid #22314a; background:var(--bg3);color:var(--text);
-      font-size:.99em;padding:9px 34px 9px 14px;box-shadow:0 1.5px 6px #293d5e18;}
-    #productSearch:focus {border-color:var(--accent);}
-    .search-icon {position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--accent2);pointer-events:none;opacity:.7;font-size:1.05em;}
-
-    #multiSelectControls {display:none;gap:10px;margin:7px 0 0 5px;align-items:center;}
-    #multiSelectControls.active {display:flex;}
-    #deleteSelectedBtn {background:var(--danger);color:#fff;border:none;border-radius:12px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.97em;box-shadow:0 1px 7px #ef444433;}
-    #deleteSelectedBtn:disabled {background:#d67070a8;}
-    #selectAllCheckbox {accent-color:var(--accent2);margin-left:4px;transform:scale(1.08);}
-    #selectedCountText {color:var(--danger);font-weight:600;font-size:.99em;}
-
+    /* Stylish Skyblue Buttons */
     .rounded-sky-btn {
-      background:var(--gradient);color:#fff;border:none;border-radius:12px;padding:9px 18px;font-size:.98em;font-weight:600;cursor:pointer;box-shadow:0 1.2px 7px #09B7D450;
-      transition:background .15s,box-shadow .1s,transform .10s;letter-spacing:0.02em;user-select:none;}
-    .rounded-sky-btn:hover {background:linear-gradient(90deg,#09B7D4 60%,#297EFF 90%);}
-    .rounded-sky-btn.cancel {background:#19263c;color:var(--accent);border:1.3px solid var(--accent);}
-    .rounded-sky-btn.cancel:hover {background:#22384a;color:#fff;border-color:var(--accent2);}
-    button,.rounded-sky-btn {outline:none !important;}
-    ::selection {background:var(--accent2);color:#fff;}
-    a {color:var(--accent);font-weight:500;}
-    .hidden {display:none !important;}
+      background: var(--button-gradient);
+      color: #fff;
+      border: none;
+      border-radius: var(--rounded-btn);
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 1.5px 10px #2eb9f733;
+      transition: background .15s, box-shadow .14s, transform .10s;
+      outline: none;
+      margin: 2px 0;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent; 
+      -webkit-user-select: none;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .rounded-sky-btn:hover,
+    .rounded-sky-btn:active {
+      background: linear-gradient(90deg, #0e9fec, #2563EB 95%);
+      box-shadow: 0 3px 16px #43c7fc43;
+      transform: translateY(-1.5px) scale(1.03);
+    }
+    .rounded-sky-btn.cancel {
+      background: #18313c;
+      color: var(--button-skyblue);
+      border: 1.5px solid var(--button-skyblue);
+      font-weight: 600;
+    }
+    .rounded-sky-btn.cancel:hover, .rounded-sky-btn.cancel:active {
+      background: #22384a;
+      color: #fff;
+      border-color: #1095b7;
+    }
+    
+    /* Biometric Button */
+    #biometricUnlockBtn {
+      background: linear-gradient(90deg, #10b981 30%, #059669 100%);
+      width: 100%;
+      margin-top: 10px;
+      display: none; /* hidden by default */
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* Product list & cards */
-    .product-list {margin:0;padding:0;list-style:none;}
-    .prod-card {background:var(--bg3);border-radius:1em;margin-bottom:13px;box-shadow:0 2px 10px #297EFF18;display:flex;gap:16px;align-items:center;padding:15px 15px 15px 5px;position:relative;animation:fadeUp .42s;opacity:0;transform:translateY(18px);animation-fill-mode:forwards;transition:box-shadow .14s,border-color .18s;}
-    .prod-card.show {opacity:1;transform:none;}
-    .prod-card:hover {border-color:var(--accent2);}
-    .prod-img {min-width:39px;width:39px;height:39px;border-radius:9px;background:#2c3144;display:flex;align-items:center;justify-content:center;font-size:1.32em;}
-    .prod-photo-thumb {max-width:100%;max-height:39px;border-radius:8px;object-fit:cover;background:#232e3a;}
-    .prod-main-details {flex:1;overflow:hidden;}
-    .prod-name {font-weight:700;font-size:1.10em;color:var(--text);}
-    .prod-details {color:var(--gray);font-size:.96em;}
-    .prod-actions {margin-left:auto;display:flex;gap:7px;align-items:center;}
-    .prod-actions button {background:none;border:none;color:var(--accent2);font-size:1.18em;padding:3px 3px;border-radius:6px;cursor:pointer;}
-    .prod-select-checkbox {margin-right:12px;transform:scale(1.18);accent-color:var(--accent2);}
-    .prod-card.selected {border:2px solid var(--danger);background:#20233a;box-shadow:0 0 12px #ef44441a;}
+    button, .rounded-sky-btn, .prod-actions button, .modal-close, input[type="button"], input[type="submit"], .remove-photo-btn {
+      -webkit-tap-highlight-color: transparent !important;
+      tap-highlight-color: transparent !important;
+      outline: none !important;
+    }
+    button:focus, .rounded-sky-btn:focus, .prod-actions button:focus, .modal-close:focus, .remove-photo-btn:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    input[type="button"]:focus, input[type="submit"]:focus { outline:none !important; box-shadow:none !important; }
+    .card button:focus-visible, .card button:focus, .prod-actions button:focus, .rounded-sky-btn:focus, .remove-photo-btn:focus {
+      outline: none !important;
+      box-shadow: none !important;
+      border-color: inherit !important;
+      background-clip: padding-box;
+    }
+    .prod-card, .prod-card * {
+      -webkit-tap-highlight-color: transparent !important;
+      tap-highlight-color: transparent !important;
+    }
+    button:focus:not(:focus-visible), .rounded-sky-btn:focus:not(:focus-visible), .modal-close:focus:not(:focus-visible), .remove-photo-btn:focus:not(:focus-visible) {
+      outline: none !important;
+      box-shadow: none !important;
+    }
 
-    .no-products {text-align:center;color:var(--text-muted);font-size:1.09em;margin:34px 0 14px;}
+    .modal-file-upload-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+      margin-top: 2px;
+    }
+    .modal-file-label {
+      font-weight: 600;
+      font-size: .96em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .modal-file-upload-btn {
+      display: inline-block;
+      position: relative;
+    }
+    .modal-file-upload-btn input[type="file"] {
+      position: absolute;
+      left: 0; right: 0; top: 0; bottom: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
 
-    /* Modal styles */
-    .modal-backdrop {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(19,25,38,.92);z-index:4000;display:flex;align-items:center;justify-content:center;opacity:1;visibility:visible;transition:opacity .2s;}
-    .modal-backdrop.hide {opacity:0;visibility:hidden;pointer-events:none;}
-    .modal {min-width:300px;max-width:99vw;background:var(--bg2);border-radius:1em;box-shadow:var(--shadow);padding:36px 18px 23px;display:flex;flex-direction:column;align-items:stretch;position:relative;}
-    .modal h3 {margin:0 0 18px;color:var(--accent2);text-align:center;font-weight:800;font-size:1.18em;}
-    .modal-close {position:absolute;top:13px;right:14px;background:none;border:none;color:var(--accent2);font-size:1.18em;cursor:pointer;}
-    .modal label {font-weight:600;font-size:.99em;color:var(--text-muted);margin-bottom:4px;}
-    .modal input, .modal textarea {border-radius:7px;border:1.3px solid #253048;background:var(--bg3);color:var(--text);padding:8px 11px;margin-bottom:13px;width:100%;box-sizing:border-box;font-size:.99em;}
-    .modal textarea {min-height:54px;resize:vertical;}
-    .modal-btnbar {display:flex;align-items:center;justify-content:flex-end;gap:13px;margin-top:6px;}
-    .modal button[type=submit] {background:var(--gradient);color:#fff;padding:11px 22px;font-size:.98em;border:none;border-radius:8px;font-weight:700;cursor:pointer;}
-    .modal .error {font-size:.98em;color:var(--danger);margin-bottom:7px;min-height:18px;text-align:left;}
-    #detailModal .prod-detail-photo {display:block;width:110px;height:110px;object-fit:cover;border-radius:15px;margin:8px auto 0;background:#21293f;box-shadow:0 2px 10px #297EFF16;}
+    .remove-photo-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 1.18em;
+      font-weight: bold;
+      margin-left: 4px;
+      cursor: pointer;
+      transition: background 0.14s, color 0.12s;
+      box-shadow: 0 1px 5px #ef444433;
+      z-index: 2;
+      vertical-align: middle;
+    }
+    .remove-photo-btn:hover, .remove-photo-btn:focus {
+      background: #ce3737;
+      color: #fff;
+    }
+    .photo-preview-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .photo-preview-img-thumb {
+      max-width: 42px;
+      max-height: 42px;
+      border-radius: 7px;
+      object-fit: cover;
+      border: 2px solid var(--accent2-hover);
+      margin-right: 2px;
+      background: #273855;
+      display: block;
+    }
 
-    /* Modern toggle styling */
-    .keep-logged-toggle {display:flex;align-items:center;gap:7px;margin-top:8px;user-select:none;font-size:.99em;color:var(--text-muted);}
-    .keep-logged-toggle input[type=checkbox] {accent-color:var(--accent2);transform:scale(1.13);}
-    #timeoutNotice {font-size:.97em;color:var(--accent2);margin-top:11px;text-align:center;display:none;font-weight:600;background:#132447;padding:8px 10px;border-radius:10px;}
+    /* -----------  PRODUCT CARD LIST-VIEW SIZING  ----------- */
+    .prod-card { 
+      background:var(--bg3); 
+      border-radius:13px; 
+      margin-bottom:16px; 
+      box-shadow:0 2px 10px #2c345128; 
+      display:flex; 
+      gap:19px; 
+      align-items:center; 
+      padding:18px 20px; 
+      position:relative; 
+      animation:fadeUp .3s ease-out; 
+      opacity:0; 
+      transform:translateY(15px); 
+      animation-fill-mode:forwards; 
+      cursor:pointer; 
+      border:2px solid transparent; 
+      transition:box-shadow .14s, border-color .16s; 
+      content-visibility: auto; 
+    }
+    .prod-card.show { opacity:1; transform:none; }
+    .prod-card:hover { border-color:var(--accent2); box-shadow:0 6px 24px #18346023; }
+    
+    .prod-img { 
+        min-width:43px; width:43px; height:43px; 
+        border-radius:10px; background:#21293f; 
+        flex-shrink:0; display:flex; align-items:center; justify-content:center; 
+        color:var(--accent2); font-size:1.45em; overflow:hidden; 
+        cursor: zoom-in;
+    }
+    .prod-photo-thumb { max-width:100%; max-height:43px; border-radius:8px; object-fit:cover; background:#232b36; display:block; }
+    
+    .prod-name { font-weight:700; font-size:1.15em; color:var(--text); letter-spacing:-0.5px; margin-bottom:1.5px; }
+    .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
+    .prod-actions { margin-left:auto; display:flex; gap:7px; align-items:center; }
+    .prod-actions button { background:none; border:none; color:var(--accent2); font-size:1.32em; cursor:pointer; transition:color .13s; border-radius:5px; padding:3px 5px; outline:none; }
+    .prod-select-checkbox {
+      margin-right: 18px;
+      transform: scale(1.25);
+      accent-color: var(--accent2);
+      cursor:pointer;
+    }
+    .prod-card.selected { border-color: var(--danger); background: #1b1d2d; box-shadow: 0 4px 16px #ef44441a;}
+    .prod-card .prod-select-checkbox:focus { outline: 2px solid var(--accent2); outline-offset:1px;}
 
-    /* Photo upload preview styles */
-    .photo-preview-wrap {display:inline-flex;align-items:center;gap:2px;}
-    .photo-preview-img-thumb {max-width:36px;max-height:36px;border-radius:7px;object-fit:cover;border:2px solid var(--accent2);background:#273855;}
-    .remove-photo-btn {background:var(--danger);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:.9em;display:inline-flex;align-items:center;justify-content:center;margin-left:3px;cursor:pointer;box-shadow:0 1px 5px #ef444433;}
-    .remove-photo-btn:hover {background:#cd2424;}
-    .modal-file-upload-wrap {display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-    .modal-file-label {font-weight:600;font-size:.97em;color:var(--text-muted);margin-bottom:3px;}
-    .modal-file-upload-btn {position:relative;}
-    .modal-file-upload-btn input[type=file] {position:absolute;left:0;right:0;top:0;bottom:0;opacity:0;width:100%;height:100%;cursor:pointer;}
+    /* Category Header Style */
+    .category-header {
+        font-size: 0.95em;
+        font-weight: 800;
+        color: var(--accent2);
+        background: rgba(33, 41, 54, 0.5);
+        padding: 8px 12px;
+        margin-top: 15px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-left: 4px solid var(--accent);
+    }
+    .category-header:first-child { margin-top: 0; }
+    
+    /* Category Filter Label */
+    #activeCategoryDisplay {
+        display: none;
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--accent2);
+        border: 1px dashed var(--accent2);
+        border-radius: 10px;
+        font-weight: 700;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+    #activeCategoryDisplay:hover { background: rgba(6, 182, 212, 0.25); }
+    #activeCategoryDisplay.show { display: flex; }
 
+    /* Category Modal Grid */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+    .category-item-btn {
+        background: #253048;
+        color: var(--text);
+        border: 1px solid #364052;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+    }
+    .category-item-btn:hover { background: #303d58; transform: translateY(-2px); border-color: var(--accent2); }
+    .category-item-btn.active { background: var(--button-gradient); color: #fff; border-color: transparent; }
+
+    .no-products { text-align:center; color:var(--text-muted); font-size:1.12em; margin:34px 0 14px 0; letter-spacing:.01em; }
+    .modal-backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(18,23,32,0.92); z-index:4999; display:flex; align-items:center; justify-content:center; opacity:1; visibility:visible; transition:opacity .21s; }
+    .modal-backdrop.hide { opacity:0; visibility:hidden; pointer-events:none; }
+    .modal { min-width:320px; max-width:98vw; background:var(--bg2); border-radius:var(--radius-card); box-shadow:var(--shadow); z-index:6000; padding:36px 22px 23px 22px; animation:fadeUp .3s; display:flex; flex-direction:column; align-items:stretch; position:relative; }
+    .modal h3 { margin:0 0 18px 0; color:var(--accent2); text-align:center; font-weight:800; font-size:1.26em; letter-spacing:-.2px; }
+    .modal-close { position:absolute; top:13px; right:14px; background:none; border:none; color:var(--accent2); font-size:1.24em; cursor:pointer; font-weight:bold; outline:none; }
+    .modal label { font-weight:600; font-size:.96em; color:var(--text-muted); margin-bottom:4px; }
+    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal textarea { border-radius:7px; border:1.5px solid #253048; background:var(--bg3); color:var(--text); font-size:1em; padding:8px 11px; margin-bottom:13px; margin-top:2px; outline:none; width:100%; box-sizing:border-box; transition:border .13s; }
+    .modal textarea { min-height:54px; resize:vertical; }
+    .modal-btnbar { display:flex; align-items:center; justify-content:flex-end; gap:13px; margin-top:6px; }
+    .modal button[type=submit] { background:linear-gradient(95deg,var(--accent2),var(--accent)); color:#fff; padding:11px 22px; font-size:1em; border:none; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:0 2px 10px #1b314e28; margin:6px 0; transition:background .14s; outline:none; }
+    .modal .error { font-size:.98em; color:var(--danger); margin-bottom:7px; min-height:18px; text-align:left; }
+    
+   /* ---- PRODUCT DETAIL MODAL ---- */
+#detailModal {
+  max-width: 260px;
+  width: 85%;
+  padding-top: 30px;
+}
+
+#detailModal .prod-detail-photo { 
+  display: block; 
+  width: 85%; 
+  max-width: 170px;
+  height: 170px;
+  object-fit: cover; 
+  border-radius: 20px; 
+  margin: 8px auto 16px auto; 
+  box-shadow: 0 4px 16px #1b314e33; 
+  background: #21293f; 
+}
+
+#detailModalBody ul { font-size: 0.78em; }
+#detailModalBody ul li { margin-bottom: 6px; }
+
+    .show-password-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      position: relative;
+    }
+    #showLoginPINBtn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      font-size: 1.11em;
+      opacity: 0.79;
+      padding: 2px 7px;
+      border-radius: 8px;
+      z-index: 5;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent !important;
+      outline: none !important;
+    }
+    #showLoginPINBtn:active, #showLoginPINBtn:focus {
+      background: #1f2336;
+      color: var(--accent2-hover);
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    
+    .share-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    .share-option-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: #1e2530;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .share-option-row:hover { background: #262f3d; }
+    .share-option-row input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        transform: scale(1.2);
+        accent-color: var(--accent2);
+        cursor: pointer;
+    }
+
+    /* --- FULL SCREEN IMAGE VIEWER --- */
+    #imageViewerOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 8000;
+        background: rgba(0,0,0,0.95);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.2s ease-out;
+    }
+    #imageViewerOverlay.show { display: flex; }
+    #imageViewerImg {
+        max-width: 95vw;
+        max-height: 85vh;
+        object-fit: contain;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    #imageViewerClose {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    #imageViewerClose:hover { background: rgba(255,255,255,0.25); }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+    /* --- PRINTING STYLES (PDF Generation) --- */
+    #printableArea {
+        display: none;
+        background: white;
+        color: black;
+        font-family: 'Arial', sans-serif;
+        padding: 40px;
+    }
+    @media print {
+        body > *:not(#printableArea) {
+            display: none !important;
+        }
+        #printableArea {
+            display: block !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            z-index: 9999;
+            background: white !important;
+            color: black !important;
+        }
+        .print-product-page {
+            page-break-after: always;
+            margin-bottom: 50px;
+        }
+        .print-product-page:last-child {
+            page-break-after: auto;
+        }
+        .print-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .print-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        .print-title { font-size: 24px; font-weight: bold; margin: 10px 0; }
+        .print-product-img {
+            max-width: 300px;
+            max-height: 300px;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+        }
+        .print-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .print-details-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .print-label { font-weight: bold; width: 40%; }
+        .print-notes-box {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px dashed #aaa;
+            background: #f9f9f9;
+        }
+    }
+
+    body.modal-open {
+      overflow: hidden !important;
+      position: fixed !important;
+      width: 100vw;
+    }
+    body.detail-modal-open {
+      overflow: hidden !important;
+    }
+
+    /* --------- MOBILE OPTIMIZATIONS  ---------- */
     @media (max-width:650px){
-      .container{padding:11px .5vw 15px;}
-      .card {padding:.8em .4em .95em .45em;}
-      .app-logo {width:36px;height:36px;}
-      .app-title{font-size:1rem;}
-      .prod-card{padding:10px 3px 10px 1.5px;}
-      .modal{padding:10vw 2vw 7vw 2vw;}
-      #detailModal .prod-detail-photo{width:70px;height:70px;}
-      #multiSelectControls{font-size:0.98em;}
-      .photo-preview-img-thumb {max-width:29px;max-height:29px;}
-      .remove-photo-btn {width:17px;height:17px;font-size:.85em;}
+      html, body { font-size: 15.5px; }
+      .container{padding:10px 2vw 17px 2vw;}
+      .card{padding:.54rem .26rem 0.7rem .47rem;}
+      .app-title{font-size:1.02rem;}
+      
+      .prod-card{
+        padding: 12px 10px;
+        gap: 14px;
+        border-radius: 9px;
+        margin-bottom: 10px;
+        min-height: 64px;
+      }
+      
+      .prod-img{ 
+          min-width: 48px; width: 48px; height: 48px; 
+          font-size: 1.5em; border-radius: 9px;
+      }
+      .prod-photo-thumb { max-width:100%; max-height:48px; border-radius:8px; }
+      
+      .prod-name{ font-size: 1.1em; margin-bottom: 1px;}
+      .prod-details{ font-size: 0.92em; margin-top: 2px; margin-bottom: 2px;}
+      
+      .prod-actions{ gap: 8px; }
+      .prod-actions button{font-size: 1.15em; padding: 4px;}
+      
+      .prod-select-checkbox { margin-right: 12px; transform: scale(1.35); padding: 5px; }
+      
+      .modal{padding:12vw 2vw 3vw 2vw; min-width:unset;}
+      
+      #detailModal .prod-detail-photo{ width: 100%; max-width: 190px; height: 190px;}
+      
+      #mobileInstallInstructions{max-width:98vw;font-size:0.92em;}
+      #multiSelectControls{font-size:0.96em; flex-wrap:wrap;}
+      .photo-preview-img-thumb { max-width:22px; max-height:22px; }
+      .remove-photo-btn { width:18px; height:18px; font-size:.95em;}
+    }
+    ::selection{background:var(--accent2); color:#fff;}
+    a{color:var(--accent);}
+    .hidden { display:none !important; }
+    
+    .keep-logged-toggle {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 8px;
+      user-select: none;
+      font-size: .99em;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .keep-logged-toggle input[type="checkbox"] {
+      accent-color: var(--accent2);
+      transform: scale(1.13);
+      margin-right: 2px;
+    }
+    #timeoutNotice {
+      font-size: .97em;
+      color: var(--accent2);
+      margin-top: 11px;
+      text-align: center;
+      display: none;
+      font-weight: 600;
+      background: #122447;
+      padding: 8px 10px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <!-- LOGIN MODAL -->
-  <div id="login-modal">
-    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate>
-      <!-- No close button for login modal, for cleaner style -->
+  <div id="printableArea"></div>
+
+  <div id="imageViewerOverlay">
+      <button id="imageViewerClose">✖</button>
+      <img id="imageViewerImg" src="" alt="Full Screen" />
+  </div>
+
+  <div id="login-modal" style="position:fixed; inset:0; z-index:7000; background:rgba(22,27,34,0.89); display:flex; justify-content:center; align-items:center;">
+    <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
+      <button class="modal-close" type="button" id="loginCloseBtn" title="Close" aria-label="Close dialog" role="button" style="display:none">✖</button>
       <h3 style="text-align:center;color:var(--accent2);margin-bottom:12px">🔐 Dealer Login</h3>
-      <div class="error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
+      <div class="error input-error" id="login-error" style="min-height:18px;margin-bottom:8px"></div>
+
       <label id="pinLabel" for="loginPIN">Create a secure PIN / Password</label>
-      <div style="position:relative;display:flex;align-items:center;">
-        <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" style="flex:1;"/>
-        <button type="button" id="showLoginPINBtn" title="Show/hide PIN" class="login-password-toggle">
-          <span id="showLoginPINBtnIcon">&#128065;</span>
+      <div class="show-password-wrap">
+        <input type="password" id="loginPIN" minlength="4" maxlength="32" required placeholder="Set PIN or password" autocomplete="new-password" />
+        <button type="button" id="showLoginPINBtn" title="Show/Hide PIN" tabindex="-1" aria-label="Show password" style="display:inline-flex;align-items:center;">
+          <span id="showLoginPINBtnIcon" aria-hidden="true">&#128065;</span>
         </button>
       </div>
-      <button type="button" id="fingerprintBtn" tabindex="0" title="Fingerprint Login" style="display:none">
-        <span style="font-size:1.4em">🔒</span>
-        <span style="font-size:.96em;">Use Fingerprint</span>
-      </button>
-      <label class="keep-logged-toggle" title="Stay logged in 5 Min unless closed/locked">
-        <input type="checkbox" id="keepLoggedInToggle"/>
-        <span>Keep me logged in for 5 Minutes</span>
+
+      <label class="keep-logged-toggle" title="If checked, you stay logged in for 5 minutes unless the app is closed or device is locked.">
+        <input type="checkbox" id="keepLoggedInToggle" />
+        <span>Keep me logged in for 30 Minutes</span>
       </label>
       <div id="timeoutNotice"></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
-        <button type="submit" id="loginBtn" style="flex:1;" class="rounded-sky-btn">Set PIN</button>
+
+      <div style="display:flex; flex-direction:column; gap:10px; align-items:center; width:100%; margin-top:10px;">
+        <button type="submit" id="loginBtn" style="width:100%;">Set PIN</button>
+        <button type="button" id="biometricUnlockBtn" class="rounded-sky-btn" title="Unlock with Fingerprint">
+           👆 Unlock with Fingerprint
+        </button>
+        <button type="button" id="forgotBtn" style="display:none; background:transparent; border:1px solid #253048; color:var(--text); padding:9px 12px; border-radius:8px; cursor:pointer;">Forgot</button>
       </div>
-      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data stored locally in your browser. PIN stored hashed.</small>
+
+      <small style="display:block;margin-top:12px;color:var(--text-muted);">All data is stored locally in your browser. PIN is hashed before saving.</small>
     </form>
   </div>
 
-  <!-- APP MAIN -->
-  <div id="dealerApp" style="display:none;">
+  <div id="dealerApp" class="" style="display:none;">
     <div class="container">
       <header>
         <div class="logo-wrap">
-          <div class="app-logo" title="Al Rahman Electronics">
-            <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" alt="App Logo"/>
+          <div class="app-logo" title="Al Rehman Electronics" style="padding:0;">
+            <img src="https://github.com/ashardiyan/test/blob/e8a700de371269b411bebca7c951e8ce92c400d8/Al%20Rahman%20Electronics-02.png?raw=true" alt="App Logo" style="width:100%;height:100%;border-radius:16px;object-fit:cover;background:#fff;border:none;"/>
           </div>
-          <span class="app-title">Al Rahman Electronics</span>
+          <span class="app-title">Al Rehman Electronics</span>
         </div>
         <div class="top-controls">
           <button id="installPromptBtn" title="Install as App">📲 Install</button>
@@ -310,22 +701,34 @@
           <span id="mobileInstallInstructions"></span>
         </div>
       </header>
+
       <div class="main-content">
-        <section class="card" style="animation-delay:.08s">
+        <section class="card" style="animation-delay:.06s">
           <div class="products-top-actions">
             <div class="product-search-wrap">
-              <input type="search" placeholder="Search by name, category, or note..." id="productSearch" autocomplete="off"/>
+              <input type="search" placeholder="Search by name, category, or note..." id="productSearch" autocomplete="off" />
               <span class="search-icon">&#128269;</span>
             </div>
             <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
+            <button type="button" id="categoryFilterBtn" class="rounded-sky-btn">Category</button>
             <button type="button" id="exportBtn" class="rounded-sky-btn">Export</button>
             <button type="button" id="importBtn" class="rounded-sky-btn">Import</button>
             <input type="file" id="importFile" accept="application/json" style="display:none"/>
           </div>
+          
+          <div id="activeCategoryDisplay"></div>
+          
           <div id="multiSelectControls">
-            <label style="display:flex;align-items:center;gap:5px;"><input type="checkbox" id="selectAllCheckbox"/><span>Select all</span></label>
-            <button type="button" id="deleteSelectedBtn" disabled>🗑️ Delete Selected</button>
-            <span id="selectedCountText"></span>
+            <label style="display:flex;align-items:center;gap:4px;margin-right:10px;">
+              <input type="checkbox" id="selectAllCheckbox" title="Select all" />
+              <span style="user-select:none;">Select all</span>
+            </label>
+            <div style="display:flex;gap:6px; flex-wrap:wrap;">
+                <button type="button" id="deleteSelectedBtn" disabled>🗑️ Delete</button>
+                <button type="button" id="exportSelectedBtn" disabled>💾 Export JSON</button>
+                <button type="button" id="shareSelectedBtn" disabled>📤 Share PDF</button>
+            </div>
+            <span id="selectedCountText" style="color:var(--danger);font-weight:600;font-size:0.99em;margin-left:5px;"></span>
           </div>
           <ul class="product-list" id="productList"></ul>
           <div class="no-products" id="noProducts" style="display:none">No products yet. Click <b>+ Add</b> to get started!</div>
@@ -334,160 +737,238 @@
     </div>
   </div>
 
-  <!-- Product Add/Edit Modal -->
   <div class="modal-backdrop hide" id="productModalBackdrop">
     <form class="modal" id="productModal" autocomplete="off">
-      <button class="modal-close" type="button" id="closeModalBtn">✖</button>
+      <button class="modal-close" type="button" id="closeModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
       <h3 id="modalTitle">Add Product</h3>
       <div class="error" id="modalError" style="min-height:18px"></div>
       <label for="prodName">Name</label>
-      <input type="text" id="prodName" required maxlength="64"/>
+      <input type="text" id="prodName" required maxlength="64" />
       <label for="prodMrp">MRP (₨)</label>
-      <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required/>
+      <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
       <label for="prodCost">Cost Price (₨)</label>
       <input type="number" id="prodCost" min="0" max="100000" step="0.01"/>
       <label for="prodQty">Quantity</label>
-      <input type="number" id="prodQty" min="0" max="100000" required/>
+      <input type="number" id="prodQty" min="0" max="100000" required />
       <label for="prodCategory">Category</label>
-      <input type="text" id="prodCategory" maxlength="32"/>
+      <input type="text" id="prodCategory" maxlength="32" />
       <label for="prodNotes">Notes</label>
-      <textarea id="prodNotes" maxlength="120"></textarea>
-      <span class="modal-file-label">Photo <span style="color:var(--accent2)">[auto-compressed]</span></span>
-      <div class="modal-file-upload-wrap">
+      <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
+      <span class="modal-file-label">Photo <span title="Base64 photos use much more space than compressed images. Large images may slow the app. Compressed automatically." style="font-size:1.1em;color:var(--accent2)">[auto-compressed]</span></span>
+      <div class="modal-file-upload-wrap" id="fileUploadWrap">
         <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText">
           <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span id="uploadBtnInnerText">Choose Image</span>
-          <input type="file" id="prodPhoto" accept="image/*"/>
+          <input type="file" id="prodPhoto" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
-        <span id="prodPhotoFileContainer" class="photo-preview-wrap"></span>
+        <span id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em;"></span>
         <span id="prodPhotoFileName" style="color:var(--text-muted);font-size:.99em;"></span>
       </div>
       <div class="modal-btnbar">
         <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
       </div>
-      <div id="imageCompressMsg" style="font-size:.99em;color:var(--text-muted);margin-top:10px;display:none"></div>
+      <div id="imageCompressMsg" style="font-size:.99em;color:var(--text-muted);margin-top:10px;user-select:none;display:none"></div>
     </form>
+  </div>
+  
+  <div class="modal-backdrop hide" id="categoryModalBackdrop">
+    <div class="modal" id="categoryModal">
+        <button class="modal-close" type="button" id="closeCategoryBtn" title="Close" aria-label="Close dialog">✖</button>
+        <h3>Select Category</h3>
+        <div id="categoryGrid" class="category-grid">
+            </div>
+    </div>
+  </div>
+  
+  <div class="modal-backdrop hide" id="shareModalBackdrop">
+    <div class="modal" id="shareModal">
+      <button class="modal-close" type="button" id="closeShareBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <h3>📤 Share Product PDF</h3>
+      <div id="shareSubtitle" style="margin-bottom:15px;color:var(--text-muted);text-align:center;">Select fields to include in the generated PDF/Print.</div>
+      
+      <div class="share-options">
+          <label class="share-option-row">
+              <input type="checkbox" id="sharePhoto" checked> <span>Include Photo</span>
+          </label>
+          <label class="share-option-row">
+              <input type="checkbox" id="shareMrp" checked> <span>Include MRP (Price)</span>
+          </label>
+          <label class="share-option-row">
+              <input type="checkbox" id="shareCost"> <span>Include Cost Price</span>
+          </label>
+          <label class="share-option-row">
+              <input type="checkbox" id="shareQty" checked> <span>Include Quantity</span>
+          </label>
+          <label class="share-option-row">
+              <input type="checkbox" id="shareCategory" checked> <span>Include Category</span>
+          </label>
+          <label class="share-option-row">
+              <input type="checkbox" id="shareNotes" checked> <span>Include Notes</span>
+          </label>
+      </div>
+
+      <div class="modal-btnbar">
+        <button type="button" id="generatePdfBtn" class="rounded-sky-btn">🖨️ Generate PDF / Print</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-backdrop hide" id="deleteModalBackdrop">
     <form class="modal" id="deleteModal">
-      <button class="modal-close" type="button" id="closeDeleteBtn">✖</button>
+      <button class="modal-close" type="button" id="closeDeleteBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
       <h3>Delete Product</h3>
       <div style="margin:11px 0 17px 0">Are you sure you want to delete <b id="deleteName"></b>?</div>
       <div class="modal-btnbar">
         <button type="button" id="cancelDeleteBtn" class="rounded-sky-btn cancel">Cancel</button>
-        <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;">Yes, Delete</button>
+        <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px #1b314e28;transition:background .14s;outline:none;">Yes, Delete</button>
       </div>
     </form>
   </div>
 
   <div class="modal-backdrop hide" id="detailModalBackdrop">
     <div class="modal" id="detailModal" tabindex="-1">
-      <button class="modal-close" type="button" id="closeDetailModalBtn">✖</button>
+      <button class="modal-close" type="button" id="closeDetailModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
       <h3>Product Details</h3>
       <div id="detailModalBody"></div>
     </div>
   </div>
 
   <div class="modal-backdrop hide" id="settingsBackdrop">
-    <div class="modal" id="settingsModal" role="dialog" aria-modal="true">
-      <button class="modal-close" type="button" id="closeSettingsBtn">✖</button>
-      <h3>Settings</h3>
+    <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <button class="modal-close" type="button" id="closeSettingsBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <h3 id="settingsTitle">Settings</h3>
+
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <div><span style="font-weight:700">Account</span>
-          <div style="color:var(--text-muted);font-size:.94em;">Logout or reset PIN</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:700">Account</div>
+            <div style="color:var(--text-muted);font-size:.94em;">Logout or reset your PIN</div>
+          </div>
         </div>
-        <button id="logoutBtn" class="rounded-sky-btn" style="background:#24272f;color:var(--text)">🔒 Logout</button>
-        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;"/>
+
+        <button id="logoutBtn" style="padding:10px;border-radius:8px;border:none;background:#2b2f3a;color:var(--text);cursor:pointer;">🔒 Logout</button>
+
+        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;" />
+
+        <div style="font-weight:700; display:flex; align-items:center; gap:6px;">
+          Fingerprint / Face ID
+        </div>
+        <button id="setupBiometricBtn" class="rounded-sky-btn" style="background:#2b2f3a; border:1px solid #364052;">
+           👆 Setup Fingerprint
+        </button>
+        <div style="color:var(--text-muted);font-size:.85em;margin-bottom:6px;">
+           Enable easy unlock using your device's sensor.
+        </div>
+
+        <hr style="border:none;height:1px;background:#22272f;margin:6px 0;border-radius:2px;" />
+
         <div style="font-weight:700">Reset PIN</div>
-        <div style="color:var(--text-muted);font-size:.92em;margin-bottom:6px;">Enter current PIN, then choose a new one.</div>
+        <div style="color:var(--text-muted);font-size:.93em;margin-bottom:6px;">Enter your current PIN, then choose a new one.</div>
+
         <label for="oldPin">Current PIN</label>
-        <input type="password" id="oldPin" maxlength="32"/>
+        <input type="password" id="oldPin" placeholder="Current PIN" maxlength="32" />
+
         <label for="newPin">New PIN</label>
-        <input type="password" id="newPin" maxlength="32"/>
+        <input type="password" id="newPin" placeholder="New PIN (min 4 chars)" maxlength="32" />
+
         <label for="confirmPin">Confirm New PIN</label>
-        <input type="password" id="confirmPin" maxlength="32"/>
+        <input type="password" id="confirmPin" placeholder="Confirm new PIN" maxlength="32" />
+
         <div class="error" id="resetPinError" style="min-height:18px;"></div>
+
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button id="resetPinCancel" class="rounded-sky-btn cancel">Cancel</button>
           <button id="resetPinSubmit" class="rounded-sky-btn">Reset PIN</button>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Hidden import for products json -->
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
 
-  <!-- --- Service Worker for PWA --- -->
   <script>
-    // Dynamically add manifest for PWA install support
-    (function(){
-      const manifest = {
-        name: "Al Rahman Electronics",
-        short_name: "ARE",
-        description: "Offline-first dealer product listing",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#161B22",
-        theme_color: "#161B22",
-        icons: [
-          { src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true", sizes: "192x192", type: "image/png" },
-          { src: "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true", sizes: "512x512", type: "image/png" }
-        ]
-      };
-      let link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type: 'application/json'}));
-      document.head.appendChild(link);
-    })();
+    /****************************************************************
+     * BIOMETRIC (FINGERPRINT/FACE ID) LOGIC
+     ****************************************************************/
+    const strToBuffer = (str) => Uint8Array.from(str, c => c.charCodeAt(0));
+    const randomBuffer = (len) => {
+      const arr = new Uint8Array(len);
+      window.crypto.getRandomValues(arr);
+      return arr;
+    };
 
-    // Service worker for offline support (in-page for GitHub Pages)
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function() {
-        try {
-          const swBlob = new Blob([`
-            const CACHE_NAME = 'dealer-cache-v3';
-            const FILES = [
-              location.pathname.endsWith('.html') ? location.pathname : '/index.html',
-              '/',
-            ];
-            self.addEventListener('install', e => {
-              e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));
-            });
-            self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
-            self.addEventListener('fetch',e=>{
-              if(e.request.method!='GET')return;
-              e.respondWith(
-                caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
-                  if(resp&&resp.status==200&&resp.type=='basic'){
-                    caches.open(CACHE_NAME).then(c=>c.put(e.request,resp.clone()));
-                  }
-                  return resp;
-                }).catch(()=>{
-                  if(e.request.mode=='navigate'||e.request.destination=='document')
-                    return caches.match('/index.html');
-                  return;
-                }))
-              );
-            });
-          `],{type:'text/javascript'});
-          const swUrl = URL.createObjectURL(swBlob);
-          navigator.serviceWorker.register(swUrl).catch(()=>{});
-        } catch(e){}
-      });
+    function hasBiometricSetup() {
+       return !!localStorage.getItem('dealer-bio-cred-id');
     }
-  </script>
 
-  <!-- --- APP JS --- -->
-  <script>
-    // All JS goes here; identical logic unless for visual tweaks
+    async function registerBiometric() {
+        if (!window.PublicKeyCredential) {
+            alert("Biometrics not supported on this browser.");
+            return;
+        }
+        const userId = window.localStorage.getItem('dealer-hash') || 'default-user';
+        try {
+            const publicKeyCredentialCreationOptions = {
+                challenge: randomBuffer(32),
+                rp: { name: "Al Rehman Electronics", id: window.location.hostname },
+                user: { id: strToBuffer(userId), name: "dealer@local", displayName: "Dealer" },
+                pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
+                timeout: 60000,
+                attestation: "none"
+            };
+            const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+            const credId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+            localStorage.setItem('dealer-bio-cred-id', credId);
+            alert("Fingerprint setup successful! You can now use it to unlock.");
+            checkBiometricButtonVisibility();
+        } catch (err) {
+            console.error(err);
+            if(err.name === 'NotAllowedError') alert("Setup cancelled or timed out.");
+            else if (window.location.protocol === 'file:') alert("Security Error: Biometrics do not work on local files (file://).");
+            else alert("Setup failed: " + err.message);
+        }
+    }
 
-    // Utility
-    function escapeHTML(v){return typeof v!=="string"?v===null||v===undefined?"":String(v):v.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-    function genID(){return 'p'+(Date.now() +(Math.random()).toString().slice(2,7));}
+    async function authenticateBiometric() {
+        if (!hasBiometricSetup()) return;
+        try {
+            const publicKeyCredentialRequestOptions = {
+                challenge: randomBuffer(32),
+                rpId: window.location.hostname,
+                userVerification: "required",
+                allowCredentials: [{ id: Uint8Array.from(atob(localStorage.getItem('dealer-bio-cred-id')), c => c.charCodeAt(0)), type: 'public-key', transports: ['internal'] }]
+            };
+            const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+            if (assertion) {
+                showDealerApp();
+                const keepLoggedInToggle = document.getElementById('keepLoggedInToggle');
+                if (keepLoggedInToggle.checked) {
+                     setKeepSessionActive(Date.now() + KEEP_LOGGED_TIMEOUT_MS);
+                     startSessionTimeoutMonitor();
+                } else {
+                     clearKeepSession();
+                     stopSessionTimeoutMonitor();
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            const loginError = document.getElementById('login-error');
+            loginError.textContent = "Fingerprint not recognized. Use PIN.";
+            loginError.style.color = 'var(--danger)';
+        }
+    }
 
-    // Modal scroll lock
+    function checkBiometricButtonVisibility() {
+        const btn = document.getElementById('biometricUnlockBtn');
+        if(hasBiometricSetup() && getHasPIN()) btn.style.display = 'flex';
+        else btn.style.display = 'none';
+    }
+
+    /****************************************************************
+     * EXISTING APP LOGIC
+     ****************************************************************/
     (function() {
       function lockBodyScroll() {
         if (!document.body.classList.contains('modal-open')) {
@@ -505,114 +986,62 @@
           delete document.body.dataset.scrollY;
         }
       }
+
       function observeProductModalOpen() {
         const productModalBackdrop = document.getElementById('productModalBackdrop');
         if (!productModalBackdrop) return;
         const config = { attributes: true, attributeFilter: ['class'] };
         const observer = new MutationObserver(() => {
-          if (!productModalBackdrop.classList.contains('hide')) lockBodyScroll();
-          else unlockBodyScroll();
+          if (!productModalBackdrop.classList.contains('hide')) {
+            lockBodyScroll();
+          } else {
+            unlockBodyScroll();
+          }
         });
         observer.observe(productModalBackdrop, config);
         window.addEventListener('beforeunload', unlockBodyScroll);
       }
       window.addEventListener('DOMContentLoaded', observeProductModalOpen);
       window.addEventListener('keydown', function(e) {
-        if (e.key === "Escape") unlockBodyScroll();
+        if (e.key === "Escape") {
+          unlockBodyScroll();
+        }
       });
     })();
+  </script>
+  <script>
+    /****************************************************************
+     * Keep-logged-in authentication logic
+     ****************************************************************/
+    const KEEP_LOGGED_TIMEOUT_MS = 30*60*1000;
 
-    // ---- FINGERPRINT Auth (WebAuthn platform) ----
-    async function canUseFingerprint() {
-      // Only offer on android/chrome; only if a PIN exists
-      if(!window.PublicKeyCredential || !navigator.credentials || !getHasPIN()) return false;
-      // quick check for platform authenticator + android
-      try {
-        if(!/android/i.test(navigator.userAgent)) return false;
-        if(typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable !== "function") return false;
-        if(!(await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())) return false;
-        // simple chrome+android
-        return true;
-      } catch(e){return false;}
+    function setKeepSessionActive(expiresAt) { try { localStorage.setItem('dealer-keep-expires', String(expiresAt)); } catch(e) {} }
+    function getKeepSessionActive() { try { const val = localStorage.getItem('dealer-keep-expires'); return val && /^\d+$/.test(val) ? parseInt(val, 10) : null; } catch(e) { return null; } }
+    function clearKeepSession() { try { localStorage.removeItem('dealer-keep-expires'); } catch(e) {} }
+    
+    function showTimeoutNotice(msg) {
+      const t = document.getElementById('timeoutNotice');
+      t.textContent = msg || '';
+      t.style.display = msg ? 'block' : 'none';
     }
-
-    // Fingerprint: Register (when PIN is created)
-    async function setupWebauthnCredentialForLogin(pin) {
-      if(!window.PublicKeyCredential || !navigator.credentials) return false;
-      try {
-        const idB = new TextEncoder().encode('ARE_DEALER_UNIQ_FP');
-        // fake/implicit registration; only in Chrome/Android, store challenge in localStorage (user may ignore warn)
-        const cred = await navigator.credentials.create({
-          publicKey: {
-            challenge: window.crypto.getRandomValues(new Uint8Array(32)),
-            rp: { name: 'Al Rahman Electronics'},
-            user: { id: idB, name: "dealer", displayName: "Dealer"},
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-            timeout: 20000,
-            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-            attestation: "none"
-          }
-        });
-        if (cred) {
-          // Don't really use these on client, only allow fingerprint on this device!
-          window.localStorage.setItem('dealer-fp-enabled', '1');
-          return true;
-        }
-      } catch(e) {}
-      return false;
-    }
-
-    async function tryFingerprintLogin() {
-      try {
-        // Use static challenge; just need user presence on same device
-        // (For production, challenge should be server-generated and signed but here it's for local client)
-        const idB = new TextEncoder().encode('ARE_DEALER_UNIQ_FP');
-        const assertion = await navigator.credentials.get({
-          publicKey: {
-            challenge: window.crypto.getRandomValues(new Uint8Array(32)),
-            allowCredentials: [{
-              id: idB,
-              type:'public-key',
-              transports: ['internal']
-            }],
-            timeout: 12000,
-            userVerification: "required"
-          }
-        });
-        if(assertion){
-          // If assertion succeeded, auto unlock.
-          // No PIN required, so we simply fill correct PIN hash match
-          // For extra security, store a dummy 'fingerprint-unlocked' token TTL~5min
-          setKeepSessionActive(Date.now()+5*60*1000);
-          updatePINUI(getHasPIN());
-          showDealerApp();
-          startSessionTimeoutMonitor();
-          return true;
-        }
-      } catch(e) {
-        alert('Fingerprint unlock failed or cancelled.');
+    
+    function isSessionStillActive() { const expiresAt = getKeepSessionActive(); return !!expiresAt && Date.now() < expiresAt; }
+    
+    function showTimeoutCountdownIfAny() {
+      const expiresAt = getKeepSessionActive();
+      if (expiresAt && Date.now() < expiresAt) {
+        const secs = Math.max(0, Math.round((expiresAt-Date.now())/1000));
+        if(secs<60) showTimeoutNotice("Session will auto-lock in "+secs+" sec" + (secs===1?"":"s") + ".");
+        else if(secs<90) showTimeoutNotice("Session will auto-lock in about 1 min.");
+        else showTimeoutNotice("Session will auto-lock in about "+Math.ceil(secs/60)+" min.");
+      } else {
+        showTimeoutNotice("");
       }
-      return false;
     }
+    let timeoutCountdownInterval = null;
 
-    // PIN auth & login
-    const KEEP_LOGGED_TIMEOUT_MS = 5*60*1000;
-    function setKeepSessionActive(expAt){try{sessionStorage.setItem('dealer-keep-expires',String(expAt));}catch(e){}}
-    function getKeepSessionActive(){try{const v=sessionStorage.getItem('dealer-keep-expires');return v&&/^\d+$/.test(v)?parseInt(v,10):null;}catch(e){return null;}}
-    function clearKeepSession(){try{sessionStorage.removeItem('dealer-keep-expires');}catch(e){}}
-    function showTimeoutNotice(msg){const t=document.getElementById('timeoutNotice');t.textContent=msg||'';t.style.display=msg?'block':'none';}
-    function isSessionStillActive(){const e=getKeepSessionActive();return !!e&&Date.now()<e;}
-    function showTimeoutCountdownIfAny(){
-      const e=getKeepSessionActive();if(e&&Date.now()<e){
-        const s=Math.max(0,Math.round((e-Date.now())/1000));
-        if(s<60)showTimeoutNotice("Session locks in "+s+" sec"+(s===1?"":"s"));
-        else if(s<90)showTimeoutNotice("Session locks in about 1 min.");
-        else showTimeoutNotice("Session locks in "+Math.ceil(s/60)+" min.");
-      }else showTimeoutNotice("");
-    }
-    let timeoutCountdownInterval=null;
-    function checkQuickAutoUnlock(){
-      if(isSessionStillActive()){
+    function checkQuickAutoUnlock() {
+      if (isSessionStillActive()) {
         updatePINUI(getHasPIN());
         showDealerApp();
         startSessionTimeoutMonitor();
@@ -620,238 +1049,405 @@
       }
       return false;
     }
-    function startSessionTimeoutMonitor(){
-      if(timeoutCountdownInterval)clearInterval(timeoutCountdownInterval);
-      function check(){
+    function startSessionTimeoutMonitor() {
+      if (timeoutCountdownInterval) clearInterval(timeoutCountdownInterval);
+      function check() {
         showTimeoutCountdownIfAny();
-        if(!isSessionStillActive()){
-          showTimeoutNotice("Session expired. Please login again.");setTimeout(()=>manualLogoutDueToTimeout(),1070);}
+        if (!isSessionStillActive()) {
+          showTimeoutNotice("Session expired for security. Please login again.");
+          setTimeout(()=>manualLogoutDueToTimeout(), 1100);
+        }
       }
-      timeoutCountdownInterval=setInterval(check,800);check();
+      timeoutCountdownInterval = setInterval(check, 800);
+      check();
     }
-    function stopSessionTimeoutMonitor(){if(timeoutCountdownInterval)clearInterval(timeoutCountdownInterval);showTimeoutNotice("");}
-    function manualLogoutDueToTimeout(){
-      stopSessionTimeoutMonitor();clearKeepSession();
-      document.getElementById('dealerApp').style.display='none';
-      showLoginModal("Session expired. Please login again.");
+    function stopSessionTimeoutMonitor() { if (timeoutCountdownInterval) clearInterval(timeoutCountdownInterval); showTimeoutNotice(""); }
+    
+    function manualLogoutDueToTimeout() {
+      stopSessionTimeoutMonitor();
+      clearKeepSession();
+      document.getElementById('dealerApp').style.display = 'none';
+      showLoginModal("Session expired for security. Please login again.");
       updatePINUI(getHasPIN());
     }
-    function addSessionAutoLogoutHandlers(){
-      // Removed: clearKeepSession(); from pagehide/blur for better back-button experience
-    }
-    addSessionAutoLogoutHandlers();
 
-    // PIN hash logic, PBKDF2+salt or SHA256 fallback
-    async function hashPIN(pin){
-      let salt=window.localStorage.getItem('dealer-app-salt');
-      if(!salt){
-        const a=new Uint8Array(16);window.crypto.getRandomValues(a);
-        salt=Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join('');
-        window.localStorage.setItem('dealer-app-salt',salt);}
-      const encoder=new TextEncoder();
-      try{
-        const baseKey=await window.crypto.subtle.importKey('raw',encoder.encode(pin),'PBKDF2',false,['deriveBits']);
-        const rawBits=await window.crypto.subtle.deriveBits({name:"PBKDF2",salt:encoder.encode(salt),iterations:3000,hash:"SHA-256"},baseKey,256);
-        const hArr=new Uint8Array(rawBits);
-        return Array.from(hArr).map(b=>b.toString(16).padStart(2,"0")).join('');
-      }catch(e){
-        try{
-          const d=encoder.encode(pin+salt);
-          const arrB=await window.crypto.subtle.digest('SHA-256',d);
-          const hArr=new Uint8Array(arrB);
-          return Array.from(hArr).map(b=>b.toString(16).padStart(2,"0")).join('');
-        }catch(e2){return pin+salt;}
-      }
-    }
-    function getHasPIN(){return !!window.localStorage.getItem('dealer-hash');}
-    function showDealerApp(){
-      document.getElementById('dealerApp').style.display='';
-      document.getElementById('login-modal').style.display='none';
-      setTimeout(refreshProductList,200);
-      // Push main state to history to enable back-button logic for modals
-      history.replaceState({dealerApp:true},window.document.title,window.location.href);
-    }
-    function showLoginModal(msg){
-      document.getElementById('dealerApp').style.display='none';
-      const loginModal=document.getElementById('login-modal');
-      loginModal.style.display='flex';
-      document.getElementById('login-error').textContent=msg||'';
-      document.getElementById('loginPIN').value='';
-      setTimeout(()=>document.getElementById('loginPIN').focus(),120);
-      // Push login state
-      history.replaceState({dealerLogin:true},window.document.title,window.location.href);
-    }
-    let justSetPIN=false;
-    // --- Improved BACK button/modal support ---
-    (() => {
-      // Detail/modal back support
-      window.addEventListener('popstate', function(e){
-        // Closing Product Detail Modal on back
-        if(document.body.classList.contains('detail-modal-open')) {
-          document.getElementById('detailModalBackdrop').classList.add('hide');
-          document.getElementById('detailModalBody').innerHTML='';
-          document.body.classList.remove('detail-modal-open');
-          // Don't navigate further back
-          history.replaceState({dealerApp:true},window.document.title,window.location.href);
-        }
-        // Closing Add/Edit Modal
-        else if(document.body.classList.contains('modal-open') && !document.getElementById('detailModalBackdrop').classList.contains('hide')){
-          document.getElementById('productModalBackdrop').classList.add('hide');
-          document.body.classList.remove('modal-open');
-          document.getElementById('imageCompressMsg').style.display='none';
-          history.replaceState({dealerApp:true},window.document.title,window.location.href);
-        }
-        // Closing login: optional, go to login modal if in app
-        else if(document.getElementById('dealerApp').style.display!='none') {
-          doLogout();//force to login modal
-        }
-      });
-    })();
+    /****************************************************************
+     * Service Worker & PWA
+     ****************************************************************/
+    (function createManifestAndServiceWorker() {
+      const imgIcon = "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true";
+      const manifestObj = {
+        name: "Al Rehman Electronics",
+        short_name: "ARE",
+        description: "Local-only dealer product listing (offline-first)",
+        start_url: "./index.html", 
+        display: "standalone",
+        background_color: "#161B22",
+        theme_color: "#161B22",
+        icons: [{ src: imgIcon, sizes: "192x192", type: "image/png" }, { src: imgIcon, sizes: "512x512", type: "image/png" }]
+      };
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      (function setManifestLink() {
+        let existing = document.querySelector('link[rel="manifest"]');
+        if (!existing) { existing = document.createElement('link'); existing.rel = 'manifest'; document.head.appendChild(existing); }
+        existing.href = manifestURL;
+      })();
 
-    window.addEventListener('load',()=>{
-      updatePINUI(getHasPIN());
-      if(!checkQuickAutoUnlock()){
-        showLoginModal();
-      }
-      // Back button logic on direct load
-      history.replaceState({dealerLogin:true},window.document.title,window.location.href);
-
-      setTimeout(function(){
-        if("serviceWorker" in navigator && window.matchMedia('(display-mode:standalone)').matches){
-          try{history.replaceState({start:true},document.title,window.location.href);}catch(e){}
-        }
-      },180);
-
-      // Fingerprint: show button if available
-      canUseFingerprint().then(show => {
-        document.getElementById('fingerprintBtn').style.display = show ? '' : 'none';
-      });
-    });
-    const loginBtn=document.getElementById('loginBtn'),loginForm=document.getElementById('loginForm'),loginPIN=document.getElementById('loginPIN'),pinLabel=document.getElementById('pinLabel'),keepLoggedInToggle=document.getElementById('keepLoggedInToggle');
-    (function(){
-      const showBtn=document.getElementById('showLoginPINBtn'),pinInput=document.getElementById('loginPIN'),iconSpan=document.getElementById('showLoginPINBtnIcon');
-      let visible=false;
-      if(showBtn&&pinInput){
-        showBtn.addEventListener('click',function(e){
-          e.preventDefault();visible=!visible;pinInput.type=visible?"text":"password";
-          iconSpan.textContent=visible?"🙈":"👁️";showBtn.setAttribute('aria-label', visible?"Hide PIN":"Show PIN");});
-        pinInput.addEventListener('keydown',function(e){if(visible&&e.key==="Escape"){pinInput.type='password';visible=false;iconSpan.textContent='👁️';showBtn.setAttribute('aria-label',"Show PIN");}});
-      }
-    })();
-    // Fingerprint unlock
-    document.getElementById('fingerprintBtn').onclick = tryFingerprintLogin;
-
-    function updatePINUI(hasPIN){
-      if(hasPIN){
-        loginBtn.textContent="Unlock";
-        pinLabel.textContent="Enter your PIN / Password:";
-        loginPIN.placeholder="Enter PIN";
-        loginPIN.autocomplete="current-password";
-        // If first time and fingerprint supported, recommend Fingerprint
-        canUseFingerprint().then(show=>{
-          document.getElementById('fingerprintBtn').style.display = show ? '' : 'none';
+      const swScript = `
+        const CACHE_NAME = 'local-dealer-cache-v8';
+        const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
+        const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
+        self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
+        self.addEventListener('activate', function(event) { event.waitUntil(self.clients.claim()); });
+        self.addEventListener('fetch', function(event) {
+          if (event.request.method !== 'GET') return;
+          event.respondWith(caches.match(event.request, {ignoreSearch:true}).then(function(response) {
+              if (response) return response;
+              return fetch(event.request).then(function(resp) {
+                if (resp && resp.status === 200 && resp.type === 'basic' && /\.(html|js|css|png|jpg|jpeg|svg|woff2?|json)$/i.test(event.request.url)) {
+                  const respClone = resp.clone();
+                  caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, respClone); });
+                }
+                return resp;
+              }).catch(function() {
+                if (event.request.mode === 'navigate' || event.request.destination === 'document') return caches.match(OFFLINE_URL);
+                return undefined;
+              });
+            })
+          );
         });
-      }else{
-        loginBtn.textContent="Set PIN";
-        pinLabel.textContent="Create PIN:";
-        loginPIN.placeholder="Set PIN or password";
-        loginPIN.autocomplete="new-password";
-        document.getElementById('fingerprintBtn').style.display = 'none';
-      }
-      document.getElementById('login-error').textContent='';
-    }
-    loginForm.onsubmit=async function(e){
-      e.preventDefault();
-      const pinVal=(loginPIN.value||'').trim(),hasPIN=getHasPIN();
-      if(!pinVal||pinVal.length<4){document.getElementById('login-error').textContent=hasPIN?"Enter your PIN.":"PIN must be at least 4 chars.";return;}
-      loginBtn.disabled=true;
-      try{
-        const hash=await hashPIN(pinVal);
-        // SET PIN (first time)
-        if(!hasPIN){
-          window.localStorage.setItem('dealer-hash',hash);justSetPIN=true;updatePINUI(true);document.getElementById('login-error').style.color='var(--success)';
-          document.getElementById('login-error').textContent="PIN set. Unlock now.";loginBtn.disabled=false;loginPIN.value='';
-          keepLoggedInToggle.checked=false;
-          // Attempt fingerprint registration after PIN
-          if(await canUseFingerprint()) {
-            setupWebauthnCredentialForLogin(pinVal);
-            document.getElementById('fingerprintBtn').style.display='';
+      `;
+      try {
+        const swBlob = new Blob([swScript], { type: 'text/javascript' });
+        const swURL = URL.createObjectURL(swBlob);
+        if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register(swURL); }); }
+      } catch (e) {}
+    })();
+
+    // OPTIMIZATION: Removed the heavy setTimeout loop that slowed down rendering
+    window.addEventListener('DOMContentLoaded', function(){
+      setTimeout(function() { document.querySelectorAll(".card").forEach((el,i)=> { el.classList.add('show'); }); }, 100);
+    });
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installPromptBtn');
+    const installAsAppBtn = document.getElementById('installAsAppBtn');
+    const mobileInstall = document.getElementById('mobileInstallInstructions');
+    function isMobileChromeStandaloneCapable() { const ua = navigator.userAgent || ''; return /Android/.test(ua) && /Chrome\/[.0-9]* Mobile/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches; }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'inline-block'; installAsAppBtn.style.display = 'inline-block'; mobileInstall.style.display = 'none';
+    });
+
+    installBtn && (installBtn.onclick = async function() {
+      installBtn.disabled = true;
+      if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none'; installAsAppBtn.style.display = 'none'; installBtn.disabled = false; }
+    });
+
+    installAsAppBtn && (installAsAppBtn.onclick = async function() {
+      installAsAppBtn.disabled = true;
+      if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none'; installAsAppBtn.style.display = 'none'; installAsAppBtn.disabled = false; } else { alert("Install prompt not available right now."); installAsAppBtn.disabled = false; }
+    });
+
+    window.addEventListener('appinstalled', ()=>{ installBtn.style.display='none'; installAsAppBtn.style.display='none'; deferredPrompt = null; mobileInstall.style.display='none'; });
+
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        if (!window.matchMedia('(display-mode: standalone)').matches && !window.matchMedia('(display-mode: fullscreen)').matches && isMobileChromeStandaloneCapable()) {
+          if ((installBtn.style.display === "none" || getComputedStyle(installBtn).display === "none") && (installAsAppBtn.style.display === "none" || getComputedStyle(installAsAppBtn).display === "none")) {
+            mobileInstall.innerHTML = "To install this app: tap <b><span style='font-size:1.22em;'>⋮</span></b> at the top right of Chrome, and choose <b>Add to Home screen</b>."; mobileInstall.style.display = "inline-block";
           }
-          return;
         }
-        // UNLOCK result
-        const userHash=window.localStorage.getItem('dealer-hash');
-        if(userHash===hash){
-          if(keepLoggedInToggle.checked){setKeepSessionActive(Date.now()+KEEP_LOGGED_TIMEOUT_MS);startSessionTimeoutMonitor();}
-          else{clearKeepSession();stopSessionTimeoutMonitor();}
-          showDealerApp();loginBtn.disabled=false;justSetPIN=false;
-        }else{
-          loginBtn.disabled=false;
-          document.getElementById('login-error').style.color='var(--danger)';
-          document.getElementById('login-error').textContent='Incorrect PIN / Password.';
-        }
-      }catch(ex){loginBtn.disabled=false;document.getElementById('login-error').textContent='Error. Try again.';}
-    };
-    keepLoggedInToggle.onchange=function(){showTimeoutNotice("");if(!this.checked)clearKeepSession();};
-    // Session/Logout logic
-    function doLogout(showMsg){
-      stopSessionTimeoutMonitor();clearKeepSession();
-      document.getElementById('dealerApp').style.display='none';
-      showLoginModal(showMsg||'You have been logged out.');
+      }, 1100);
+    });
+
+    (function handleAndroidBackButton() {
+      let openedModals = [];
+      const modalPriority = ['imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop'];
+
+      function pushMainStateToHistory() { try { history.replaceState({dealerAppMain: true}, document.title, window.location.href); } catch (e) {} }
+      function pushModalState(modalId) { try { history.pushState({modal: modalId}, document.title, window.location.href); openedModals.push(modalId); } catch (e) {} }
+      
+      function enablePwaBackHandler() {
+        pushMainStateToHistory();
+        window.addEventListener('popstate', function(e) {
+            
+          // 1. Check if any modal is currently visible
+          const topOpenModal = (() => { 
+                for (let i = 0; i < modalPriority.length; ++i) { 
+                    const el = document.getElementById(modalPriority[i]); 
+                    if (!el) continue;
+                    // Check if open (image viewer uses 'show', others use absence of 'hide')
+                    if (modalPriority[i] === 'imageViewerOverlay') {
+                         if (el.classList.contains('show')) return modalPriority[i];
+                    } else {
+                         if (!el.classList.contains('hide')) return modalPriority[i];
+                    }
+                } 
+                return null; 
+            })();
+            
+            // 2. If a modal is open, close it and RETURN
+            if (topOpenModal) { 
+                if (topOpenModal === 'imageViewerOverlay') {
+                    document.getElementById(topOpenModal).classList.remove('show');
+                    document.getElementById('imageViewerImg').src = '';
+                } else {
+                    document.getElementById(topOpenModal).classList.add('hide'); 
+                }
+                setTimeout(()=>{},10); 
+                return; 
+            }
+
+            // 3. Check for active category filter
+            if (activeCategoryFilter) {
+                activeCategoryFilter = null;
+                refreshProductList();
+                return;
+            }
+
+            // 4. If NO modal/category is open, check if we have a search value to clear
+            const searchInput = document.getElementById('productSearch');
+            if (document.getElementById('dealerApp').style.display !== 'none' && searchInput && searchInput.value) {
+                 searchInput.value = '';
+                 refreshProductList();
+                 return; 
+            }
+
+            pushMainStateToHistory();
+        });
+      }
+      function setupModalHistoryTracking() {
+        modalPriority.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const observer = new MutationObserver(() => {
+            let isOpen = false;
+            if (id === 'imageViewerOverlay') isOpen = el.classList.contains('show');
+            else isOpen = !el.classList.contains('hide');
+            
+            if (isOpen) { if (!openedModals.includes(id)) pushModalState(id); } 
+            else { const idx = openedModals.indexOf(id); if (idx !== -1) openedModals.splice(idx, 1); }
+          });
+          observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+        });
+      }
+      window.__enablePwaBackHandler = function() { enablePwaBackHandler(); setupModalHistoryTracking(); };
+    })();
+
+    async function hashPIN(pin) {
+      let salt = window.localStorage.getItem('dealer-app-salt');
+      if (!salt) { const arr = new Uint8Array(16); window.crypto.getRandomValues(arr); salt = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join(''); window.localStorage.setItem('dealer-app-salt', salt); }
+      const encoder = new TextEncoder();
+      try {
+        const baseKey = await window.crypto.subtle.importKey('raw', encoder.encode(pin), 'PBKDF2', false, ['deriveBits']);
+        const rawBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" }, baseKey, 256);
+        const hashArr = new Uint8Array(rawBits);
+        return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
+      } catch (e) { return pin + salt; }
+    }
+    function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
+    
+    function showDealerApp() {
+      document.getElementById('dealerApp').style.display = '';
+      document.getElementById('login-modal').style.display = 'none';
+      setTimeout(refreshProductList, 100);
+      if (typeof window.__enablePwaBackHandler === 'function') window.__enablePwaBackHandler();
+    }
+    
+    function showLoginModal(msg) {
+      document.getElementById('dealerApp').style.display = 'none';
+      const loginModal = document.getElementById('login-modal');
+      loginModal.style.display = 'flex';
+      if (msg) { document.getElementById('login-error').textContent = msg; document.getElementById('login-error').style.color = 'var(--danger)'; } else { document.getElementById('login-error').textContent = ''; document.getElementById('login-error').style.color = ''; }
+      document.getElementById('loginPIN').value = '';
+      if (!hasBiometricSetup()) { setTimeout(()=>document.getElementById('loginPIN').focus(),120); }
+      checkBiometricButtonVisibility();
+    }
+    
+    let justSetPIN = false;
+
+    window.addEventListener('load', ()=> {
       updatePINUI(getHasPIN());
+      if (!checkQuickAutoUnlock()) { showLoginModal(); if (hasBiometricSetup()) { setTimeout(authenticateBiometric, 400); } }
+      setTimeout(function() { if ("serviceWorker" in navigator && window.matchMedia('(display-mode: standalone)').matches) { try { history.replaceState({start:true}, document.title, window.location.href); } catch (e) {} } }, 180);
+    });
+
+    const loginBtn = document.getElementById('loginBtn');
+    const loginForm = document.getElementById('loginForm');
+    const loginPIN = document.getElementById('loginPIN');
+    const loginError = document.getElementById('login-error');
+    const pinLabel = document.getElementById('pinLabel');
+    const keepLoggedInToggle = document.getElementById('keepLoggedInToggle');
+    const setupBiometricBtn = document.getElementById('setupBiometricBtn');
+    const biometricUnlockBtn = document.getElementById('biometricUnlockBtn');
+
+    setupBiometricBtn.onclick = (e) => { e.preventDefault(); registerBiometric(); };
+    biometricUnlockBtn.onclick = (e) => { e.preventDefault(); authenticateBiometric(); };
+
+    (function() {
+      const showBtn = document.getElementById('showLoginPINBtn');
+      const pinInput = document.getElementById('loginPIN');
+      const iconSpan = document.getElementById('showLoginPINBtnIcon');
+      let visible = false;
+      if (showBtn && pinInput) {
+        showBtn.addEventListener('click', function(e) { e.preventDefault(); visible = !visible; pinInput.type = visible ? 'text' : 'password'; iconSpan.textContent = visible ? '🙈' : '👁️'; showBtn.setAttribute('aria-label', visible ? "Hide PIN" : "Show PIN"); });
+        pinInput.addEventListener('keydown', function(e) { if (visible && e.key === "Escape") { pinInput.type = 'password'; visible = false; iconSpan.textContent = '👁️'; showBtn.setAttribute('aria-label', "Show PIN"); } });
+      }
+    })();
+
+    function updatePINUI(hasPIN) {
+      if (hasPIN) { loginBtn.textContent = "Unlock"; pinLabel.textContent = "Enter your PIN / Password:"; loginPIN.placeholder = "Enter PIN or password"; loginPIN.autocomplete = "current-password"; } else { loginBtn.textContent = "Set PIN"; pinLabel.textContent = "Create a secure PIN / Password:"; loginPIN.placeholder = "Set PIN or password"; loginPIN.autocomplete = "new-password"; }
+      loginError.textContent = ''; loginError.style.color = ''; checkBiometricButtonVisibility();
     }
 
-    // Settings Modal Logic
-    document.getElementById('settingsBtn').onclick = () => {
-      document.getElementById('settingsBackdrop').classList.remove('hide');
-      document.getElementById('oldPin').value='';document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
-      document.getElementById('resetPinError').textContent='';
-      history.pushState({settings:true},window.document.title,window.location.href);
-    };
-    document.getElementById('closeSettingsBtn').onclick=()=>{document.getElementById('settingsBackdrop').classList.add('hide');history.back();}
-    document.getElementById('logoutBtn').onclick=()=>{document.getElementById('settingsBackdrop').classList.add('hide');doLogout();}
-    document.getElementById('resetPinCancel').onclick=()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');history.back();};
-    document.getElementById('resetPinSubmit').onclick=async function(){
-      const oldPin=(document.getElementById('oldPin').value||'').trim(),newPin=(document.getElementById('newPin').value||'').trim(),confirmPin=(document.getElementById('confirmPin').value||'').trim();
-      if(!oldPin||oldPin.length<4) {document.getElementById('resetPinError').textContent="Enter current PIN (min 4 chars).";return;}
-      if(!newPin||newPin.length<4){document.getElementById('resetPinError').textContent="New PIN at least 4 chars.";return;}
-      if(newPin!==confirmPin){document.getElementById('resetPinError').textContent="PIN & confirm don't match.";return;}
-      if(oldPin===newPin){document.getElementById('resetPinError').textContent="New PIN must be different.";return;}
-      this.disabled=true;
-      try{
-        const oldHash=await hashPIN(oldPin),stored=window.localStorage.getItem('dealer-hash');
-        if(stored!==oldHash){document.getElementById('resetPinError').textContent="Current PIN incorrect.";this.disabled=false;return;}
-        const newHash=await hashPIN(newPin);
-        window.localStorage.setItem('dealer-hash',newHash);
-        document.getElementById('resetPinError').textContent="PIN updated!";
-        setTimeout(()=>{document.getElementById('resetPinError').textContent='';document.getElementById('settingsBackdrop').classList.add('hide');history.back();},800);
-      }catch(e){document.getElementById('resetPinError').textContent="Update failed.";}
-      this.disabled=false;
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault(); loginError.textContent = ''; loginError.style.color = '';
+      const pinVal = (loginPIN.value || '').trim();
+      const hasPIN = getHasPIN();
+      if (!pinVal || pinVal.length < 4) { loginError.style.color = 'var(--danger)'; loginError.textContent = hasPIN ? "Enter your PIN/Password." : "PIN/password must be at least 4 characters."; return; }
+      loginBtn.disabled = true;
+      try {
+        const hash = await hashPIN(pinVal);
+        if (!hasPIN) {
+          window.localStorage.setItem('dealer-hash', hash);
+          justSetPIN = true; updatePINUI(true); loginError.style.color = 'var(--success)'; loginError.textContent = "PIN set. Now use it to unlock."; loginBtn.disabled = false; loginPIN.value = '';
+          setTimeout(()=>{ loginError.textContent = ''; loginError.style.color=''; }, 1500); keepLoggedInToggle.checked = false; return;
+        }
+        const userHash = window.localStorage.getItem('dealer-hash');
+        if (userHash === hash) {
+          if (keepLoggedInToggle.checked) { setKeepSessionActive(Date.now() + KEEP_LOGGED_TIMEOUT_MS); startSessionTimeoutMonitor(); } else { clearKeepSession(); stopSessionTimeoutMonitor(); }
+          showDealerApp(); loginBtn.disabled = false; loginError.textContent = ''; loginError.style.color = ''; justSetPIN = false;
+        } else { loginBtn.disabled = false; loginError.style.color='var(--danger)'; loginError.textContent = 'Incorrect PIN / Password.'; }
+      } catch (ex) { loginBtn.disabled = false; loginError.style.color='var(--danger)'; loginError.textContent = 'An error occurred. Try again.'; }
     };
 
-    // --- Add/Edit Product modal ---
-    let productEditing=null,products=[],selectedProductIds=new Set(),multiSelectMode=false;
+    keepLoggedInToggle.onchange = function() { showTimeoutNotice(""); if (!this.checked) clearKeepSession(); };
+    document.getElementById('login-modal').addEventListener('transitionend', function() { loginPIN.value = ''; });
+    function doLogout(showMsg) { stopSessionTimeoutMonitor(); clearKeepSession(); document.getElementById('dealerApp').style.display = 'none'; showLoginModal(showMsg || 'You have been logged out.'); updatePINUI(getHasPIN()); }
 
-    function saveProducts(){try{window.localStorage.setItem('dealer-products',JSON.stringify(products));}catch(e){}refreshProductList();}
-    function loadProducts(){products=[];try{const s=window.localStorage.getItem('dealer-products');if(s)products=JSON.parse(s)||[];}catch(e){products=[];}}
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsBackdrop = document.getElementById('settingsBackdrop');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const resetPinSubmit = document.getElementById('resetPinSubmit');
+    const resetPinCancel = document.getElementById('resetPinCancel');
+    const resetPinError = document.getElementById('resetPinError');
 
-    function handleCheckboxChange(productId,checked){if(checked)selectedProductIds.add(productId);else selectedProductIds.delete(productId);updateMultiSelectControls();}
-    function updateMultiSelectControls(){
-      const multiSelectControls=document.getElementById('multiSelectControls'),deleteSelectedBtn=document.getElementById('deleteSelectedBtn'),selectedCountText=document.getElementById('selectedCountText'),selectAllCheckbox=document.getElementById('selectAllCheckbox');
-      if(selectedProductIds.size>0){multiSelectControls.classList.add('active');deleteSelectedBtn.disabled=false;selectedCountText.textContent=`${selectedProductIds.size} selected`;}
-      else{multiSelectControls.classList.remove('active');deleteSelectedBtn.disabled=true;selectedCountText.textContent="";}
-      if(products.length&&selectedProductIds.size===products.length){selectAllCheckbox.checked=true;selectAllCheckbox.indeterminate=false;}
-      else if(selectedProductIds.size>0){selectAllCheckbox.checked=false;selectAllCheckbox.indeterminate=true;}
-      else {selectAllCheckbox.checked=false;selectAllCheckbox.indeterminate=false;}
+    settingsBtn.onclick = () => { settingsBackdrop.classList.remove('hide'); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmPin').value = ''; resetPinError.textContent = ''; resetPinError.style.color = ''; };
+    closeSettingsBtn.onclick = () => settingsBackdrop.classList.add('hide');
+    logoutBtn.onclick = () => { settingsBackdrop.classList.add('hide'); doLogout(); };
+    resetPinCancel.onclick = () => { resetPinError.textContent = ''; resetPinError.style.color = ''; settingsBackdrop.classList.add('hide'); };
+
+    resetPinSubmit.onclick = async function() {
+      resetPinError.textContent = ''; resetPinError.style.color = '';
+      const oldPin = (document.getElementById('oldPin').value || '').trim();
+      const newPin = (document.getElementById('newPin').value || '').trim();
+      const confirmPin = (document.getElementById('confirmPin').value || '').trim();
+      if (!oldPin || oldPin.length < 4) { resetPinError.textContent = "Enter current PIN (min 4 chars)."; resetPinError.style.color='var(--danger)'; return; }
+      if (!newPin || newPin.length < 4) { resetPinError.textContent = "New PIN must be at least 4 characters."; resetPinError.style.color='var(--danger)'; return; }
+      if (newPin !== confirmPin) { resetPinError.textContent = "New PIN and confirmation do not match."; resetPinError.style.color='var(--danger)'; return; }
+      if (oldPin === newPin) { resetPinError.textContent = "New PIN cannot be same as old PIN."; resetPinError.style.color='var(--danger)'; return;}
+      resetPinSubmit.disabled = true;
+      try {
+        const oldHash = await hashPIN(oldPin);
+        const stored = window.localStorage.getItem('dealer-hash');
+        if (stored !== oldHash) { resetPinError.textContent = "Current PIN is incorrect."; resetPinError.style.color='var(--danger)'; resetPinSubmit.disabled = false; return; }
+        const newHash = await hashPIN(newPin);
+        window.localStorage.setItem('dealer-hash', newHash);
+        resetPinError.style.color = 'var(--success)'; resetPinError.textContent = "PIN updated successfully.";
+        setTimeout(()=>{ resetPinError.textContent = ''; resetPinError.style.color = ''; settingsBackdrop.classList.add('hide'); }, 1000);
+      } catch (err) { resetPinError.textContent = "Failed to update PIN."; resetPinError.style.color='var(--danger)'; }
+      resetPinSubmit.disabled = false;
+    };
+
+    const productListElem = document.getElementById('productList');
+    const noProductsElem = document.getElementById('noProducts');
+    let products = [];
+    let selectedProductIds = new Set();
+    
+    // --- CATEGORY & FILTER VARIABLES ---
+    let currentFilteredProducts = []; 
+    let activeCategoryFilter = null; 
+
+    function saveProducts() { try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){} refreshProductList(); }
+    function loadProducts() { products = []; try { const str = window.localStorage.getItem('dealer-products'); if (str) products = JSON.parse(str) || []; } catch (e) { products = []; } }
+    function escapeHTML(v) { if (typeof v !== "string") return v === undefined || v === null ? "" : String(v); return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c])); }
+
+    function handleCheckboxChange(productId, checked) { if (checked) selectedProductIds.add(productId); else selectedProductIds.delete(productId); updateMultiSelectControls(); }
+    
+    function updateMultiSelectControls() {
+      const multiSelectControls = document.getElementById('multiSelectControls');
+      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+      const shareSelectedBtn = document.getElementById('shareSelectedBtn');
+      const exportSelectedBtn = document.getElementById('exportSelectedBtn');
+      const selectedCountText = document.getElementById('selectedCountText');
+      const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+      
+      if (selectedProductIds.size > 0) { 
+          multiSelectControls.classList.add('active'); 
+          deleteSelectedBtn.disabled = false; 
+          shareSelectedBtn.disabled = false;
+          if(exportSelectedBtn) exportSelectedBtn.disabled = false;
+          selectedCountText.textContent = `${selectedProductIds.size} selected`; 
+      } else { 
+          multiSelectControls.classList.remove('active'); 
+          deleteSelectedBtn.disabled = true; 
+          shareSelectedBtn.disabled = true;
+          if(exportSelectedBtn) exportSelectedBtn.disabled = true;
+          selectedCountText.textContent = ""; 
+      }
+      
+      if (currentFilteredProducts.length > 0) {
+          const allVisibleSelected = currentFilteredProducts.every(p => selectedProductIds.has(p.id));
+          const someVisibleSelected = currentFilteredProducts.some(p => selectedProductIds.has(p.id));
+          
+          if(allVisibleSelected) {
+              selectAllCheckbox.checked = true;
+              selectAllCheckbox.indeterminate = false;
+          } else if (someVisibleSelected) {
+              selectAllCheckbox.checked = false;
+              selectAllCheckbox.indeterminate = true;
+          } else {
+              selectAllCheckbox.checked = false;
+              selectAllCheckbox.indeterminate = false;
+          }
+      } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+      }
     }
+    
+    // --- FULL SCREEN VIEWER LOGIC ---
+    const imageViewerOverlay = document.getElementById('imageViewerOverlay');
+    const imageViewerImg = document.getElementById('imageViewerImg');
+    const imageViewerClose = document.getElementById('imageViewerClose');
+    
+    function openImageViewer(src) {
+        if(!src) return;
+        imageViewerImg.src = src;
+        imageViewerOverlay.classList.add('show');
+    }
+    
+    imageViewerClose.onclick = () => { imageViewerOverlay.classList.remove('show'); imageViewerImg.src = ''; };
+    imageViewerOverlay.onclick = (e) => {
+        if(e.target === imageViewerOverlay) { imageViewerOverlay.classList.remove('show'); imageViewerImg.src = ''; }
+    };
 
-    function createProductCard(product,idx){
-      const li=document.createElement('li');li.className='prod-card';
-      setTimeout(()=>li.classList.add('show'),121+idx*54);
-      let imgHTML=product.photo?`<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="">`:`<span>📦</span>`;
-      const nameSafe=escapeHTML(product.name||"Unnamed"),qtyNum=Number(product.qty)||0,mrpNum=Number(product.mrp)||0;
-      let checkboxHTML=`<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" ${selectedProductIds.has(product.id)?"checked":""}/>`;
-      li.innerHTML=`
+    function createProductCard(product, idx) {
+      const li = document.createElement('li');
+      li.className = 'prod-card';
+      li.setAttribute('tabindex','0');
+      li.classList.add('show');
+
+      let imgHTML = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-photo-thumb" alt="Product Photo" loading="lazy">` : `<span>📦</span>`;
+      const nameSafe = escapeHTML(product.name || "Unnamed");
+      const qtyNum = Number(product.qty) || 0;
+      const mrpNum = Number(product.mrp) || 0;
+      let checkboxHTML = `<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" tabindex="0" ${selectedProductIds.has(product.id) ? "checked" : ""}/>`;
+
+      li.innerHTML = `
         ${checkboxHTML}
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
@@ -860,244 +1456,495 @@
           ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
-          <button type="button" title="Edit" aria-label="Edit product" data-id="${product.id}">✏️</button>
+           <button type="button" title="Edit" aria-label="Edit product" role="button" class="edit" data-id="${product.id}">✏️</button>
+           <button type="button" title="Share PDF" aria-label="Share product" role="button" class="share" data-id="${product.id}">📤</button>
         </div>
       `;
-      if(selectedProductIds.has(product.id))li.classList.add('selected');
-      const checkbox=li.querySelector('.prod-select-checkbox');
-      if(checkbox){
-        checkbox.addEventListener('change',()=>{handleCheckboxChange(product.id,checkbox.checked);});
-        checkbox.addEventListener('click',e=>e.stopPropagation());
+      if (selectedProductIds.has(product.id)) li.classList.add('selected');
+      const checkbox = li.querySelector('.prod-select-checkbox');
+      if (checkbox) {
+        checkbox.addEventListener('change', (e) => { handleCheckboxChange(product.id, checkbox.checked); });
+        checkbox.addEventListener('click', (e)=>e.stopPropagation());
+        checkbox.addEventListener('keydown', (e)=>e.stopPropagation());
       }
-      li.querySelector('.prod-actions button').onclick=(e)=>{
-        e.stopPropagation();
-        showProductModal('edit',product);
-        // Push modal to history for back-button close
-        history.pushState({modal:'edit'},window.document.title,window.location.href);
-      };
-      li.addEventListener('click',function(e){
-        if(e.target.classList.contains('prod-select-checkbox'))return;
-        showDetailModal(product);
-        // Push to history for back-close modal
-        history.pushState({modal:'detail'},window.document.title,window.location.href);
-      });
+      
+      const editBtn = li.querySelector('.edit');
+      if (editBtn) editBtn.onclick = (e)=>{ e.stopPropagation(); showProductModal('edit', product); };
+      
+      const shareBtn = li.querySelector('.share');
+      if (shareBtn) shareBtn.onclick = (e)=>{ e.stopPropagation(); openShareModal(product); };
+      
+      const thumb = li.querySelector('.prod-img');
+      if (thumb && product.photo) {
+          thumb.onclick = (e) => {
+              e.stopPropagation();
+              openImageViewer(product.photo);
+          };
+      }
+
+      li.addEventListener('click', function(e){ if(e.target.classList.contains('prod-select-checkbox')) return; if(!e.target.closest('.prod-actions')) showDetailModal(product); });
+      li.addEventListener('keydown', function(e){ if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { e.preventDefault(); showDetailModal(product); } });
       return li;
     }
-    document.getElementById("selectAllCheckbox").addEventListener("change",function(){
-      if(this.checked){products.forEach(prod=>selectedProductIds.add(prod.id));}
-      else{selectedProductIds.clear();}
-      refreshProductList();updateMultiSelectControls();
+
+    document.getElementById("selectAllCheckbox").addEventListener("change", function() { 
+        if (this.checked) { 
+            currentFilteredProducts.forEach(prod => selectedProductIds.add(prod.id)); 
+        } else { 
+            currentFilteredProducts.forEach(prod => selectedProductIds.delete(prod.id)); 
+        } 
+        refreshProductList(); 
+        updateMultiSelectControls(); 
     });
-    document.getElementById("deleteSelectedBtn").onclick=function(){
-      if(selectedProductIds.size===0)return;
-      if(!confirm(`Delete ${selectedProductIds.size} selected item(s)?`))return;
-      products=products.filter(p=>!selectedProductIds.has(p.id));
-      selectedProductIds.clear();saveProducts();updateMultiSelectControls();
+    
+    document.getElementById("deleteSelectedBtn").onclick = function() { if (selectedProductIds.size === 0) return; if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return; products = products.filter(p => !selectedProductIds.has(p.id)); selectedProductIds.clear(); saveProducts(); updateMultiSelectControls(); };
+
+    document.getElementById("shareSelectedBtn").onclick = function() {
+        if (selectedProductIds.size === 0) return;
+        const itemsToShare = products.filter(p => selectedProductIds.has(p.id));
+        if(itemsToShare.length > 0) {
+            openShareModal(null, itemsToShare);
+        }
     };
 
-    // Details modal
-    function showDetailModal(product){
-      const nameSafe=escapeHTML(product.name||'Unnamed'),
-        photoBlock=product.photo?`<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>`:`<div class="prod-detail-photo" style="font-size:52px;padding:18px 0 9px 0;">📦</div>`,
-        mrpNum=Number(product.mrp)||0,costNum=(product.cost!==undefined&&product.cost!==null)?Number(product.cost):null;
-      document.getElementById('detailModalBody').innerHTML=`
+    const exportSelectedBtn = document.getElementById('exportSelectedBtn');
+    if (exportSelectedBtn) {
+        exportSelectedBtn.onclick = function() {
+            if (selectedProductIds.size === 0) return;
+            const itemsToExport = products.filter(p => selectedProductIds.has(p.id));
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0,10);
+            const filename = `dealer-shared-${itemsToExport.length}-items-${dateStr}.json`;
+            const dataStr = JSON.stringify(itemsToExport, null, 2);
+            const blob = new Blob([dataStr], {type:"application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); setTimeout(()=>{ document.body.removeChild(a); }, 200);
+        };
+    }
+
+    const detailModalBackdrop = document.getElementById('detailModalBackdrop');
+    const detailModalBody = document.getElementById('detailModalBody');
+    function disableDetailBackgroundScroll() { document.body.classList.add('detail-modal-open'); }
+    function enableDetailBackgroundScroll() { document.body.classList.remove('detail-modal-open'); }
+    function showDetailModal(product) {
+      const nameSafe = escapeHTML(product.name || 'Unnamed');
+      const photoBlock = product.photo ? `<img src="${escapeHTML(product.photo)}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
+      const mrpNum = Number(product.mrp) || 0;
+      const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
+      detailModalBody.innerHTML = `
         <div style="text-align:center;">${photoBlock}</div>
         <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
           <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
-          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(product.category)}</span></li>`:""}
+          ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
           <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
           <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
           ${costNum!==null?`<li><b>Cost:</b> <span style="color:var(--accent2);font-weight:600">₨${costNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>`:""}
         </ul>
-        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(product.notes)}</div>`:""}
+        ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
       `;
-      document.getElementById('detailModalBackdrop').classList.remove('hide');
-      document.body.classList.add('detail-modal-open');
-      setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
+      setTimeout(()=>{
+          const detailImg = detailModalBody.querySelector('.prod-detail-photo');
+          if(detailImg && product.photo) {
+              detailImg.style.cursor = 'zoom-in';
+              detailImg.onclick = () => openImageViewer(product.photo);
+          }
+      }, 50);
+
+      detailModalBackdrop.classList.remove('hide'); disableDetailBackgroundScroll(); setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
     }
-    document.getElementById('closeDetailModalBtn').onclick=function(){
-      document.getElementById('detailModalBackdrop').classList.add('hide');
-      document.getElementById('detailModalBody').innerHTML='';
-      document.body.classList.remove('detail-modal-open');
-      history.back();
+    document.getElementById('closeDetailModalBtn').onclick = function(){ detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML = ''; enableDetailBackgroundScroll(); };
+    
+    document.addEventListener('keydown', function(e){
+      if (e.key === "Escape") {
+        let closedAModal = false;
+        if(imageViewerOverlay.classList.contains('show')) { imageViewerOverlay.classList.remove('show'); imageViewerImg.src = ''; closedAModal=true; }
+        else if (!detailModalBackdrop.classList.contains('hide')) { detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML=''; enableDetailBackgroundScroll(); closedAModal = true; }
+        else if (!productModalBackdrop.classList.contains('hide')) { productModalBackdrop.classList.add('hide'); closedAModal = true; }
+        else if (!deleteModalBackdrop.classList.contains('hide')) { deleteModalBackdrop.classList.add('hide'); closedAModal = true; }
+        else if (!settingsBackdrop.classList.contains('hide')) { settingsBackdrop.classList.add('hide'); closedAModal = true; }
+        else if (!shareModalBackdrop.classList.contains('hide')) { shareModalBackdrop.classList.add('hide'); closedAModal = true; }
+        else if (!categoryModalBackdrop.classList.contains('hide')) { categoryModalBackdrop.classList.add('hide'); closedAModal = true; }
+        if (closedAModal) enableDetailBackgroundScroll();
+      }
+    });
+    
+    function maybeResetBodyScroll() {
+      if (
+        detailModalBackdrop.classList.contains('hide') &&
+        (!productModalBackdrop || productModalBackdrop.classList.contains('hide')) &&
+        (!settingsBackdrop || settingsBackdrop.classList.contains('hide')) &&
+        (!deleteModalBackdrop || deleteModalBackdrop.classList.contains('hide')) &&
+        (!shareModalBackdrop || shareModalBackdrop.classList.contains('hide')) &&
+        (!categoryModalBackdrop || categoryModalBackdrop.classList.contains('hide'))
+      ) {
+        enableDetailBackgroundScroll();
+      }
+    }
+    detailModalBackdrop.addEventListener('transitionend', maybeResetBodyScroll);
+    detailModalBackdrop.addEventListener('animationend', maybeResetBodyScroll);
+    window.addEventListener('popstate', maybeResetBodyScroll);
+
+    const searchInput = document.getElementById('productSearch');
+    let isSearchState = false;
+    searchInput.addEventListener('input', function(){ 
+        const hasText = (this.value || '').trim().length > 0;
+        if(hasText && !isSearchState) {
+             try { history.pushState({search: true}, document.title, window.location.href); isSearchState = true; } catch(e) {}
+        }
+        refreshProductList(); 
+    });
+    searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
+
+    // --- NEW: CATEGORY BUTTON & MODAL LOGIC ---
+    const categoryBtn = document.getElementById('categoryFilterBtn');
+    const categoryModalBackdrop = document.getElementById('categoryModalBackdrop');
+    const categoryGrid = document.getElementById('categoryGrid');
+    const closeCategoryBtn = document.getElementById('closeCategoryBtn');
+    const activeCategoryDisplay = document.getElementById('activeCategoryDisplay');
+
+    categoryBtn.onclick = function() {
+        const uniqueCategories = [...new Set(products.map(p => p.category ? p.category.trim() : "").filter(c => c))];
+        uniqueCategories.sort();
+        
+        let html = `<div class="category-item-btn ${activeCategoryFilter === null ? 'active' : ''}" onclick="selectCategory(null)">All Categories</div>`;
+        uniqueCategories.forEach(cat => {
+            const isActive = activeCategoryFilter === cat ? 'active' : '';
+            html += `<div class="category-item-btn ${isActive}" onclick="selectCategory('${escapeHTML(cat)}')">${escapeHTML(cat)}</div>`;
+        });
+        
+        categoryGrid.innerHTML = html;
+        categoryModalBackdrop.classList.remove('hide');
     };
 
-    // Search
-    document.getElementById('productSearch').addEventListener('input',refreshProductList);
-    document.getElementById('productSearch').addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';refreshProductList();}});
+    closeCategoryBtn.onclick = function() { categoryModalBackdrop.classList.add('hide'); };
 
-    // Product list refresh
-    function refreshProductList(){
+    window.selectCategory = function(cat) {
+        activeCategoryFilter = cat; // null means 'All'
+        categoryModalBackdrop.classList.add('hide');
+        refreshProductList();
+        
+        // Push state so back button works to clear filter
+        if(activeCategoryFilter) {
+            try { history.pushState({category: true}, document.title, window.location.href); } catch(e){}
+        }
+    };
+
+    activeCategoryDisplay.onclick = function() {
+        activeCategoryFilter = null;
+        refreshProductList();
+    };
+
+    // --- REFRESH LIST: SORTING & GROUPING ---
+    function refreshProductList() {
       loadProducts();
-      const productListElem=document.getElementById('productList');
-      productListElem.innerHTML='';
-      let q=(document.getElementById('productSearch').value||'').trim().toLowerCase();
-      let filtered=!q?products:products.filter(prod=>
-        (String(prod.name||"").toLowerCase().includes(q))||
-        (String(prod.category||"").toLowerCase().includes(q))||
-        (String(prod.notes||"").toLowerCase().includes(q)));
-      if(!filtered.length){document.getElementById('noProducts').style.display="";document.getElementById('multiSelectControls').classList.remove('active');return;}
-      document.getElementById('noProducts').style.display="none";
-      filtered.sort((a,b)=>(Number(b.qty)-Number(a.qty))||(String(a.name||'').localeCompare(String(b.name||''))));
-      filtered.forEach((prod,i)=>productListElem.appendChild(createProductCard(prod,i)));
+      productListElem.innerHTML = '';
+      let q = (searchInput.value || '').trim().toLowerCase();
+      const terms = q.split(/\s+/).filter(t => t.length > 0);
+      
+      let filtered = products;
+
+      // 1. Apply Search
+      if (terms.length > 0) {
+          filtered = products.filter(prod => {
+             const searchString = ((prod.name || "") + " " + (prod.category || "") + " " + (prod.notes || "")).toLowerCase();
+             return terms.every(term => searchString.includes(term));
+          });
+      }
+
+      // 2. Apply Category Filter
+      if (activeCategoryFilter) {
+          filtered = filtered.filter(p => (p.category || '').trim() === activeCategoryFilter);
+          activeCategoryDisplay.textContent = `Filtered by: ${activeCategoryFilter} ✖`;
+          activeCategoryDisplay.classList.add('show');
+      } else {
+          activeCategoryDisplay.classList.remove('show');
+      }
+      
+      currentFilteredProducts = filtered;
+
+      if (!filtered.length) { noProductsElem.style.display = ""; document.getElementById('multiSelectControls').classList.remove('active'); return; }
+      noProductsElem.style.display = "none";
+      
+      // 3. Sort: Category (A-Z) -> Name (A-Z)
+      filtered.sort((a,b) => {
+          const catA = (a.category || '').trim().toLowerCase();
+          const catB = (b.category || '').trim().toLowerCase();
+          if (catA < catB) return -1;
+          if (catA > catB) return 1;
+          return (a.name || '').localeCompare(b.name || '');
+      });
+      
+      const fragment = document.createDocumentFragment();
+      let lastCategory = "@@INIT@@";
+
+      filtered.forEach((prod,i) => {
+          // 4. Inject Category Header
+          const currentCat = (prod.category || '').trim();
+          const displayCat = currentCat || "Uncategorized";
+          
+          if (displayCat.toLowerCase() !== lastCategory.toLowerCase()) {
+              const header = document.createElement('div');
+              header.className = 'category-header';
+              header.textContent = `--- ${displayCat} ---`;
+              fragment.appendChild(header);
+              lastCategory = displayCat;
+          }
+
+          fragment.appendChild(createProductCard(prod,i));
+      });
+      productListElem.appendChild(fragment);
+      
       updateMultiSelectControls();
     }
 
-    // Add/Edit Modal logic
-    let currentProductPhotoDataUrl=null,firstSubmitAttempt=true,prodPhotoLastPendingPromise=null;
-    function updatePhotoPreviewUI(){
-      const container=document.getElementById('prodPhotoFileContainer'),nameEl=document.getElementById('prodPhotoFileName'),uploadBtnInnerText=document.getElementById('uploadBtnInnerText'),imageCompressMsg=document.getElementById('imageCompressMsg');
-      container.innerHTML='';
-      if(currentProductPhotoDataUrl){
-        const img=document.createElement('img');
-        img.src=currentProductPhotoDataUrl;img.alt="Product Photo";img.className='photo-preview-img-thumb';
-        const removeBtn=document.createElement('button');
-        removeBtn.type='button';removeBtn.className='remove-photo-btn';removeBtn.title='Remove';removeBtn.innerHTML='✖';
-        removeBtn.onclick=function(){
-          currentProductPhotoDataUrl=null;document.getElementById('prodPhoto').value='';nameEl.textContent='';
-          uploadBtnInnerText.textContent='Choose Image';imageCompressMsg.style.display='none';updatePhotoPreviewUI();
-        };
-        container.appendChild(img);container.appendChild(removeBtn);
-      }
-    }
-    async function compressImageFile(file,maxDim=260,quality=.76){
-      return new Promise((resolve,reject)=>{
-        if(!/^image\//.test(file.type))return reject("Not image");
-        let img=new window.Image();let url=URL.createObjectURL(file);
-        img.onload=function(){
-          let [w,h]=[img.naturalWidth,img.naturalHeight];
-          if(w>maxDim||h>maxDim){
-            if(w>h){h=Math.round(h*maxDim/w);w=maxDim;}
-            else{w=Math.round(w*maxDim/h);h=maxDim;}
+    let productEditing = null;
+    const prodName = document.getElementById('prodName');
+    const prodMrp = document.getElementById('prodMrp');
+    const prodCost = document.getElementById('prodCost');
+    const prodQty = document.getElementById('prodQty');
+    const prodCategory = document.getElementById('prodCategory');
+    const prodNotes = document.getElementById('prodNotes');
+    const prodPhoto = document.getElementById('prodPhoto');
+    const productModalBackdrop = document.getElementById('productModalBackdrop');
+    const productModal = document.getElementById('productModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalError = document.getElementById('modalError');
+    const prodPhotoFileName = document.getElementById('prodPhotoFileName');
+    const uploadBtnInnerText = document.getElementById('uploadBtnInnerText');
+    const prodPhotoFileContainer = document.getElementById('prodPhotoFileContainer');
+    const fileUploadWrap = document.getElementById('fileUploadWrap');
+    const imageCompressMsg = document.getElementById('imageCompressMsg');
+    let currentProductPhotoDataUrl = null;
+
+    async function compressImageFile(file, maxDim = 800, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        if (!/^image\//.test(file.type)) return reject("Not an image file.");
+        let img = new window.Image();
+        let url = URL.createObjectURL(file);
+        img.onload = function() {
+          let [w, h] = [img.naturalWidth, img.naturalHeight];
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+            else { w = Math.round(w * maxDim / h); h = maxDim; }
           }
-          const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-          const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
-          canvas.toBlob(blob=>{
-            if(!blob)return reject("Comp error");
-            const reader=new FileReader();
-            reader.onload=e=>resolve(reader.result);reader.onerror=reject;
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          canvas.toBlob(blob => {
+            if (!blob) return reject("Compression error.");
+            const reader = new FileReader();
+            reader.onload = e => resolve(reader.result);
+            reader.onerror = reject;
             reader.readAsDataURL(blob);
-          },'image/jpeg',quality);URL.revokeObjectURL(url);
+          }, 'image/jpeg', quality);
+          URL.revokeObjectURL(url);
         };
-        img.onerror=()=>{URL.revokeObjectURL(url);reject("Invalid img");};
-        img.src=url;
+        img.onerror = () => { URL.revokeObjectURL(url); reject("Invalid image"); };
+        img.src = url;
       });
     }
-    document.getElementById('prodPhoto').addEventListener('change',function(){
-      if(this.files&&this.files.length){
-        const file=this.files[0];
-        document.getElementById('prodPhotoFileName').textContent=file.name;
-        document.getElementById('uploadBtnInnerText').textContent="Image Selected";
-        document.getElementById('imageCompressMsg').textContent="Compressing...";
-        document.getElementById('imageCompressMsg').style.display='block';
-        prodPhotoLastPendingPromise=compressImageFile(file,260,.71).then(dataUrl=>{
-          const kb=Math.round((dataUrl.length*3/4)/1024);
-          currentProductPhotoDataUrl=dataUrl;updatePhotoPreviewUI();
-          document.getElementById('imageCompressMsg').textContent=`~${kb} KB (max 260px, JPEG)`;
-        }).catch(err=>{
-          document.getElementById('modalError').textContent="Image compression failed.";this.value='';document.getElementById('prodPhotoFileName').textContent='';
-          document.getElementById('uploadBtnInnerText').textContent='Choose Image';document.getElementById('imageCompressMsg').style.display='none';currentProductPhotoDataUrl=null;updatePhotoPreviewUI();
+
+    function updatePhotoPreviewUI() {
+      prodPhotoFileContainer.innerHTML = '';
+      if (currentProductPhotoDataUrl) {
+        const img = document.createElement('img');
+        img.src = currentProductPhotoDataUrl; img.alt = "Product Photo"; img.className = 'photo-preview-img-thumb';
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button'; removeBtn.className = 'remove-photo-btn'; removeBtn.title = 'Remove image'; removeBtn.innerHTML = '✖';
+        removeBtn.onclick = function() { currentProductPhotoDataUrl = null; prodPhoto.value = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI(); };
+        prodPhotoFileContainer.appendChild(img); prodPhotoFileContainer.appendChild(removeBtn);
+      }
+    }
+
+    function showProductModal(mode, product) {
+      productModal.reset(); modalError.textContent = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; currentProductPhotoDataUrl = null; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI();
+      if (mode === 'add') {
+        modalTitle.textContent = "Add Product"; productEditing = null;
+        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = "";
+      } else {
+        modalTitle.textContent = "Edit Product"; productEditing = product;
+        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = "";
+        if (product.photo) { currentProductPhotoDataUrl = product.photo; updatePhotoPreviewUI(); }
+      }
+      productModalBackdrop.classList.remove('hide');
+      if (!document.body.classList.contains('modal-open')) { document.body.dataset.scrollY = window.scrollY; document.body.style.top = `-${window.scrollY}px`; document.body.classList.add('modal-open'); }
+      setTimeout(()=>prodName.focus(),150);
+      firstSubmitAttempt = true;
+    }
+
+    let firstSubmitAttempt = true;
+    let prodPhotoLastPendingPromise = null;
+
+    prodPhoto.addEventListener('change', function () {
+      if (prodPhoto.files && prodPhoto.files.length) {
+        const file = prodPhoto.files[0]; prodPhotoFileName.textContent = file.name; uploadBtnInnerText.textContent = "Image Selected"; imageCompressMsg.textContent = "Compressing image..."; imageCompressMsg.style.display = 'block';
+        const filePromise = compressImageFile(file, 800, 0.82).then(dataUrl => {
+          const kb = Math.round((dataUrl.length * 3 / 4) / 1024); currentProductPhotoDataUrl = dataUrl; updatePhotoPreviewUI();
+          imageCompressMsg.textContent = `Photo compressed: ~${kb} KB (max 800px, JPEG)`; imageCompressMsg.style.display = 'block';
+        }).catch(err => { modalError.textContent = "Image compression failed. Please select another file."; prodPhoto.value = ''; prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; imageCompressMsg.textContent = ''; imageCompressMsg.style.display = 'none'; currentProductPhotoDataUrl = null; updatePhotoPreviewUI(); });
+        prodPhotoLastPendingPromise = filePromise;
+      } else {
+        prodPhotoFileName.textContent = ''; uploadBtnInnerText.textContent = 'Choose Image'; currentProductPhotoDataUrl = null; imageCompressMsg.style.display = 'none'; updatePhotoPreviewUI(); prodPhotoLastPendingPromise = null;
+      }
+    });
+
+    document.getElementById('addProductBtn').onclick = ()=>showProductModal('add');
+    document.getElementById('closeModalBtn').onclick = ()=>{
+      productModalBackdrop.classList.add('hide');
+      if (document.body.classList.contains('modal-open')) { document.body.classList.remove('modal-open'); const scrollY = document.body.dataset.scrollY ? parseInt(document.body.dataset.scrollY, 10) : 0; document.body.style.top = ''; window.scrollTo(0, scrollY); delete document.body.dataset.scrollY; }
+      imageCompressMsg.style.display = 'none';
+    };
+
+    productModal.onsubmit = async function(e) {
+      e.preventDefault(); modalError.textContent = "";
+      if (firstSubmitAttempt && prodPhoto.files && prodPhoto.files.length && !currentProductPhotoDataUrl && prodPhotoLastPendingPromise) {
+        try { await prodPhotoLastPendingPromise; } catch (err) { modalError.textContent = "Image failed to load, please select again."; return; }
+        firstSubmitAttempt = false; productModal.onsubmit(e); return;
+      }
+      firstSubmitAttempt = false;
+      const name = (prodName.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const category = (prodCategory.value || '').trim(); const notes = (prodNotes.value || '').trim();
+      if (!name) { modalError.textContent = "Name required."; return; }
+      if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
+      if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
+      let photoData = null; if (currentProductPhotoDataUrl) photoData = currentProductPhotoDataUrl;
+      const productObj = { id: productEditing ? productEditing.id : genID(), name, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photo: photoData };
+      if (!productEditing) products.push(productObj); else { const idx = products.findIndex(p => p.id === productEditing.id); if (idx >= 0) products[idx] = productObj; else products.push(productObj); }
+      saveProducts(); productModalBackdrop.classList.add('hide');
+      if (document.body.classList.contains('modal-open')) { document.body.classList.remove('modal-open'); const scrollY = document.body.dataset.scrollY ? parseInt(document.body.dataset.scrollY, 10) : 0; document.body.style.top = ''; window.scrollTo(0, scrollY); delete document.body.dataset.scrollY; }
+      selectedProductIds.clear(); updateMultiSelectControls();
+    };
+
+    const deleteModalBackdrop = document.getElementById('deleteModalBackdrop');
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteName = document.getElementById('deleteName');
+    let productToDelete = null;
+
+    function showDeleteModal(product) { deleteModalBackdrop.classList.remove('hide'); deleteName.textContent = product.name || ''; productToDelete = product; setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60); }
+    document.getElementById('closeDeleteBtn').onclick = document.getElementById('cancelDeleteBtn').onclick = () => { deleteModalBackdrop.classList.add('hide'); productToDelete = null; };
+    deleteModal.onsubmit = function(e){ e.preventDefault(); if (!productToDelete) return; products = products.filter(p => p.id !== productToDelete.id); saveProducts(); deleteModalBackdrop.classList.add('hide'); productToDelete = null; selectedProductIds.delete(productToDelete.id); updateMultiSelectControls(); };
+    function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
+
+    /****************************************************************
+     * NEW EXPORT & IMPORT (MERGE/REPLACE) LOGIC
+     ****************************************************************/
+    document.getElementById('exportBtn').onclick = function() {
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0,10);
+      const timeStr = now.toTimeString().slice(0,5).replace(':','-');
+      const filename = `dealer-backup-${dateStr}_${timeStr}.json`;
+      const dataStr = JSON.stringify(products || [], null, 2);
+      const blob = new Blob([dataStr], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); setTimeout(()=>{ document.body.removeChild(a); }, 200);
+    };
+
+    document.getElementById('importBtn').onclick = function () { 
+        let fileInput = document.getElementById('hiddenImport'); 
+        if (fileInput) fileInput.value = ''; 
+        if (fileInput) fileInput.click(); 
+    };
+
+    document.getElementById('hiddenImport').onchange = async function (e) {
+      const fileInput = e.target;
+      if (!fileInput.files || !fileInput.files.length) return;
+      const file = fileInput.files[0];
+
+      if (!(file && (file.type === 'application/json' || /\.json$/i.test(file.name)))) { alert('Please select a valid .json backup file.'); return; }
+
+      try {
+        let text = await file.text();
+        let importedArr = JSON.parse(text); 
+        if (!Array.isArray(importedArr)) throw new Error('Invalid file format. Data must be an array.');
+        importedArr = importedArr.filter(p => p && typeof p === 'object' && p.name);
+        if (!importedArr.length) throw new Error('No valid products found in this file.');
+
+        const userWantsToMerge = confirm(`Found ${importedArr.length} products in file.\n\n• Click [OK] to MERGE.\n(Adds new items and updates existing ones. Safe.)\n\n• Click [Cancel] to REPLACE.\n(Deletes everything currently in app and restores backup.)`);
+
+        if (userWantsToMerge) {
+            const productMap = new Map();
+            products.forEach(p => productMap.set(p.id, p));
+            let addedCount = 0;
+            let updatedCount = 0;
+            importedArr.forEach(p => {
+                if (!p.id) p.id = genID();
+                if (productMap.has(p.id)) { productMap.set(p.id, p); updatedCount++; } else { productMap.set(p.id, p); addedCount++; }
+            });
+            products = Array.from(productMap.values());
+            alert(`Import Successful!\n\n🆕 Added: ${addedCount}\n🔄 Updated: ${updatedCount}`);
+        } else {
+            if(!confirm("⚠️ WARNING: This will DELETE all current products and replace them with the backup.\n\nAre you sure?")) { return; }
+            products = importedArr;
+            products.forEach(p => { if(!p.id) p.id = genID(); });
+            alert(`Restore Successful! App now has ${products.length} products.`);
+        }
+        saveProducts(); selectedProductIds.clear(); updateMultiSelectControls(); 
+      } catch (ex) { alert("Failed to import: " + (ex.message || ex)); }
+    };
+
+    window.addEventListener('load', function() { loadProducts(); });
+    
+    /****************************************************************
+     * SHARE / PDF LOGIC
+     ****************************************************************/
+    const shareModalBackdrop = document.getElementById('shareModalBackdrop');
+    const closeShareBtn = document.getElementById('closeShareBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const shareSubtitle = document.getElementById('shareSubtitle');
+    
+    const chkPhoto = document.getElementById('sharePhoto');
+    const chkMrp = document.getElementById('shareMrp');
+    const chkCost = document.getElementById('shareCost');
+    const chkQty = document.getElementById('shareQty');
+    const chkCategory = document.getElementById('shareCategory');
+    const chkNotes = document.getElementById('shareNotes');
+    
+    let productsToShareQueue = [];
+    
+    function openShareModal(product, list = null) {
+        if(list) {
+            productsToShareQueue = list;
+            shareSubtitle.textContent = `Generate PDF for ${list.length} selected product(s).`;
+        } else {
+            productsToShareQueue = [product];
+            shareSubtitle.textContent = "Select fields to include in the generated PDF/Print.";
+        }
+        chkPhoto.checked = true; chkMrp.checked = true; chkCost.checked = false; chkQty.checked = true; chkCategory.checked = true; chkNotes.checked = true;
+        shareModalBackdrop.classList.remove('hide');
+    }
+    closeShareBtn.onclick = () => { shareModalBackdrop.classList.add('hide'); productsToShareQueue = []; };
+    
+    generatePdfBtn.onclick = function() {
+        if(productsToShareQueue.length === 0) return;
+        const printableArea = document.getElementById('printableArea');
+        let fullHtml = '';
+        productsToShareQueue.forEach(prod => {
+            let html = `
+                <div class="print-product-page">
+                    <div class="print-header">
+                        <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" class="print-logo" />
+                        <div class="print-title">Al Rehman Electronics</div>
+                        <div style="font-size:14px;color:#555">Product Specification Sheet</div>
+                        <div style="font-size:12px;color:#777">Generated: ${new Date().toLocaleDateString()}</div>
+                    </div>
+                    <h1 style="text-align:center;margin-top:20px;">${escapeHTML(prod.name)}</h1>
+            `;
+            if(chkPhoto.checked && prod.photo) { html += `<img src="${prod.photo}" class="print-product-img" />`; }
+            html += `<table class="print-details-table"><tbody>`;
+            if(chkCategory.checked && prod.category) { html += `<tr><td class="print-label">Category</td><td>${escapeHTML(prod.category)}</td></tr>`; }
+            if(chkQty.checked) { html += `<tr><td class="print-label">In Stock</td><td>${prod.qty}</td></tr>`; }
+            if(chkMrp.checked) { html += `<tr><td class="print-label">Price (MRP)</td><td>₨ ${Number(prod.mrp).toLocaleString()}</td></tr>`; }
+            if(chkCost.checked && prod.cost !== null && prod.cost !== undefined) { html += `<tr><td class="print-label">Cost Price</td><td>₨ ${Number(prod.cost).toLocaleString()}</td></tr>`; }
+            html += `</tbody></table>`;
+            if(chkNotes.checked && prod.notes) { html += `<div class="print-notes-box"><strong>Notes:</strong><br/>${escapeHTML(prod.notes)}</div>`; }
+            html += `<div style="text-align:center; margin-top:50px; font-size:12px; color:#888;">Thank you for your interest.For any detail contact on this Phone number:0300-3685270</div></div>`;
+            fullHtml += html;
         });
-      }else{
-        document.getElementById('prodPhotoFileName').textContent='';
-        document.getElementById('uploadBtnInnerText').textContent='Choose Image';
-        currentProductPhotoDataUrl=null;document.getElementById('imageCompressMsg').style.display='none';updatePhotoPreviewUI();prodPhotoLastPendingPromise=null;
-      }
-    });
-    document.getElementById('addProductBtn').onclick=()=>{
-      showProductModal('add');
-      history.pushState({modal:'add'},window.document.title,window.location.href);
-    };
-    document.getElementById('closeModalBtn').onclick=()=>{
-      document.getElementById('productModalBackdrop').classList.add('hide');
-      document.body.classList.remove('modal-open');
-      document.getElementById('imageCompressMsg').style.display='none';
-      history.back();
-    };
-    function showProductModal(mode,product){
-      document.getElementById('productModal').reset();document.getElementById('modalError').textContent='';
-      document.getElementById('prodPhotoFileName').textContent='';document.getElementById('uploadBtnInnerText').textContent='Choose Image';currentProductPhotoDataUrl=null;document.getElementById('imageCompressMsg').style.display='none';
-      updatePhotoPreviewUI();
-      if(mode==='add'){
-        document.getElementById('modalTitle').textContent="Add Product";productEditing=null;
-        document.getElementById('prodName').value="";document.getElementById('prodMrp').value="";document.getElementById('prodCost').value="";document.getElementById('prodQty').value="";document.getElementById('prodCategory').value="";document.getElementById('prodNotes').value="";document.getElementById('prodPhoto').value="";
-      }else{
-        document.getElementById('modalTitle').textContent="Edit Product";productEditing=product;
-        document.getElementById('prodName').value=product.name||"";document.getElementById('prodMrp').value=product.mrp!==undefined?product.mrp:"";document.getElementById('prodCost').value=product.cost!==undefined?product.cost:"";document.getElementById('prodQty').value=product.qty!==undefined?product.qty:"";document.getElementById('prodCategory').value=product.category||"";document.getElementById('prodNotes').value=product.notes||"";document.getElementById('prodPhoto').value="";
-        if(product.photo){currentProductPhotoDataUrl=product.photo;updatePhotoPreviewUI();}
-      }
-      document.getElementById('productModalBackdrop').classList.remove('hide');
-      document.body.classList.add('modal-open');
-      setTimeout(()=>document.getElementById('prodName').focus(),140);
-      firstSubmitAttempt=true;
-    }
-    document.getElementById('productModal').onsubmit=async function(e){
-      e.preventDefault();document.getElementById('modalError').textContent="";
-      if(firstSubmitAttempt&&document.getElementById('prodPhoto').files.length&&!currentProductPhotoDataUrl&&prodPhotoLastPendingPromise){
-        try{await prodPhotoLastPendingPromise;}catch(err){document.getElementById('modalError').textContent="Image failed, select again.";return;}
-        firstSubmitAttempt=false;this.onsubmit(e);return;
-      }
-      firstSubmitAttempt=false;
-      const name=(document.getElementById('prodName').value||'').trim(),mrpVal=document.getElementById('prodMrp').value,costVal=document.getElementById('prodCost').value,qtyVal=document.getElementById('prodQty').value,category=(document.getElementById('prodCategory').value||'').trim(),
-        notes=(document.getElementById('prodNotes').value||'').trim(),photoData=currentProductPhotoDataUrl||null;
-      if(!name){document.getElementById('modalError').textContent="Name required.";return;}
-      if(mrpVal===""||isNaN(Number(mrpVal))||Number(mrpVal)<0){document.getElementById('modalError').textContent="Valid MRP required.";return;}
-      if(qtyVal===""||isNaN(Number(qtyVal))||Number(qtyVal)<0){document.getElementById('modalError').textContent="Valid Stock required.";return;}
-      const productObj={
-        id:productEditing?productEditing.id:genID(),name,mrp:Number(mrpVal),cost:costVal!==""?Number(costVal):null,qty:Number(qtyVal),category,notes,photo:photoData
-      };
-      if(!productEditing)products.push(productObj);else{const idx=products.findIndex(p=>p.id===productEditing.id);if(idx>=0)products[idx]=productObj;else products.push(productObj);}
-      saveProducts();document.getElementById('productModalBackdrop').classList.add('hide');
-      document.body.classList.remove('modal-open');selectedProductIds.clear();updateMultiSelectControls();
-      history.back();
+        printableArea.innerHTML = fullHtml;
+        shareModalBackdrop.classList.add('hide');
+        setTimeout(() => { window.print(); productsToShareQueue = []; }, 300);
     };
 
-    // --- Delete Product Modal ---
-    let productToDelete=null;
-    function showDeleteModal(product){
-      document.getElementById('deleteModalBackdrop').classList.remove('hide');
-      document.getElementById('deleteName').textContent=product.name||'';productToDelete=product;
-      setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60);
-    }
-    document.getElementById('closeDeleteBtn').onclick=document.getElementById('cancelDeleteBtn').onclick=()=>{document.getElementById('deleteModalBackdrop').classList.add('hide');productToDelete=null;};
-    document.getElementById('deleteModal').onsubmit=function(e){
-      e.preventDefault();
-      if(!productToDelete)return;
-      products=products.filter(p=>p.id!==productToDelete.id);saveProducts();document.getElementById('deleteModalBackdrop').classList.add('hide');
-      selectedProductIds.delete(productToDelete.id);updateMultiSelectControls();productToDelete=null;
-    };
-
-    // --- Export/Import ---
-    document.getElementById('exportBtn').onclick=function(){
-      const dataStr=JSON.stringify(products||[],null,2);
-      const blob=new Blob([dataStr],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement('a');
-      a.style.display='none';a.href=url;a.download='dealer-products-backup.json';document.body.appendChild(a);a.click();
-      URL.revokeObjectURL(url);setTimeout(()=>{document.body.removeChild(a);},150);
-    };
-    document.getElementById('importBtn').onclick=function(){
-      let fileInput=document.getElementById('hiddenImport');if(fileInput)fileInput.value='';if(fileInput)fileInput.click();
-    };
-    document.getElementById('hiddenImport').onchange=async function(e){
-      const file=e.target.files[0];
-      if(!file||!(file.type=='application/json'||/\.json$/i.test(file.name))){
-        alert('Please select a .json backup/export file.');return;
-      }
-      try{
-        let text=file.text?await file.text():await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=e=>resolve(e.target.result);reader.onerror=reject;reader.readAsText(file);});
-        let arr=JSON.parse(text);
-        if(!Array.isArray(arr))throw new Error('Invalid file');
-        arr=arr.filter(prod=>prod&&typeof prod==='object'&&'name'in prod&&'qty'in prod);
-        if(!arr.length)throw new Error('No valid products.');
-        if(!confirm(`Import WILL OVERWRITE current list (${arr.length} products). Are you SURE?`))return;
-        window.localStorage.setItem('dealer-products',JSON.stringify(arr));products=arr;refreshProductList();selectedProductIds.clear();updateMultiSelectControls();alert('Import done. List replaced.');
-      }catch(ex){alert("Import failed: "+(ex.message||ex));}
-    };
-
-    // --- Fade up cards on page load ---
-    window.addEventListener('DOMContentLoaded',function(){
-      setTimeout(function(){document.querySelectorAll(".card").forEach((el,i)=>{setTimeout(()=>{el.classList.add('show')},170+52*i);});},120);
-    });
-    window.addEventListener('load',function(){loadProducts();});
   </script>
 </body>
 </html>
