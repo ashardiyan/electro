@@ -160,6 +160,12 @@
       border-color: #1095b7;
     }
     
+    /* Small Button Variant for Uploads */
+    .btn-small {
+        padding: 8px 12px !important;
+        font-size: 0.9em !important;
+    }
+    
     #biometricUnlockBtn {
       background: linear-gradient(90deg, #10b981 30%, #059669 100%);
       width: 100%;
@@ -198,7 +204,7 @@
     .modal-file-upload-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       margin-bottom: 13px;
       margin-top: 2px;
     }
@@ -754,13 +760,13 @@
       <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
       <span class="modal-file-label">Photo <span title="Binary Blob storage used for maximum efficiency." style="font-size:1.1em;color:var(--accent2)">[efficient binary format]</span></span>
       <div class="modal-file-upload-wrap" id="fileUploadWrap">
-        <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText" style="flex:1; text-align:center;">
+        <span class="modal-file-upload-btn rounded-sky-btn btn-small" id="uploadBtnText" style="flex:1; text-align:center;">
           <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span id="uploadBtnInnerText">Gallery</span>
           <input type="file" id="prodPhoto" accept="image/jpeg, image/png" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
         
-        <span class="modal-file-upload-btn rounded-sky-btn" id="cameraBtnText" style="flex:1; text-align:center; background: var(--accent2); margin-left: 8px;">
+        <span class="modal-file-upload-btn rounded-sky-btn btn-small" id="cameraBtnText" style="flex:1; text-align:center; background: var(--accent2);">
           <span style="font-size:1.15em; margin-right:4px;">📷</span>
           <span>Camera</span>
           <input type="file" id="prodCamera" accept="image/jpeg, image/png" capture="environment" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
@@ -1101,7 +1107,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v13';
+        const CACHE_NAME = 'local-dealer-cache-v14';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
@@ -1890,8 +1896,15 @@
       prodPhotoFileContainer.innerHTML = '';
       if (currentProductBlob) {
         const img = document.createElement('img');
-        // Create temporary URL for preview
-        img.src = URL.createObjectURL(currentProductBlob);
+        
+        // --- FIX: Handle BOTH Blob (New) and String (Old) ---
+        if (currentProductBlob instanceof Blob) {
+             img.src = URL.createObjectURL(currentProductBlob);
+        } else {
+             // It is likely a base64 string from old data
+             img.src = currentProductBlob; 
+        }
+        
         img.alt = "Product Photo"; 
         img.className = 'photo-preview-img-thumb';
         const removeBtn = document.createElement('button');
