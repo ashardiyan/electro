@@ -16,7 +16,6 @@
   <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
 
   <style>
-    /* ... (STYLES REMAIN UNCHANGED) ... */
     :root {
       --bg1: #0C1220;
       --bg2: #161B22;
@@ -759,7 +758,7 @@
       <label for="prodQty">Quantity</label>
       <input type="number" id="prodQty" min="0" max="100000" required />
       <label for="prodCategory">Category</label>
-      <input type="text" id="prodCategory" maxlength="32" />
+      <input type="text" id="prodCategory" maxlength="32" placeholder="e.g. Washing Machine" />
       <label for="prodNotes">Notes</label>
       <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
       <span class="modal-file-label">Photo <span title="Base64 photos use much more space than compressed images. Large images may slow the app. Compressed automatically." style="font-size:1.1em;color:var(--accent2)">[auto-compressed]</span></span>
@@ -1103,7 +1102,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v8';
+        const CACHE_NAME = 'local-dealer-cache-v9';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
@@ -1133,7 +1132,6 @@
       } catch (e) {}
     })();
 
-    // OPTIMIZATION: Removed the heavy setTimeout loop that slowed down rendering
     window.addEventListener('DOMContentLoaded', function(){
       setTimeout(function() { document.querySelectorAll(".card").forEach((el,i)=> { el.classList.add('show'); }); }, 100);
     });
@@ -1692,11 +1690,27 @@
 
     categoryBtn.onclick = function() {
         const uniqueCategories = [...new Set(products.map(p => p.category ? p.category.trim() : "").filter(c => c))];
-        uniqueCategories.sort();
+        
+        // Smart Sort: Ignore Case
+        uniqueCategories.sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        
+        // De-duplicate Case Variations (Keep only one)
+        const seenLower = new Set();
+        const cleanedCats = [];
+        uniqueCategories.forEach(c => {
+            const low = c.toLowerCase();
+            if(!seenLower.has(low)){
+                seenLower.add(low);
+                // Auto-Capitalize for display
+                const niceName = c.charAt(0).toUpperCase() + c.slice(1);
+                cleanedCats.push(niceName);
+            }
+        });
         
         let html = `<div class="category-item-btn ${activeCategoryFilter === null ? 'active' : ''}" onclick="selectCategory(null)">All Categories</div>`;
-        uniqueCategories.forEach(cat => {
-            const isActive = activeCategoryFilter === cat ? 'active' : '';
+        cleanedCats.forEach(cat => {
+            // Note: we compare lower case to active filter lower case to allow matching
+            const isActive = (activeCategoryFilter && activeCategoryFilter.toLowerCase() === cat.toLowerCase()) ? 'active' : '';
             html += `<div class="category-item-btn ${isActive}" onclick="selectCategory('${escapeHTML(cat)}')">${escapeHTML(cat)}</div>`;
         });
         
@@ -1740,10 +1754,14 @@
           });
       }
 
-      // 2. Apply Category Filter
+      // 2. Apply Category Filter (Case Insensitive)
       if (activeCategoryFilter) {
-          filtered = filtered.filter(p => (p.category || '').trim() === activeCategoryFilter);
-          activeCategoryDisplay.textContent = `Filtered by: ${activeCategoryFilter} ✖`;
+          const targetLower = activeCategoryFilter.toLowerCase();
+          filtered = filtered.filter(p => (p.category || '').trim().toLowerCase() === targetLower);
+          
+          // Display the "Pretty" version of the category name
+          const displayNice = activeCategoryFilter.charAt(0).toUpperCase() + activeCategoryFilter.slice(1);
+          activeCategoryDisplay.textContent = `Filtered by: ${displayNice} ✖`;
           activeCategoryDisplay.classList.add('show');
       } else {
           activeCategoryDisplay.classList.remove('show');
@@ -1764,19 +1782,25 @@
       });
       
       const fragment = document.createDocumentFragment();
-      let lastCategory = "@@INIT@@";
+      let lastCategoryLower = "@@INIT@@";
 
       filtered.forEach((prod,i) => {
-          // 4. Inject Category Header
-          const currentCat = (prod.category || '').trim();
-          const displayCat = currentCat || "Uncategorized";
+          // 4. Inject Category Header (MERGED Case Insensitive)
+          const currentCatRaw = (prod.category || '').trim();
+          const currentCatLower = currentCatRaw.toLowerCase();
           
-          if (displayCat.toLowerCase() !== lastCategory.toLowerCase()) {
+          // Display logic: "electronics" -> "Electronics"
+          let displayCat = currentCatRaw || "Uncategorized";
+          if (displayCat !== "Uncategorized") {
+              displayCat = displayCat.charAt(0).toUpperCase() + displayCat.slice(1);
+          }
+          
+          if (currentCatLower !== lastCategoryLower) {
               const header = document.createElement('div');
               header.className = 'category-header';
               header.textContent = `--- ${displayCat} ---`;
               fragment.appendChild(header);
-              lastCategory = displayCat;
+              lastCategoryLower = currentCatLower;
           }
 
           fragment.appendChild(createProductCard(prod,i));
@@ -1892,7 +1916,15 @@
         firstSubmitAttempt = false; productModal.onsubmit(e); return;
       }
       firstSubmitAttempt = false;
-      const name = (prodName.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const category = (prodCategory.value || '').trim(); const notes = (prodNotes.value || '').trim();
+      const name = (prodName.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const notes = (prodNotes.value || '').trim();
+      
+      // FIX FOR CATEGORY MERGING: Auto-capitalize user input
+      let category = (prodCategory.value || '').trim();
+      if(category.length > 0) {
+          // Capitalize first letter to normalize (e.g. "iphone" -> "Iphone")
+          category = category.charAt(0).toUpperCase() + category.slice(1);
+      }
+      
       if (!name) { modalError.textContent = "Name required."; return; }
       if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
       if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
@@ -1973,8 +2005,6 @@
         saveProducts(); selectedProductIds.clear(); updateMultiSelectControls(); 
       } catch (ex) { alert("Failed to import: " + (ex.message || ex)); }
     };
-
-    // window.addEventListener('load', function() { loadProducts(); }); // Removed (called in async handler above now)
     
     /****************************************************************
      * SHARE / PDF LOGIC
