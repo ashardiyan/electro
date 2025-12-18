@@ -16,6 +16,7 @@
   <link rel="apple-touch-icon" type="image/png" sizes="192x192" href="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true">
 
   <style>
+    /* ... (STYLES REMAIN UNCHANGED) ... */
     :root {
       --bg1: #0C1220;
       --bg2: #161B22;
@@ -1275,7 +1276,10 @@
     
     let justSetPIN = false;
 
-    window.addEventListener('load', ()=> {
+    window.addEventListener('load', async ()=> {
+      // START NEW STORAGE LOGIC
+      await loadProducts(); 
+      // END NEW STORAGE LOGIC
       updatePINUI(getHasPIN());
       if (!checkQuickAutoUnlock()) { showLoginModal(); if (hasBiometricSetup()) { setTimeout(authenticateBiometric, 400); } }
       setTimeout(function() { if ("serviceWorker" in navigator && window.matchMedia('(display-mode: standalone)').matches) { try { history.replaceState({start:true}, document.title, window.location.href); } catch (e) {} } }, 180);
@@ -1378,8 +1382,85 @@
     let currentFilteredProducts = []; 
     let activeCategoryFilter = null; 
 
-    function saveProducts() { try { window.localStorage.setItem('dealer-products', JSON.stringify(products)); } catch(e){} refreshProductList(); }
-    function loadProducts() { products = []; try { const str = window.localStorage.getItem('dealer-products'); if (str) products = JSON.parse(str) || []; } catch (e) { products = []; } }
+    // ***************************************************************
+    // * INDEXED DB STORAGE ENGINE (Replaces LocalStorage)         *
+    // ***************************************************************
+    const DB_NAME = 'DealerDB';
+    const STORE_NAME = 'products';
+    const DB_VERSION = 1;
+
+    function openDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = function(e) {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = e => resolve(e.target.result);
+            request.onerror = e => reject(e.target.error);
+        });
+    }
+
+    async function saveProductsToDB(productsArray) {
+        const db = await openDB();
+        // Clear old
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        await new Promise((resolve, reject) => {
+            const req = store.clear();
+            req.onsuccess = resolve;
+            req.onerror = reject;
+        });
+
+        // Add new
+        const tx2 = db.transaction(STORE_NAME, 'readwrite');
+        const store2 = tx2.objectStore(STORE_NAME);
+        productsArray.forEach(p => store2.put(p));
+        return new Promise((resolve, reject) => {
+            tx2.oncomplete = resolve;
+            tx2.onerror = reject;
+        });
+    }
+
+    async function loadProductsFromDB() {
+        // MIGRATION STEP: Check if LocalStorage has old data
+        const localData = localStorage.getItem('dealer-products');
+        if (localData) {
+            try {
+                const parsed = JSON.parse(localData);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    console.log("Migrating data from LocalStorage to IndexedDB...");
+                    await saveProductsToDB(parsed);
+                    localStorage.removeItem('dealer-products'); // Clear LocalStorage
+                    console.log("Migration Complete. LocalStorage cleared.");
+                    return parsed;
+                }
+            } catch(e) { console.error("Migration check failed", e); }
+        }
+
+        const db = await openDB();
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        return new Promise((resolve, reject) => {
+            const req = store.getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function saveProducts() { 
+        // We update memory immediately, but save async
+        try { await saveProductsToDB(products); } catch(e){ console.error("Save failed", e); }
+        refreshProductList(); 
+    }
+    
+    async function loadProducts() { 
+        products = []; 
+        try { products = await loadProductsFromDB(); } catch (e) { products = []; } 
+    }
+
     function escapeHTML(v) { if (typeof v !== "string") return v === undefined || v === null ? "" : String(v); return v.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'" :'&#39;','"':'&quot;'}[c])); }
 
     function handleCheckboxChange(productId, checked) { if (checked) selectedProductIds.add(productId); else selectedProductIds.delete(productId); updateMultiSelectControls(); }
@@ -1643,7 +1724,8 @@
 
     // --- REFRESH LIST: SORTING & GROUPING ---
     function refreshProductList() {
-      loadProducts();
+      // NOTE: We don't call loadProducts here to avoid DB thrashing. 
+      // We rely on 'products' array being in sync.
       productListElem.innerHTML = '';
       let q = (searchInput.value || '').trim().toLowerCase();
       const terms = q.split(/\s+/).filter(t => t.length > 0);
@@ -1817,7 +1899,10 @@
       let photoData = null; if (currentProductPhotoDataUrl) photoData = currentProductPhotoDataUrl;
       const productObj = { id: productEditing ? productEditing.id : genID(), name, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photo: photoData };
       if (!productEditing) products.push(productObj); else { const idx = products.findIndex(p => p.id === productEditing.id); if (idx >= 0) products[idx] = productObj; else products.push(productObj); }
-      saveProducts(); productModalBackdrop.classList.add('hide');
+      
+      saveProducts(); // Save (fire and forget)
+      
+      productModalBackdrop.classList.add('hide');
       if (document.body.classList.contains('modal-open')) { document.body.classList.remove('modal-open'); const scrollY = document.body.dataset.scrollY ? parseInt(document.body.dataset.scrollY, 10) : 0; document.body.style.top = ''; window.scrollTo(0, scrollY); delete document.body.dataset.scrollY; }
       selectedProductIds.clear(); updateMultiSelectControls();
     };
@@ -1889,7 +1974,7 @@
       } catch (ex) { alert("Failed to import: " + (ex.message || ex)); }
     };
 
-    window.addEventListener('load', function() { loadProducts(); });
+    // window.addEventListener('load', function() { loadProducts(); }); // Removed (called in async handler above now)
     
     /****************************************************************
      * SHARE / PDF LOGIC
