@@ -766,13 +766,13 @@
         <span class="modal-file-upload-btn rounded-sky-btn" id="uploadBtnText" style="flex:1; text-align:center;">
           <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span id="uploadBtnInnerText">Gallery</span>
-          <input type="file" id="prodPhoto" accept="image/*" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
+          <input type="file" id="prodPhoto" accept="image/jpeg, image/png" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
         
         <span class="modal-file-upload-btn rounded-sky-btn" id="cameraBtnText" style="flex:1; text-align:center; background: var(--accent2); margin-left: 8px;">
           <span style="font-size:1.15em; margin-right:4px;">📷</span>
           <span>Camera</span>
-          <input type="file" id="prodCamera" accept="image/*" capture="environment" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
+          <input type="file" id="prodCamera" accept="image/jpeg, image/png" capture="environment" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
       </div>
       <div id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em; margin-bottom: 8px;">
@@ -1110,7 +1110,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v11';
+        const CACHE_NAME = 'local-dealer-cache-v12';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
@@ -1839,12 +1839,16 @@
     let currentProductPhotoDataUrl = null;
 
     /****************************************************************
-     * MEMORY-OPTIMIZED IMAGE COMPRESSION
+     * MEMORY-SAFE IMAGE COMPRESSION (NEW FIX)
      ****************************************************************/
-    async function compressImageFile(file, maxDim = 700, quality = 0.75) { // Reduced defaults
+    async function compressImageFile(file, maxDim = 600, quality = 0.70) { 
+      // 1. SAFETY CHECK: Reject files > 10MB to avoid immediate crash
+      if (file.size > 10 * 1024 * 1024) {
+          return Promise.reject("File too large (>10MB). Please use a lower resolution.");
+      }
       if (!/^image\//.test(file.type)) return Promise.reject("Not an image file.");
       
-      // Attempt to use createImageBitmap (Very fast & low memory)
+      // 2. ATTEMPT: createImageBitmap (Low Memory)
       if ('createImageBitmap' in window) {
           try {
               const bitmap = await createImageBitmap(file);
@@ -1863,8 +1867,8 @@
               
               return new Promise((resolve, reject) => {
                   canvas.toBlob(blob => {
-                      // Destroy canvas references immediately
-                      canvas.width = 1; canvas.height = 1; 
+                      // Aggressive cleanup
+                      canvas.width = 0; canvas.height = 0; 
                       if (!blob) return reject("Compression error.");
                       const reader = new FileReader();
                       reader.onload = e => resolve(reader.result);
@@ -1873,16 +1877,18 @@
                   }, 'image/jpeg', quality);
               });
           } catch(e) {
-              console.warn("createImageBitmap failed, falling back to standard load.", e);
+              console.warn("createImageBitmap failed, falling back.", e);
           }
       }
 
-      // Fallback: Standard Image Load (High Memory, risky for 12MP+ on weak phones)
+      // 3. FALLBACK: Standard Image Load (With stricter cleanup)
       return new Promise((resolve, reject) => {
         let img = new window.Image();
         let url = URL.createObjectURL(file);
+        
         img.onload = function() {
           let [w, h] = [img.naturalWidth, img.naturalHeight];
+          // Aggressive Resize
           if (w > maxDim || h > maxDim) {
             if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
             else { w = Math.round(w * maxDim / h); h = maxDim; }
@@ -1892,13 +1898,13 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           
-          // Cleanup source immediately
+          // IMMEDIATE MEMORY CLEANUP
           URL.revokeObjectURL(url);
           img.src = "";
           img = null;
 
           canvas.toBlob(blob => {
-            canvas.width = 1; canvas.height = 1; // shrink canvas
+            canvas.width = 0; canvas.height = 0; // shrink canvas
             if (!blob) return reject("Compression error.");
             const reader = new FileReader();
             reader.onload = e => resolve(reader.result);
@@ -1906,10 +1912,11 @@
             reader.readAsDataURL(blob);
           }, 'image/jpeg', quality);
         };
+        
         img.onerror = () => { 
             URL.revokeObjectURL(url); 
             img = null; 
-            reject("Invalid image"); 
+            reject("Invalid image data"); 
         };
         img.src = url;
       });
@@ -1966,8 +1973,8 @@
         imageCompressMsg.textContent = "Compressing image..."; 
         imageCompressMsg.style.display = 'block';
         
-        // 700px max width/height, 0.75 quality = GOOD COMPROMISE
-        const filePromise = compressImageFile(file, 700, 0.75).then(dataUrl => {
+        // 600px max width/height, 0.70 quality = MEMORY SAFE
+        const filePromise = compressImageFile(file, 600, 0.70).then(dataUrl => {
           const kb = Math.round((dataUrl.length * 3 / 4) / 1024); 
           currentProductPhotoDataUrl = dataUrl; 
           updatePhotoPreviewUI();
@@ -1975,7 +1982,7 @@
           imageCompressMsg.style.display = 'block';
         }).catch(err => { 
             console.error(err);
-            modalError.textContent = "Photo processing failed (Low Memory). Try a smaller image."; 
+            modalError.textContent = String(err) || "Photo processing failed (Low Memory). Try a smaller image."; 
             prodPhoto.value = ''; 
             prodCamera.value = '';
             prodPhotoFileName.textContent = ''; 
