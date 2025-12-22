@@ -70,8 +70,8 @@
     #productSearch:focus { border-color:var(--accent); }
     .search-icon { position:absolute; right:42px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
     
-    /* FIX NO 3: Scan Button Style */
-    #scanBarcodeBtn {
+    /* Scan Button Style (In Search Bar) */
+    .scan-btn-inline {
       position: absolute;
       right: 6px;
       top: 50%;
@@ -87,8 +87,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 10;
     }
-    #scanBarcodeBtn:hover { color: var(--accent2); background: rgba(255,255,255,0.05); }
+    .scan-btn-inline:hover { color: var(--accent2); background: rgba(255,255,255,0.05); }
+
+    /* Scan Button inside Modal Input */
+    .input-with-scan { position: relative; display:block; }
+    .input-with-scan input { padding-right: 40px !important; width:100%; box-sizing:border-box; }
+    .scan-btn-modal {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-60%); /* Slight adjustment for alignment */
+      background: none;
+      border: none;
+      color: var(--accent2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      z-index: 10;
+    }
 
     #multiSelectControls {
       display: none;
@@ -196,12 +215,12 @@
       gap: 8px;
     }
 
-    button, .rounded-sky-btn, .prod-actions button, .modal-close, input[type="button"], input[type="submit"], .remove-photo-btn {
+    button, .rounded-sky-btn, .prod-actions button, .modal-close, input[type="button"], input[type="submit"], .remove-photo-btn, .scan-btn-inline, .scan-btn-modal {
       -webkit-tap-highlight-color: transparent !important;
       tap-highlight-color: transparent !important;
       outline: none !important;
     }
-    button:focus, .rounded-sky-btn:focus, .prod-actions button:focus, .modal-close:focus, .remove-photo-btn:focus {
+    button:focus, .rounded-sky-btn:focus, .prod-actions button:focus, .modal-close:focus, .remove-photo-btn:focus, .scan-btn-inline:focus, .scan-btn-modal:focus {
       outline: none !important;
       box-shadow: none !important;
     }
@@ -523,7 +542,7 @@
     #imageViewerClose:hover { background: rgba(255,255,255,0.25); }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
-    /* --- SCANNER OVERLAY (FIX NO 3) --- */
+    /* --- SCANNER OVERLAY --- */
     #scannerOverlay {
         position: fixed;
         inset: 0;
@@ -789,7 +808,7 @@
             <div class="product-search-wrap">
               <input type="search" placeholder="Search by name, category, or note..." id="productSearch" autocomplete="off" />
               <span class="search-icon">&#128269;</span>
-              <button id="scanBarcodeBtn" title="Scan Barcode">
+              <button class="scan-btn-inline" id="scanSearchBtn" title="Scan to Search">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect><line x1="12" y1="7" x2="12" y2="17"></line></svg>
               </button>
             </div>
@@ -826,8 +845,18 @@
       <button class="modal-close" type="button" id="closeModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
       <h3 id="modalTitle">Add Product</h3>
       <div class="error" id="modalError" style="min-height:18px"></div>
+      
       <label for="prodName">Name</label>
       <input type="text" id="prodName" required maxlength="64" />
+
+      <label for="prodBarcode">Barcode (Scan Multiple)</label>
+      <div class="input-with-scan">
+          <input type="text" id="prodBarcode" placeholder="Scan or Type multiple codes..." />
+          <button type="button" class="scan-btn-modal" id="scanModalBtn" title="Scan Barcode">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect><line x1="12" y1="7" x2="12" y2="17"></line></svg>
+          </button>
+      </div>
+      
       <label for="prodMrp">MRP (₨)</label>
       <input type="number" id="prodMrp" min="0" max="100000" step="0.01" required />
       <label for="prodCost">Cost Price (₨)</label>
@@ -1789,10 +1818,14 @@
       const photoBlock = imgSrc ? `<img src="${imgSrc}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
       const mrpNum = Number(product.mrp) || 0;
       const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
+      // Show Barcode in Details if exists
+      const barcodeHtml = product.barcode ? `<li><b>Barcode:</b> <span style="font-family:monospace;background:#2b3548;padding:2px 6px;border-radius:4px;">${escapeHTML(product.barcode)}</span></li>` : "";
+
       detailModalBody.innerHTML = `
         <div style="text-align:center;">${photoBlock}</div>
         <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
           <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
+          ${barcodeHtml}
           ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
           <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
           <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
@@ -1916,7 +1949,8 @@
 
       if (terms.length > 0) {
           filtered = products.filter(prod => {
-             const searchString = ((prod.name || "") + " " + (prod.category || "") + " " + (prod.notes || "")).toLowerCase();
+             // MODIFIED: Search inside Barcode field too!
+             const searchString = ((prod.name || "") + " " + (prod.barcode || "") + " " + (prod.category || "") + " " + (prod.notes || "")).toLowerCase();
              return terms.every(term => searchString.includes(term));
           });
       }
@@ -1980,6 +2014,7 @@
 
     let productEditing = null;
     const prodName = document.getElementById('prodName');
+    const prodBarcode = document.getElementById('prodBarcode'); // NEW FIELD
     const prodMrp = document.getElementById('prodMrp');
     const prodCost = document.getElementById('prodCost');
     const prodQty = document.getElementById('prodQty');
@@ -2105,10 +2140,10 @@
       
       if (mode === 'add') {
         modalTitle.textContent = "Add Product"; productEditing = null;
-        prodName.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = ""; prodCamera.value = "";
+        prodName.value = ""; prodBarcode.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = ""; prodCamera.value = "";
       } else {
         modalTitle.textContent = "Edit Product"; productEditing = product;
-        prodName.value = product.name || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = ""; prodCamera.value = "";
+        prodName.value = product.name || ""; prodBarcode.value = product.barcode || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = ""; prodCamera.value = "";
         
         // Handle existing photo (Blob or String)
         if (product.photo) {
@@ -2180,7 +2215,7 @@
         firstSubmitAttempt = false; productModal.onsubmit(e); return;
       }
       firstSubmitAttempt = false;
-      const name = (prodName.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const notes = (prodNotes.value || '').trim();
+      const name = (prodName.value || '').trim(); const barcodeVal = (prodBarcode.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const notes = (prodNotes.value || '').trim();
       
       let category = (prodCategory.value || '').trim();
       if(category.length > 0) {
@@ -2192,7 +2227,8 @@
       if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
       
       // Store the BLOB directly
-      const productObj = { id: productEditing ? productEditing.id : genID(), name, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photo: currentProductBlob };
+      // Added barcode property
+      const productObj = { id: productEditing ? productEditing.id : genID(), name, barcode: barcodeVal, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photo: currentProductBlob };
       
       if (!productEditing) products.push(productObj); else { const idx = products.findIndex(p => p.id === productEditing.id); if (idx >= 0) products[idx] = productObj; else products.push(productObj); }
       
@@ -2262,6 +2298,8 @@
             if(chkPhoto.checked && imgSrc) { html += `<img src="${imgSrc}" class="print-product-img" />`; }
             html += `<table class="print-details-table"><tbody>`;
             if(chkCategory.checked && prod.category) { html += `<tr><td class="print-label">Category</td><td>${escapeHTML(prod.category)}</td></tr>`; }
+            // Include barcode in print
+            if(prod.barcode) { html += `<tr><td class="print-label">Barcode</td><td>${escapeHTML(prod.barcode)}</td></tr>`; }
             if(chkQty.checked) { html += `<tr><td class="print-label">In Stock</td><td>${prod.qty}</td></tr>`; }
             if(chkMrp.checked) { html += `<tr><td class="print-label">Price (MRP)</td><td>₨ ${Number(prod.mrp).toLocaleString()}</td></tr>`; }
             if(chkCost.checked && prod.cost !== null && prod.cost !== undefined) { html += `<tr><td class="print-label">Cost Price</td><td>₨ ${Number(prod.cost).toLocaleString()}</td></tr>`; }
@@ -2278,18 +2316,23 @@
     /****************************************************************
      * FIX NO 3: BARCODE SCANNER LOGIC (Native API)
      ****************************************************************/
-    const scanBarcodeBtn = document.getElementById('scanBarcodeBtn');
+    const scanSearchBtn = document.getElementById('scanSearchBtn');
+    const scanModalBtn = document.getElementById('scanModalBtn');
     const scannerOverlay = document.getElementById('scannerOverlay');
     const scannerVideo = document.getElementById('scannerVideo');
     const closeScannerBtn = document.getElementById('closeScannerBtn');
+    
     let scannerStream = null;
     let scannerInterval = null;
+    let activeScanTarget = null; // 'search' or 'modal'
 
-    async function startScanner() {
+    async function startScanner(target) {
         if (!('BarcodeDetector' in window)) {
-            alert("Barcode scanning is not supported on this device/browser. Please use your keyboard's scan button or type manually.");
+            alert("Barcode scanning is not supported on this device/browser. Please type manually.");
             return;
         }
+
+        activeScanTarget = target; // Remember where to put the result
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -2300,7 +2343,7 @@
             scannerVideo.srcObject = stream;
             scannerOverlay.classList.add('show');
             
-            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39'] });
+            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e'] });
 
             scannerInterval = setInterval(async () => {
                 if (!scannerVideo.videoWidth) return;
@@ -2309,9 +2352,23 @@
                     if (barcodes.length > 0) {
                         const code = barcodes[0].rawValue;
                         stopScanner();
-                        // Put in search and trigger event
-                        searchInput.value = code;
-                        searchInput.dispatchEvent(new Event('input'));
+                        
+                        // Handle the scanned code based on target
+                        if (activeScanTarget === 'search') {
+                             searchInput.value = code;
+                             searchInput.dispatchEvent(new Event('input')); // Trigger search
+                        } else if (activeScanTarget === 'modal') {
+                             // CHANGED LOGIC: APPEND instead of REPLACE
+                             if(prodBarcode.value) {
+                                 // Check if already exists to avoid duplicates
+                                 if(!prodBarcode.value.includes(code)) {
+                                     prodBarcode.value += ", " + code;
+                                 }
+                             } else {
+                                 prodBarcode.value = code;
+                             }
+                        }
+
                         // Optional: Vibration feedback
                         if (navigator.vibrate) navigator.vibrate(50);
                     }
@@ -2337,9 +2394,11 @@
             scannerInterval = null;
         }
         scannerOverlay.classList.remove('show');
+        activeScanTarget = null;
     }
 
-    scanBarcodeBtn.onclick = startScanner;
+    scanSearchBtn.onclick = () => startScanner('search');
+    scanModalBtn.onclick = () => startScanner('modal');
     closeScannerBtn.onclick = stopScanner;
 
   </script>
