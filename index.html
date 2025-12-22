@@ -65,10 +65,30 @@
     @keyframes fadeUp { 0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);} }
     
     .products-top-actions { display:flex; align-items:flex-end; gap:11px; margin-bottom:17px; flex-wrap:wrap; }
-    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; }
-    #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 38px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
+    .product-search-wrap { position:relative; flex:1 1 192px; max-width:370px; margin-bottom:0; display:flex; align-items:center; }
+    #productSearch { width:100%; border-radius:8px; border:none; background:var(--bg3); color:var(--text); font-size:1.06em; padding:9px 78px 9px 15px; outline:none; box-shadow:0 1.5px 6px #35455a23; transition:border .13s; border:1.5px solid #23314a; }
     #productSearch:focus { border-color:var(--accent); }
-    .search-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
+    .search-icon { position:absolute; right:42px; top:50%; transform:translateY(-50%); color:var(--accent2); font-size:1.15em; opacity:0.7; pointer-events:none; }
+    
+    /* FIX NO 3: Scan Button Style */
+    #scanBarcodeBtn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.3em;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #scanBarcodeBtn:hover { color: var(--accent2); background: rgba(255,255,255,0.05); }
 
     #multiSelectControls {
       display: none;
@@ -503,6 +523,55 @@
     #imageViewerClose:hover { background: rgba(255,255,255,0.25); }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
+    /* --- SCANNER OVERLAY (FIX NO 3) --- */
+    #scannerOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9000;
+        background: #000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #scannerOverlay.show { display: flex; }
+    #scannerVideo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #scannerUI {
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        z-index: 9001;
+    }
+    #closeScannerBtn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: bold;
+        backdrop-filter: blur(5px);
+    }
+    .scanner-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70%;
+        height: 30%;
+        border: 2px solid rgba(6, 182, 212, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 0 0 4000px rgba(0,0,0,0.5);
+        pointer-events: none;
+    }
+
     /* --- PRINTING STYLES (PDF Generation) --- */
     #printableArea {
         display: none;
@@ -657,6 +726,14 @@
       <img id="imageViewerImg" src="" alt="Full Screen" />
   </div>
 
+  <div id="scannerOverlay">
+      <video id="scannerVideo" autoplay playsinline muted></video>
+      <div class="scanner-guide"></div>
+      <div id="scannerUI">
+          <button id="closeScannerBtn">Cancel Scan</button>
+      </div>
+  </div>
+
   <div id="login-modal" style="position:fixed; inset:0; z-index:7000; background:rgba(22,27,34,0.89); display:flex; justify-content:center; align-items:center;">
     <form class="login-dialog modal" id="loginForm" autocomplete="off" novalidate style="max-width:380px;">
       <button class="modal-close" type="button" id="loginCloseBtn" title="Close" aria-label="Close dialog" role="button" style="display:none">✖</button>
@@ -712,6 +789,9 @@
             <div class="product-search-wrap">
               <input type="search" placeholder="Search by name, category, or note..." id="productSearch" autocomplete="off" />
               <span class="search-icon">&#128269;</span>
+              <button id="scanBarcodeBtn" title="Scan Barcode">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect><line x1="12" y1="7" x2="12" y2="17"></line></svg>
+              </button>
             </div>
             <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
             <button type="button" id="categoryFilterBtn" class="rounded-sky-btn">Category</button>
@@ -1174,8 +1254,9 @@
     });
 
     (function handleAndroidBackButton() {
+      let isHandlerAttached = false; // FIX: Prevents duplicate listener attachment
       let openedModals = [];
-      const modalPriority = ['imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop'];
+      const modalPriority = ['scannerOverlay', 'imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop'];
 
       function pushMainStateToHistory() { try { history.replaceState({dealerAppMain: true}, document.title, window.location.href); } catch (e) {} }
       function pushModalState(modalId) { try { history.pushState({modal: modalId}, document.title, window.location.href); openedModals.push(modalId); } catch (e) {} }
@@ -1188,7 +1269,8 @@
                 for (let i = 0; i < modalPriority.length; ++i) { 
                     const el = document.getElementById(modalPriority[i]); 
                     if (!el) continue;
-                    if (modalPriority[i] === 'imageViewerOverlay') {
+                    // Fix: Check class based on how each overlay works
+                    if (modalPriority[i] === 'imageViewerOverlay' || modalPriority[i] === 'scannerOverlay') {
                          if (el.classList.contains('show')) return modalPriority[i];
                     } else {
                          if (!el.classList.contains('hide')) return modalPriority[i];
@@ -1198,9 +1280,12 @@
             })();
             
             if (topOpenModal) { 
-                if (topOpenModal === 'imageViewerOverlay') {
+                if (topOpenModal === 'imageViewerOverlay' || topOpenModal === 'scannerOverlay') {
+                    // FIX NO 3: Ensure stream stops if scanner closed via back button
+                    if(topOpenModal === 'scannerOverlay') stopScanner();
+                    
                     document.getElementById(topOpenModal).classList.remove('show');
-                    document.getElementById('imageViewerImg').src = '';
+                    if(topOpenModal === 'imageViewerOverlay') document.getElementById('imageViewerImg').src = '';
                 } else {
                     document.getElementById(topOpenModal).classList.add('hide'); 
                 }
@@ -1230,7 +1315,7 @@
           if (!el) return;
           const observer = new MutationObserver(() => {
             let isOpen = false;
-            if (id === 'imageViewerOverlay') isOpen = el.classList.contains('show');
+            if (id === 'imageViewerOverlay' || id === 'scannerOverlay') isOpen = el.classList.contains('show');
             else isOpen = !el.classList.contains('hide');
             
             if (isOpen) { if (!openedModals.includes(id)) pushModalState(id); } 
@@ -1239,7 +1324,14 @@
           observer.observe(el, { attributes: true, attributeFilter: ['class'] });
         });
       }
-      window.__enablePwaBackHandler = function() { enablePwaBackHandler(); setupModalHistoryTracking(); };
+      
+      // FIX: Check if already attached before running
+      window.__enablePwaBackHandler = function() { 
+          if(isHandlerAttached) return;
+          isHandlerAttached = true;
+          enablePwaBackHandler(); 
+          setupModalHistoryTracking(); 
+      };
     })();
 
     async function hashPIN(pin) {
@@ -1376,6 +1468,9 @@
     
     let currentFilteredProducts = []; 
     let activeCategoryFilter = null; 
+
+    // FIX NO 1: Global array to track active URLs for revocation
+    let activeObjectUrls = [];
 
     // ***************************************************************
     // * INDEXED DB STORAGE ENGINE (Replaces LocalStorage)         *
@@ -1721,6 +1816,7 @@
       if (e.key === "Escape") {
         let closedAModal = false;
         if(imageViewerOverlay.classList.contains('show')) { imageViewerOverlay.classList.remove('show'); imageViewerImg.src = ''; closedAModal=true; }
+        else if(document.getElementById('scannerOverlay').classList.contains('show')) { stopScanner(); document.getElementById('scannerOverlay').classList.remove('show'); closedAModal=true; }
         else if (!detailModalBackdrop.classList.contains('hide')) { detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML=''; enableDetailBackgroundScroll(); closedAModal = true; }
         else if (!productModalBackdrop.classList.contains('hide')) { productModalBackdrop.classList.add('hide'); closedAModal = true; }
         else if (!deleteModalBackdrop.classList.contains('hide')) { deleteModalBackdrop.classList.add('hide'); closedAModal = true; }
@@ -1808,6 +1904,10 @@
     };
 
     function refreshProductList() {
+      // FIX NO 1: Memory Leak Protection - Revoke old object URLs
+      activeObjectUrls.forEach(url => URL.revokeObjectURL(url));
+      activeObjectUrls = [];
+
       productListElem.innerHTML = '';
       let q = (searchInput.value || '').trim().toLowerCase();
       const terms = q.split(/\s+/).filter(t => t.length > 0);
@@ -1865,7 +1965,13 @@
               lastCategoryLower = currentCatLower;
           }
 
-          fragment.appendChild(createProductCard(prod,i));
+          // FIX NO 1: Register URL after creation
+          const card = createProductCard(prod,i);
+          const imgThumb = card.querySelector('.prod-photo-thumb');
+          if (imgThumb && imgThumb.src && imgThumb.src.startsWith('blob:')) {
+             activeObjectUrls.push(imgThumb.src);
+          }
+          fragment.appendChild(card);
       });
       productListElem.appendChild(fragment);
       
@@ -1897,7 +2003,7 @@
     /****************************************************************
      * BINARY BLOB COMPRESSION (NO BASE64 STRINGS)
      ****************************************************************/
-    async function compressImageFileToBlob(file, maxDim = 600, quality = 0.70) { 
+    async function compressImageFileToBlob(file, maxDim = 800, quality = 0.85) { 
       // 1. SAFETY CHECK
       if (file.size > 20 * 1024 * 1024) return Promise.reject("File too large (>20MB).");
       if (!/^image\//.test(file.type)) return Promise.reject("Not an image file.");
@@ -2168,6 +2274,73 @@
         shareModalBackdrop.classList.add('hide');
         setTimeout(() => { window.print(); productsToShareQueue = []; }, 300);
     };
+
+    /****************************************************************
+     * FIX NO 3: BARCODE SCANNER LOGIC (Native API)
+     ****************************************************************/
+    const scanBarcodeBtn = document.getElementById('scanBarcodeBtn');
+    const scannerOverlay = document.getElementById('scannerOverlay');
+    const scannerVideo = document.getElementById('scannerVideo');
+    const closeScannerBtn = document.getElementById('closeScannerBtn');
+    let scannerStream = null;
+    let scannerInterval = null;
+
+    async function startScanner() {
+        if (!('BarcodeDetector' in window)) {
+            alert("Barcode scanning is not supported on this device/browser. Please use your keyboard's scan button or type manually.");
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+            scannerStream = stream;
+            scannerVideo.srcObject = stream;
+            scannerOverlay.classList.add('show');
+            
+            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39'] });
+
+            scannerInterval = setInterval(async () => {
+                if (!scannerVideo.videoWidth) return;
+                try {
+                    const barcodes = await barcodeDetector.detect(scannerVideo);
+                    if (barcodes.length > 0) {
+                        const code = barcodes[0].rawValue;
+                        stopScanner();
+                        // Put in search and trigger event
+                        searchInput.value = code;
+                        searchInput.dispatchEvent(new Event('input'));
+                        // Optional: Vibration feedback
+                        if (navigator.vibrate) navigator.vibrate(50);
+                    }
+                } catch (err) {
+                    // console.error(err);
+                }
+            }, 500);
+
+        } catch (err) {
+            console.error(err);
+            alert("Camera access denied or error starting scanner.");
+            stopScanner();
+        }
+    }
+
+    function stopScanner() {
+        if (scannerStream) {
+            scannerStream.getTracks().forEach(track => track.stop());
+            scannerStream = null;
+        }
+        if (scannerInterval) {
+            clearInterval(scannerInterval);
+            scannerInterval = null;
+        }
+        scannerOverlay.classList.remove('show');
+    }
+
+    scanBarcodeBtn.onclick = startScanner;
+    closeScannerBtn.onclick = stopScanner;
 
   </script>
 </body>
