@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>Al Rehman Electronics</title>
   <meta name="theme-color" content="#161B22" />
   <meta name="mobile-web-app-capable" content="yes">
@@ -33,9 +33,11 @@
       --shadow-soft: 0 2px 8px rgba(40,98,180,.11);
       --danger: #ef4444;
       --success: #10b981;
+      --warning: #f59e0b;
       --rounded-btn: 10px;
       --button-skyblue: #06B6D4;
       --button-gradient: linear-gradient(90deg, #06B6D4 40%, #2563EB 100%);
+      --sell-mode-color: #f59e0b; 
     }
     html, body {
       padding: 0;
@@ -45,6 +47,7 @@
       background: linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
       color: var(--text);
       min-height: 100vh;
+      overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
     }
     body { display:flex; flex-direction:column; min-height:100vh; }
     .container { max-width:640px; margin:0 auto; padding:34px 12px 54px; width:100%; box-sizing:border-box; }
@@ -98,7 +101,7 @@
       position: absolute;
       right: 8px;
       top: 50%;
-      transform: translateY(-60%); /* Slight adjustment for alignment */
+      transform: translateY(-60%);
       background: none;
       border: none;
       color: var(--accent2);
@@ -199,6 +202,47 @@
       border-color: #1095b7;
     }
     
+    /* Feature: Quick Sell Mode Active Styling */
+    .quick-sell-btn {
+        background: #333; 
+        color: #fbbf24;
+        border: 1.5px solid #fbbf24;
+    }
+    .quick-sell-btn.active {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+        color: #fff;
+        border: none;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    }
+    
+    body.quick-sell-active .prod-card {
+        cursor: copy; /* Visual cue */
+    }
+    body.quick-sell-active .prod-card:hover {
+        border-color: var(--warning);
+    }
+    
+    /* Feature: History Modal List */
+    .history-list {
+        max-height: 50vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .history-item {
+        background: #1b2430;
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 3px solid var(--success);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9em;
+    }
+    .history-meta { color: var(--text-muted); font-size: 0.85em; margin-top: 2px; }
+    .history-profit { font-size: 0.82em; color: var(--accent2); margin-top: 2px; }
+    
     /* Small Button Variant for Uploads */
     .btn-small {
         padding: 8px 12px !important;
@@ -267,7 +311,31 @@
       cursor: pointer;
     }
 
+    /* Multi-image preview styles */
+    .photo-preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      min-height: 1em;
+    }
+    .photo-preview-item {
+        position: relative;
+        display: inline-block;
+    }
+    .photo-preview-img-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 7px;
+      object-fit: cover;
+      border: 2px solid var(--accent2-hover);
+      background: #273855;
+      display: block;
+    }
     .remove-photo-btn {
+      position: absolute;
+      top: -6px;
+      right: -6px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -275,36 +343,15 @@
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      font-size: 1.18em;
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
       font-weight: bold;
-      margin-left: 4px;
       cursor: pointer;
-      transition: background 0.14s, color 0.12s;
-      box-shadow: 0 1px 5px #ef444433;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
       z-index: 2;
-      vertical-align: middle;
     }
-    .remove-photo-btn:hover, .remove-photo-btn:focus {
-      background: #ce3737;
-      color: #fff;
-    }
-    .photo-preview-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-    }
-    .photo-preview-img-thumb {
-      max-width: 42px;
-      max-height: 42px;
-      border-radius: 7px;
-      object-fit: cover;
-      border: 2px solid var(--accent2-hover);
-      margin-right: 2px;
-      background: #273855;
-      display: block;
-    }
+    .remove-photo-btn:hover { background: #ce3737; }
 
     .prod-card { 
       background:var(--bg3); 
@@ -339,6 +386,10 @@
     
     .prod-name { font-weight:700; font-size:1.15em; color:var(--text); letter-spacing:-0.5px; margin-bottom:1.5px; }
     .prod-details { color:var(--gray); font-size:.97em; margin-top:2px; margin-bottom:2px; }
+    
+    /* Low Stock Style */
+    .prod-details.low-stock { color: var(--danger); font-weight: 700; }
+    
     .prod-actions { margin-left:auto; display:flex; gap:7px; align-items:center; }
     .prod-actions button { background:none; border:none; color:var(--accent2); font-size:1.32em; cursor:pointer; transition:color .13s; border-radius:5px; padding:3px 5px; outline:none; }
     .prod-select-checkbox {
@@ -431,16 +482,25 @@
   padding-top: 30px;
 }
 
-#detailModal .prod-detail-photo { 
-  display: block; 
-  width: 85%; 
-  max-width: 170px;
+/* Updated for multi-image gallery scroll */
+.detail-gallery {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+.detail-gallery img {
+  flex-shrink: 0;
+  width: 170px;
   height: 170px;
   object-fit: cover; 
   border-radius: 20px; 
-  margin: 8px auto 16px auto; 
   box-shadow: 0 4px 16px #1b314e33; 
   background: #21293f; 
+  cursor: zoom-in;
 }
 
 #detailModalBody ul { font-size: 0.78em; }
@@ -542,7 +602,7 @@
     #imageViewerClose:hover { background: rgba(255,255,255,0.25); }
     @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
-    /* --- SCANNER OVERLAY --- */
+    /* --- SCANNER OVERLAY & CONFIRMATION UI --- */
     #scannerOverlay {
         position: fixed;
         inset: 0;
@@ -554,22 +614,33 @@
         align-items: center;
     }
     #scannerOverlay.show { display: flex; }
+    
     #scannerVideo {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    #scannerUI {
+    
+    .scanner-controls {
         position: absolute;
         bottom: 40px;
-        left: 0;
-        right: 0;
+        left: 20px;
+        right: 20px;
         display: flex;
-        justify-content: center;
-        gap: 20px;
-        z-index: 9001;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 9002;
+        align-items: center;
     }
-    #closeScannerBtn {
+    
+    .scanner-btn-row {
+        display: flex;
+        gap: 15px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    #closeScannerBtn, #toggleTorchBtn {
         background: rgba(255, 255, 255, 0.2);
         color: white;
         border: 1px solid rgba(255,255,255,0.4);
@@ -577,18 +648,71 @@
         border-radius: 30px;
         font-weight: bold;
         backdrop-filter: blur(5px);
+        font-size: 1em;
+        min-width: 100px;
     }
+    
+    .zoom-control {
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0,0,0,0.5);
+        padding: 8px 15px;
+        border-radius: 20px;
+        display: none; 
+    }
+    .zoom-control span { color: white; font-weight: bold; font-size: 0.9em; }
+    input[type=range] { flex: 1; accent-color: var(--accent2); cursor: pointer; }
+
     .scanner-guide {
         position: absolute;
-        top: 50%;
+        top: 45%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 70%;
-        height: 30%;
-        border: 2px solid rgba(6, 182, 212, 0.6);
+        width: 75%;
+        height: 25%;
+        border: 2px solid rgba(6, 182, 212, 0.8);
         border-radius: 12px;
-        box-shadow: 0 0 0 4000px rgba(0,0,0,0.5);
+        box-shadow: 0 0 0 4000px rgba(0,0,0,0.6);
         pointer-events: none;
+        z-index: 9001;
+    }
+    
+    /* Confirmation Popup inside Scanner */
+    #scanConfirmation {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 9010;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .scan-code-display {
+        font-size: 1.2em; /* Made smaller as requested */
+        font-weight: 800;
+        color: var(--accent2);
+        background: #1e2530;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        text-align: center;
+        border: 2px solid var(--accent);
+        word-break: break-all;
+        max-width: 90%;
+    }
+    .scan-action-btns {
+        display: flex;
+        gap: 20px;
+    }
+    .scan-action-btns button {
+        min-width: 110px;
+        padding: 12px 20px;
+        font-size: 1em;
     }
 
     /* --- PRINTING STYLES (PDF Generation) --- */
@@ -633,11 +757,17 @@
             object-fit: contain;
         }
         .print-title { font-size: 24px; font-weight: bold; margin: 10px 0; }
+        .print-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
         .print-product-img {
-            max-width: 300px;
-            max-height: 300px;
-            display: block;
-            margin: 20px auto;
+            max-width: 250px;
+            max-height: 250px;
+            object-fit: contain;
             border: 1px solid #ddd;
         }
         .print-details-table {
@@ -698,12 +828,10 @@
       
       .modal{padding:12vw 2vw 3vw 2vw; min-width:unset;}
       
-      #detailModal .prod-detail-photo{ width: 100%; max-width: 190px; height: 190px;}
+      #detailModal .prod-detail-photo, .detail-gallery img { width: 100%; max-width: 190px; height: 190px;}
       
       #mobileInstallInstructions{max-width:98vw;font-size:0.92em;}
       #multiSelectControls{font-size:0.96em; flex-wrap:wrap;}
-      .photo-preview-img-thumb { max-width:22px; max-height:22px; }
-      .remove-photo-btn { width:18px; height:18px; font-size:.95em;}
     }
     ::selection{background:var(--accent2); color:#fff;}
     a{color:var(--accent);}
@@ -748,8 +876,24 @@
   <div id="scannerOverlay">
       <video id="scannerVideo" autoplay playsinline muted></video>
       <div class="scanner-guide"></div>
-      <div id="scannerUI">
-          <button id="closeScannerBtn">Cancel Scan</button>
+      
+      <div class="scanner-controls">
+          <div class="zoom-control" id="zoomControl">
+              <span>Zoom:</span>
+              <input type="range" id="zoomSlider" min="1" max="5" step="0.1" value="1">
+          </div>
+          <div class="scanner-btn-row">
+              <button id="toggleTorchBtn" style="display:none;">🔦 Torch</button>
+              <button id="closeScannerBtn">Cancel</button>
+          </div>
+      </div>
+
+      <div id="scanConfirmation">
+          <div class="scan-code-display" id="scannedCodeDisplay"></div>
+          <div class="scan-action-btns">
+              <button id="scanRetryBtn" class="rounded-sky-btn cancel">🔄 Retry</button>
+              <button id="scanConfirmBtn" class="rounded-sky-btn">✅ Paste</button>
+          </div>
       </div>
   </div>
 
@@ -812,6 +956,9 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect><line x1="12" y1="7" x2="12" y2="17"></line></svg>
               </button>
             </div>
+            
+            <button type="button" id="quickSellToggleBtn" class="rounded-sky-btn quick-sell-btn" title="Toggle Quick Sell Mode">⚡ Sell Mode</button>
+            <button type="button" id="historyBtn" class="rounded-sky-btn">📜 History</button>
             <button type="button" id="addProductBtn" class="rounded-sky-btn">+ Add</button>
             <button type="button" id="categoryFilterBtn" class="rounded-sky-btn">Category</button>
             <button type="button" id="exportBtn" class="rounded-sky-btn">Export</button>
@@ -867,12 +1014,12 @@
       <input type="text" id="prodCategory" maxlength="32" placeholder="e.g. Washing Machine" />
       <label for="prodNotes">Notes</label>
       <textarea id="prodNotes" maxlength="120" placeholder=""></textarea>
-      <span class="modal-file-label">Photo <span title="Binary Blob storage used for maximum efficiency." style="font-size:1.1em;color:var(--accent2)">[efficient binary format]</span></span>
+      <span class="modal-file-label">Photos (Add Multiple) <span title="Binary Blob storage used for maximum efficiency." style="font-size:1.1em;color:var(--accent2)">[efficient binary format]</span></span>
       <div class="modal-file-upload-wrap" id="fileUploadWrap">
         <span class="modal-file-upload-btn rounded-sky-btn btn-small" id="uploadBtnText" style="flex:1; text-align:center;">
           <svg width="18" height="18" style="margin-right:6px;vertical-align:-4px" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
           <span id="uploadBtnInnerText">Gallery</span>
-          <input type="file" id="prodPhoto" accept="image/jpeg, image/png" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
+          <input type="file" id="prodPhoto" accept="image/jpeg, image/png" multiple style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
         
         <span class="modal-file-upload-btn rounded-sky-btn btn-small" id="cameraBtnText" style="flex:1; text-align:center; background: var(--accent2);">
@@ -881,9 +1028,8 @@
           <input type="file" id="prodCamera" accept="image/jpeg, image/png" capture="environment" style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;cursor:pointer;"/>
         </span>
       </div>
-      <div id="prodPhotoFileContainer" class="photo-preview-wrap" style="min-width:1em; margin-bottom: 8px;">
-        <span id="prodPhotoFileName" style="color:var(--text-muted);font-size:.99em;"></span>
-      </div>
+      
+      <div id="prodPhotoList" class="photo-preview-list"></div>
       
       <div class="modal-btnbar">
         <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
@@ -909,7 +1055,7 @@
       
       <div class="share-options">
           <label class="share-option-row">
-              <input type="checkbox" id="sharePhoto" checked> <span>Include Photo</span>
+              <input type="checkbox" id="sharePhoto" checked> <span>Include Photos</span>
           </label>
           <label class="share-option-row">
               <input type="checkbox" id="shareMrp" checked> <span>Include MRP (Price)</span>
@@ -944,6 +1090,34 @@
         <button type="submit" style="background:var(--danger);border-radius:10px;padding:10px 22px;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px #1b314e28;transition:background .14s;outline:none;">Yes, Delete</button>
       </div>
     </form>
+  </div>
+  
+  <div class="modal-backdrop hide" id="quickSellModalBackdrop">
+    <form class="modal" id="quickSellModal" style="max-width:320px;">
+      <button class="modal-close" type="button" id="closeQuickSellBtn" title="Close">✖</button>
+      <h3 style="color: var(--warning)">⚡ Quick Sell</h3>
+      <div style="text-align:center; margin-bottom:15px; font-weight:600;" id="quickSellName">Product Name</div>
+      
+      <label for="quickSellPrice">Sale Price (₨)</label>
+      <input type="number" id="quickSellPrice" min="0" step="0.01" style="font-size:1.2em; text-align:center; margin-bottom:10px;" required />
+      
+      <label for="quickSellQty">Quantity Sold</label>
+      <input type="number" id="quickSellQty" value="1" min="1" max="1000" style="font-size:1.5em; text-align:center;" required />
+      
+      <div class="modal-btnbar" style="justify-content:center;">
+        <button type="submit" class="rounded-sky-btn" style="background:linear-gradient(90deg, #f59e0b, #d97706);">Confirm Sale</button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="modal-backdrop hide" id="historyModalBackdrop">
+    <div class="modal" id="historyModal">
+      <button class="modal-close" type="button" id="closeHistoryBtn" title="Close">✖</button>
+      <h3>📜 Sales History</h3>
+      <div id="historyList" class="history-list">
+          <div style="text-align:center; color:var(--text-muted); padding:20px;">Loading...</div>
+      </div>
+    </div>
   </div>
 
   <div class="modal-backdrop hide" id="detailModalBackdrop">
@@ -1129,8 +1303,7 @@
         }
       });
     })();
-  </script>
-  <script>
+  
     /****************************************************************
      * Keep-logged-in authentication logic
      ****************************************************************/
@@ -1187,13 +1360,20 @@
     function manualLogoutDueToTimeout() {
       stopSessionTimeoutMonitor();
       clearKeepSession();
+      // FIX: Ensure scanner is closed before showing login, otherwise scanner (z9000) blocks login (z7000)
+      if(typeof stopScanner === 'function') stopScanner();
+      if(document.getElementById('imageViewerOverlay').classList.contains('show')) {
+         document.getElementById('imageViewerOverlay').classList.remove('show');
+         document.getElementById('imageViewerImg').src = '';
+      }
+      
       document.getElementById('dealerApp').style.display = 'none';
       showLoginModal("Session expired for security. Please login again.");
       updatePINUI(getHasPIN());
     }
 
     /****************************************************************
-     * Service Worker & PWA
+     * Service Worker & PWA (Offline Logic)
      ****************************************************************/
     (function createManifestAndServiceWorker() {
       const imgIcon = "https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true";
@@ -1216,26 +1396,42 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v14';
+        const CACHE_NAME = 'local-dealer-cache-v16';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
-        self.addEventListener('install', function(event) { event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); self.skipWaiting(); });
-        self.addEventListener('activate', function(event) { event.waitUntil(self.clients.claim()); });
+        
+        self.addEventListener('install', function(event) { 
+            event.waitUntil(caches.open(CACHE_NAME).then(function(cache) { return cache.addAll(FILES_TO_CACHE); })); 
+            self.skipWaiting(); 
+        });
+        
+        self.addEventListener('activate', function(event) { 
+            event.waitUntil(self.clients.claim()); 
+        });
+        
+        // NETWORK FIRST, FALLBACK TO CACHE
         self.addEventListener('fetch', function(event) {
           if (event.request.method !== 'GET') return;
-          event.respondWith(caches.match(event.request, {ignoreSearch:true}).then(function(response) {
-              if (response) return response;
-              return fetch(event.request).then(function(resp) {
-                if (resp && resp.status === 200 && resp.type === 'basic' && /\.(html|js|css|png|jpg|jpeg|svg|woff2?|json)$/i.test(event.request.url)) {
-                  const respClone = resp.clone();
-                  caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, respClone); });
+          
+          event.respondWith(
+            fetch(event.request)
+              .then(function(response) {
+                // Online: Return response and update cache
+                if (!response || response.status !== 200 || response.type !== 'basic') {
+                    return response;
                 }
-                return resp;
-              }).catch(function() {
-                if (event.request.mode === 'navigate' || event.request.destination === 'document') return caches.match(OFFLINE_URL);
-                return undefined;
-              });
-            })
+                const resClone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
+                return response;
+              })
+              .catch(function() {
+                // Offline: Return cached version
+                return caches.match(event.request).then(function(response) {
+                    if (response) return response;
+                    // Fallback for navigation
+                    if (event.request.mode === 'navigate') return caches.match(OFFLINE_URL);
+                });
+              })
           );
         });
       `;
@@ -1285,7 +1481,7 @@
     (function handleAndroidBackButton() {
       let isHandlerAttached = false; // FIX: Prevents duplicate listener attachment
       let openedModals = [];
-      const modalPriority = ['scannerOverlay', 'imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop'];
+      const modalPriority = ['scannerOverlay', 'imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop', 'quickSellModalBackdrop', 'historyModalBackdrop'];
 
       function pushMainStateToHistory() { try { history.replaceState({dealerAppMain: true}, document.title, window.location.href); } catch (e) {} }
       function pushModalState(modalId) { try { history.pushState({modal: modalId}, document.title, window.location.href); openedModals.push(modalId); } catch (e) {} }
@@ -1453,7 +1649,22 @@
 
     keepLoggedInToggle.onchange = function() { showTimeoutNotice(""); if (!this.checked) clearKeepSession(); };
     document.getElementById('login-modal').addEventListener('transitionend', function() { loginPIN.value = ''; });
-    function doLogout(showMsg) { stopSessionTimeoutMonitor(); clearKeepSession(); document.getElementById('dealerApp').style.display = 'none'; showLoginModal(showMsg || 'You have been logged out.'); updatePINUI(getHasPIN()); }
+    
+    // FIX NO 2: Ensure scanner/viewer are closed on logout to prevent UI lockup
+    function doLogout(showMsg) { 
+        stopSessionTimeoutMonitor(); 
+        clearKeepSession(); 
+        
+        if(typeof stopScanner === 'function') stopScanner();
+        if(document.getElementById('imageViewerOverlay').classList.contains('show')) {
+           document.getElementById('imageViewerOverlay').classList.remove('show');
+           document.getElementById('imageViewerImg').src = '';
+        }
+
+        document.getElementById('dealerApp').style.display = 'none'; 
+        showLoginModal(showMsg || 'You have been logged out.'); 
+        updatePINUI(getHasPIN()); 
+    }
 
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsBackdrop = document.getElementById('settingsBackdrop');
@@ -1497,16 +1708,18 @@
     
     let currentFilteredProducts = []; 
     let activeCategoryFilter = null; 
+    let isQuickSellMode = false; // State for Quick Sell
 
     // FIX NO 1: Global array to track active URLs for revocation
     let activeObjectUrls = [];
 
     // ***************************************************************
-    // * INDEXED DB STORAGE ENGINE (Replaces LocalStorage)         *
+    // * INDEXED DB STORAGE ENGINE (Updated for History)             *
     // ***************************************************************
     const DB_NAME = 'DealerDB';
     const STORE_NAME = 'products';
-    const DB_VERSION = 1;
+    const STORE_HISTORY = 'sales_history'; // NEW STORE
+    const DB_VERSION = 3; // UPDATED VERSION TO FORCE UPGRADE
 
     function openDB() {
         return new Promise((resolve, reject) => {
@@ -1515,6 +1728,10 @@
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains(STORE_NAME)) {
                     db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains(STORE_HISTORY)) {
+                    // Create History Store
+                    db.createObjectStore(STORE_HISTORY, { keyPath: 'id', autoIncrement: true });
                 }
             };
             request.onsuccess = e => resolve(e.target.result);
@@ -1562,6 +1779,40 @@
         const db = await openDB();
         const tx = db.transaction(STORE_NAME, 'readonly');
         const store = tx.objectStore(STORE_NAME);
+        return new Promise((resolve, reject) => {
+            const req = store.getAll();
+            req.onsuccess = () => {
+                let results = req.result || [];
+                // Data Migration: Ensure 'photos' array exists for all products
+                results.forEach(p => {
+                    if(!p.photos) {
+                        if(p.photo) p.photos = [p.photo]; // Migrate single photo to array
+                        else p.photos = [];
+                    }
+                });
+                resolve(results);
+            };
+            req.onerror = () => reject(req.error);
+        });
+    }
+    
+    // NEW: Sales History Functions
+    async function logSaleToDB(entry) {
+        const db = await openDB();
+        const tx = db.transaction(STORE_HISTORY, 'readwrite');
+        const store = tx.objectStore(STORE_HISTORY);
+        store.add(entry);
+        return new Promise((resolve, reject) => {
+            tx.oncomplete = resolve;
+            tx.onerror = reject;
+        });
+    }
+    
+    async function getSalesHistoryFromDB() {
+        const db = await openDB();
+        if(!db.objectStoreNames.contains(STORE_HISTORY)) return [];
+        const tx = db.transaction(STORE_HISTORY, 'readonly');
+        const store = tx.objectStore(STORE_HISTORY);
         return new Promise((resolve, reject) => {
             const req = store.getAll();
             req.onsuccess = () => resolve(req.result || []);
@@ -1657,7 +1908,16 @@
       li.setAttribute('tabindex','0');
       li.classList.add('show');
 
-      const imgSrc = getPhotoSrc(product.photo);
+      // Use the first photo as the main thumbnail
+      let firstPhoto = null;
+      if (product.photos && product.photos.length > 0) {
+          firstPhoto = product.photos[0];
+      } else if (product.photo) {
+          // Fallback legacy
+          firstPhoto = product.photo;
+      }
+
+      const imgSrc = getPhotoSrc(firstPhoto);
       let imgHTML = imgSrc ? `<img src="${imgSrc}" class="prod-photo-thumb" alt="Product Photo" loading="lazy">` : `<span>📦</span>`;
       
       const nameSafe = escapeHTML(product.name || "Unnamed");
@@ -1665,12 +1925,18 @@
       const mrpNum = Number(product.mrp) || 0;
       let checkboxHTML = `<input type="checkbox" class="prod-select-checkbox" title="Select" data-id="${product.id}" tabindex="0" ${selectedProductIds.has(product.id) ? "checked" : ""}/>`;
 
+      // Feature 1: Low Stock Logic (UPDATED: red if <= 1)
+      const isLowStock = qtyNum <= 0;
+      const stockColor = isLowStock ? 'var(--danger)' : 'var(--success)';
+      const stockIcon = isLowStock ? '⚠️ ' : '';
+      const lowStockClass = isLowStock ? 'low-stock' : '';
+
       li.innerHTML = `
         ${checkboxHTML}
         <div class="prod-img">${imgHTML}</div>
         <div class="prod-main-details">
           <div class="prod-name">${nameSafe}</div>
-          <div class="prod-details">Stock: <b style="color:var(--success);font-weight:600">${qtyNum}</b> • ₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</div>
+          <div class="prod-details ${lowStockClass}">Stock: <b style="color:${stockColor};font-weight:600">${stockIcon}${qtyNum}</b> • ₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</div>
           ${product.notes?`<div class="prod-details">${escapeHTML(String(product.notes)).slice(0,55)}</div>`:""}
         </div>
         <div class="prod-actions">
@@ -1700,8 +1966,25 @@
           };
       }
 
-      li.addEventListener('click', function(e){ if(e.target.classList.contains('prod-select-checkbox')) return; if(!e.target.closest('.prod-actions')) showDetailModal(product); });
-      li.addEventListener('keydown', function(e){ if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { e.preventDefault(); showDetailModal(product); } });
+      // Feature 2: Quick Sell Logic integration
+      li.addEventListener('click', function(e){ 
+          if(e.target.classList.contains('prod-select-checkbox')) return; 
+          if(e.target.closest('.prod-actions')) return; 
+          
+          if(isQuickSellMode) {
+              openQuickSellModal(product);
+          } else {
+              showDetailModal(product); 
+          }
+      });
+      
+      li.addEventListener('keydown', function(e){ 
+          if((e.key==="Enter"||e.key===" ") && !e.target.closest('.prod-actions')) { 
+              e.preventDefault(); 
+              if(isQuickSellMode) openQuickSellModal(product);
+              else showDetailModal(product); 
+          } 
+      });
       return li;
     }
 
@@ -1725,31 +2008,92 @@
         }
     };
 
-    // --- UPDATED EXPORT LOGIC: CONVERT BLOBS TO BASE64 STRINGS ---
+    // --- REFACTORED EXPORT LOGIC: ROBUST AND SHARED ---
+    // UPDATED FOR MULTI-IMAGE SUPPORT
+    async function performExport(itemsToExport, filename) {
+        try {
+            // Convert Blobs to Base64 for JSON storage
+            const dataToExport = await Promise.all(itemsToExport.map(async (p) => {
+                // Handle photos array
+                let photoDataArray = [];
+                if(p.photos && p.photos.length > 0) {
+                     photoDataArray = await Promise.all(p.photos.map(async (photo) => {
+                         if (photo instanceof Blob) {
+                            return await new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.onerror = () => resolve(null);
+                                reader.readAsDataURL(photo);
+                            });
+                         }
+                         return photo; // already string or null
+                     }));
+                } 
+                // Legacy fallback
+                else if (p.photo) {
+                     let singlePhoto = p.photo;
+                     if(singlePhoto instanceof Blob) {
+                         singlePhoto = await new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.readAsDataURL(singlePhoto);
+                         });
+                     }
+                     photoDataArray.push(singlePhoto);
+                }
+
+                // Remove legacy 'photo' key, only use 'photos'
+                const { photo, ...cleanP } = p;
+                return { ...cleanP, photos: photoDataArray };
+            }));
+
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const blob = new Blob([dataStr], {type:"application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); 
+            a.style.display='none'; 
+            a.href = url; 
+            a.download = filename; 
+            document.body.appendChild(a); 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+            setTimeout(()=>{ document.body.removeChild(a); }, 200);
+        } catch (err) {
+            console.error("Export failed:", err);
+            alert("Export failed: " + (err.message || "Unknown error"));
+        }
+    }
+
+    // Main Export Button (All Products)
     document.getElementById('exportBtn').onclick = async function() {
+      if(!products || products.length === 0) {
+          alert("No products to export.");
+          return;
+      }
       const now = new Date();
       const dateStr = now.toISOString().slice(0,10);
       const timeStr = now.toTimeString().slice(0,5).replace(':','-');
       const filename = `dealer-backup-${dateStr}_${timeStr}.json`;
       
-      // Convert Blobs to Base64 for JSON storage
-      const dataToExport = await Promise.all(products.map(async (p) => {
-          let photoData = p.photo;
-          if (p.photo instanceof Blob) {
-              photoData = await new Promise((resolve) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => resolve(reader.result);
-                  reader.readAsDataURL(p.photo);
-              });
-          }
-          return { ...p, photo: photoData };
-      }));
-
-      const dataStr = JSON.stringify(dataToExport, null, 2);
-      const blob = new Blob([dataStr], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.style.display='none'; a.href = url; a.download = filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); setTimeout(()=>{ document.body.removeChild(a); }, 200);
+      await performExport(products, filename);
     };
+
+    // Selected Export Button (Multi-select)
+    const exportSelectedBtn = document.getElementById('exportSelectedBtn');
+    if (exportSelectedBtn) {
+        exportSelectedBtn.onclick = async function() {
+            if (selectedProductIds.size === 0) return;
+            const itemsToExport = products.filter(p => selectedProductIds.has(p.id));
+            if(itemsToExport.length === 0) return;
+
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0,10);
+            const timeStr = now.toTimeString().slice(0,5).replace(':','-');
+            const filename = `dealer-selected-${dateStr}_${timeStr}.json`;
+
+            await performExport(itemsToExport, filename);
+        };
+    }
 
     document.getElementById('importBtn').onclick = function () { 
         let fileInput = document.getElementById('hiddenImport'); 
@@ -1757,7 +2101,7 @@
         if (fileInput) fileInput.click(); 
     };
 
-    // --- UPDATED IMPORT LOGIC: CONVERT BASE64 STRINGS BACK TO BLOBS ---
+    // --- UPDATED IMPORT LOGIC: CONVERT BASE64 STRINGS BACK TO BLOBS (ARRAY SUPPORT) ---
     document.getElementById('hiddenImport').onchange = async function (e) {
       const fileInput = e.target;
       if (!fileInput.files || !fileInput.files.length) return;
@@ -1772,13 +2116,30 @@
         
         // Convert Base64 strings back to Blobs for efficiency
         importedArr = await Promise.all(importedArr.map(async (p) => {
-            if (p.photo && typeof p.photo === 'string' && p.photo.startsWith('data:')) {
+            // Handle photos array
+            if (p.photos && Array.isArray(p.photos)) {
+                p.photos = await Promise.all(p.photos.map(async (photoStr) => {
+                    if (typeof photoStr === 'string' && photoStr.startsWith('data:')) {
+                        try {
+                            const res = await fetch(photoStr);
+                            return await res.blob();
+                        } catch(err) { return photoStr; }
+                    }
+                    return photoStr;
+                }));
+            } 
+            // Handle legacy photo string
+            else if (p.photo && typeof p.photo === 'string' && p.photo.startsWith('data:')) {
                 try {
                     const res = await fetch(p.photo);
                     const blob = await res.blob();
-                    p.photo = blob;
-                } catch(err) { /* fallback to string */ }
+                    p.photos = [blob];
+                    delete p.photo;
+                } catch(err) { /* fallback */ }
             }
+            // Ensure array exists
+            if(!p.photos) p.photos = [];
+            
             return p;
         }));
 
@@ -1812,17 +2173,31 @@
     const detailModalBody = document.getElementById('detailModalBody');
     function disableDetailBackgroundScroll() { document.body.classList.add('detail-modal-open'); }
     function enableDetailBackgroundScroll() { document.body.classList.remove('detail-modal-open'); }
+    
     function showDetailModal(product) {
       const nameSafe = escapeHTML(product.name || 'Unnamed');
-      const imgSrc = getPhotoSrc(product.photo);
-      const photoBlock = imgSrc ? `<img src="${imgSrc}" class="prod-detail-photo" alt="${nameSafe}"/>` : `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;">📦</div>`;
+      
+      // Build Gallery HTML
+      let galleryHtml = "";
+      if(product.photos && product.photos.length > 0) {
+          galleryHtml = `<div class="detail-gallery">`;
+          product.photos.forEach(photo => {
+              const src = getPhotoSrc(photo);
+              if(src) {
+                  galleryHtml += `<img src="${src}" onclick="openImageViewer('${src}')" alt="${nameSafe}"/>`;
+              }
+          });
+          galleryHtml += `</div>`;
+      } else {
+          galleryHtml = `<div class="prod-detail-photo" style="font-size:60px;padding:22px 0 12px 0;text-align:center;">📦</div>`;
+      }
+      
       const mrpNum = Number(product.mrp) || 0;
       const costNum = (product.cost !== undefined && product.cost !== null) ? Number(product.cost) : null;
-      // Show Barcode in Details if exists
       const barcodeHtml = product.barcode ? `<li><b>Barcode:</b> <span style="font-family:monospace;background:#2b3548;padding:2px 6px;border-radius:4px;">${escapeHTML(product.barcode)}</span></li>` : "";
 
       detailModalBody.innerHTML = `
-        <div style="text-align:center;">${photoBlock}</div>
+        ${galleryHtml}
         <ul style="list-style:none;padding:0;margin:10px 0 0 0;display:flex;flex-direction:column;gap:.57em;">
           <li><b>Name:</b> <span style="color:var(--accent2);font-weight:600">${nameSafe}</span></li>
           ${barcodeHtml}
@@ -1833,13 +2208,6 @@
         </ul>
         ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
       `;
-      setTimeout(()=>{
-          const detailImg = detailModalBody.querySelector('.prod-detail-photo');
-          if(detailImg && imgSrc) {
-              detailImg.style.cursor = 'zoom-in';
-              detailImg.onclick = () => openImageViewer(imgSrc);
-          }
-      }, 50);
 
       detailModalBackdrop.classList.remove('hide'); disableDetailBackgroundScroll(); setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
     }
@@ -1856,6 +2224,10 @@
         else if (!settingsBackdrop.classList.contains('hide')) { settingsBackdrop.classList.add('hide'); closedAModal = true; }
         else if (!shareModalBackdrop.classList.contains('hide')) { shareModalBackdrop.classList.add('hide'); closedAModal = true; }
         else if (!categoryModalBackdrop.classList.contains('hide')) { categoryModalBackdrop.classList.add('hide'); closedAModal = true; }
+        // NEW MODAL ESC HANDLERS
+        else if (!quickSellModalBackdrop.classList.contains('hide')) { quickSellModalBackdrop.classList.add('hide'); closedAModal = true; }
+        else if (!historyModalBackdrop.classList.contains('hide')) { historyModalBackdrop.classList.add('hide'); closedAModal = true; }
+        
         if (closedAModal) enableDetailBackgroundScroll();
       }
     });
@@ -1867,7 +2239,10 @@
         (!settingsBackdrop || settingsBackdrop.classList.contains('hide')) &&
         (!deleteModalBackdrop || deleteModalBackdrop.classList.contains('hide')) &&
         (!shareModalBackdrop || shareModalBackdrop.classList.contains('hide')) &&
-        (!categoryModalBackdrop || categoryModalBackdrop.classList.contains('hide'))
+        (!categoryModalBackdrop || categoryModalBackdrop.classList.contains('hide')) &&
+        // NEW
+        (!quickSellModalBackdrop || quickSellModalBackdrop.classList.contains('hide')) &&
+        (!historyModalBackdrop || historyModalBackdrop.classList.contains('hide'))
       ) {
         enableDetailBackgroundScroll();
       }
@@ -1886,6 +2261,148 @@
         refreshProductList(); 
     });
     searchInput.addEventListener('keydown', function(e){ if(e.key==='Escape'){ searchInput.value=''; refreshProductList(); } });
+    
+    /****************************************************************
+     * NEW FEATURE: QUICK SELL LOGIC
+     ****************************************************************/
+    const quickSellToggleBtn = document.getElementById('quickSellToggleBtn');
+    const quickSellModalBackdrop = document.getElementById('quickSellModalBackdrop');
+    const quickSellModal = document.getElementById('quickSellModal');
+    const quickSellName = document.getElementById('quickSellName');
+    const quickSellQty = document.getElementById('quickSellQty');
+    const quickSellPrice = document.getElementById('quickSellPrice'); // NEW FIELD
+    const closeQuickSellBtn = document.getElementById('closeQuickSellBtn');
+    let quickSellProductTarget = null;
+    
+    quickSellToggleBtn.onclick = function() {
+        isQuickSellMode = !isQuickSellMode;
+        if(isQuickSellMode) {
+            quickSellToggleBtn.classList.add('active');
+            document.body.classList.add('quick-sell-active');
+            if (navigator.vibrate) navigator.vibrate(50);
+        } else {
+            quickSellToggleBtn.classList.remove('active');
+            document.body.classList.remove('quick-sell-active');
+        }
+    };
+    
+    function openQuickSellModal(product) {
+        quickSellProductTarget = product;
+        quickSellName.textContent = `Sell: ${product.name}`;
+        quickSellQty.value = 1;
+        quickSellPrice.value = product.mrp || 0; // Pre-fill with MRP
+        
+        quickSellModalBackdrop.classList.remove('hide');
+        
+        // Focus Price first (as requested to ask for price)
+        setTimeout(() => quickSellPrice.focus(), 100);
+    }
+    
+    closeQuickSellBtn.onclick = () => quickSellModalBackdrop.classList.add('hide');
+    
+    quickSellModal.onsubmit = async function(e) {
+        e.preventDefault();
+        if(!quickSellProductTarget) return;
+        
+        const qtyToSell = parseInt(quickSellQty.value);
+        const actualSellPrice = parseFloat(quickSellPrice.value) || 0;
+        
+        if(qtyToSell <= 0) return;
+        if(actualSellPrice < 0) { alert("Price cannot be negative."); return; }
+        
+        // Update Stock
+        const currentQty = quickSellProductTarget.qty || 0;
+        const newQty = Math.max(0, currentQty - qtyToSell);
+        quickSellProductTarget.qty = newQty;
+        
+        // Calculate Profit
+        const costPrice = quickSellProductTarget.cost || 0;
+        const profit = (actualSellPrice - costPrice) * qtyToSell;
+        
+        // Log to History
+        const logEntry = {
+            productId: quickSellProductTarget.id,
+            productName: quickSellProductTarget.name,
+            qtySold: qtyToSell,
+            salePricePerUnit: actualSellPrice,
+            costPricePerUnit: costPrice,
+            totalValue: qtyToSell * actualSellPrice,
+            totalProfit: profit,
+            timestamp: new Date().toISOString()
+        };
+        
+        try {
+            await logSaleToDB(logEntry);
+            await saveProducts(); // Saves updated qty and refreshes UI
+            
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            
+            // Close
+            quickSellModalBackdrop.classList.add('hide');
+            quickSellProductTarget = null;
+        } catch(err) {
+            alert("Error saving sale: " + err.message);
+        }
+    };
+    
+    /****************************************************************
+     * NEW FEATURE: HISTORY LOGIC
+     ****************************************************************/
+    const historyBtn = document.getElementById('historyBtn');
+    const historyModalBackdrop = document.getElementById('historyModalBackdrop');
+    const historyList = document.getElementById('historyList');
+    const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+    
+    historyBtn.onclick = async function() {
+        historyModalBackdrop.classList.remove('hide');
+        historyList.innerHTML = '<div style="text-align:center;padding:20px;">Loading history...</div>';
+        
+        try {
+            const history = await getSalesHistoryFromDB();
+            
+            if(history.length === 0) {
+                historyList.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">No sales recorded yet.</div>';
+                return;
+            }
+            
+            // Sort newest first
+            history.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            let html = '';
+            history.forEach(item => {
+                const dateObj = new Date(item.timestamp);
+                const dateStr = dateObj.toLocaleDateString();
+                const timeStr = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const salePrice = item.salePricePerUnit || 0;
+                const costPrice = item.costPricePerUnit || 0;
+                const profit = item.totalProfit !== undefined ? item.totalProfit : ((salePrice - costPrice) * item.qtySold);
+                
+                const profitColor = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+                const profitSign = profit >= 0 ? '+' : '';
+
+                html += `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight:700; color:var(--text);">${escapeHTML(item.productName)}</div>
+                            <div class="history-meta">${dateStr} at ${timeStr}</div>
+                            <div class="history-meta">Sold @ ₨${salePrice.toLocaleString()} (Cost: ₨${costPrice.toLocaleString()})</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:bold; color:var(--text); font-size:1.1em;">-${item.qtySold}</div>
+                            <div style="font-size:0.85em; color:var(--text-muted);">Total: ₨${item.totalValue.toLocaleString()}</div>
+                            <div class="history-profit" style="color:${profitColor}">${profitSign}₨${profit.toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            historyList.innerHTML = html;
+        } catch(err) {
+            historyList.innerHTML = `<div style="color:var(--danger)">Error loading history.</div>`;
+        }
+    };
+    
+    closeHistoryBtn.onclick = () => historyModalBackdrop.classList.add('hide');
 
     // --- NEW: CATEGORY BUTTON & MODAL LOGIC ---
     const categoryBtn = document.getElementById('categoryFilterBtn');
@@ -2014,7 +2531,7 @@
 
     let productEditing = null;
     const prodName = document.getElementById('prodName');
-    const prodBarcode = document.getElementById('prodBarcode'); // NEW FIELD
+    const prodBarcode = document.getElementById('prodBarcode'); 
     const prodMrp = document.getElementById('prodMrp');
     const prodCost = document.getElementById('prodCost');
     const prodQty = document.getElementById('prodQty');
@@ -2026,14 +2543,13 @@
     const productModal = document.getElementById('productModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalError = document.getElementById('modalError');
-    const prodPhotoFileName = document.getElementById('prodPhotoFileName');
     const uploadBtnInnerText = document.getElementById('uploadBtnInnerText');
-    const prodPhotoFileContainer = document.getElementById('prodPhotoFileContainer');
+    const prodPhotoList = document.getElementById('prodPhotoList');
     const fileUploadWrap = document.getElementById('fileUploadWrap');
     const imageCompressMsg = document.getElementById('imageCompressMsg');
     
-    // CHANGED: This variable now holds a BLOB, not a DataURL string
-    let currentProductBlob = null;
+    // CHANGED: Array to hold multiple blobs
+    let currentProductBlobs = [];
 
     /****************************************************************
      * BINARY BLOB COMPRESSION (NO BASE64 STRINGS)
@@ -2101,56 +2617,62 @@
       });
     }
 
+    // UPDATE UI TO SHOW LIST OF THUMBNAILS
     function updatePhotoPreviewUI() {
-      prodPhotoFileContainer.innerHTML = '';
-      if (currentProductBlob) {
-        const img = document.createElement('img');
-        
-        // --- FIX: Handle BOTH Blob (New) and String (Old) ---
-        if (currentProductBlob instanceof Blob) {
-             img.src = URL.createObjectURL(currentProductBlob);
-        } else {
-             // It is likely a base64 string from old data
-             img.src = currentProductBlob; 
-        }
-        
-        img.alt = "Product Photo"; 
-        img.className = 'photo-preview-img-thumb';
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button'; removeBtn.className = 'remove-photo-btn'; removeBtn.title = 'Remove image'; removeBtn.innerHTML = '✖';
-        removeBtn.onclick = function() { 
-            currentProductBlob = null; 
-            prodPhoto.value = ''; 
-            prodCamera.value = '';
-            prodPhotoFileName.textContent = ''; 
-            imageCompressMsg.style.display = 'none'; 
-            updatePhotoPreviewUI(); 
-        };
-        prodPhotoFileContainer.appendChild(img); prodPhotoFileContainer.appendChild(removeBtn);
+      prodPhotoList.innerHTML = '';
+      currentProductBlobs.forEach((blob, index) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'photo-preview-item';
+          
+          const img = document.createElement('img');
+          // Handle Blob vs String
+          if (blob instanceof Blob) {
+              img.src = URL.createObjectURL(blob);
+          } else {
+              img.src = blob; 
+          }
+          img.className = 'photo-preview-img-thumb';
+          
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button'; 
+          removeBtn.className = 'remove-photo-btn'; 
+          removeBtn.innerHTML = '✖';
+          removeBtn.onclick = () => {
+              currentProductBlobs.splice(index, 1);
+              updatePhotoPreviewUI();
+          };
+          
+          itemDiv.appendChild(img);
+          itemDiv.appendChild(removeBtn);
+          prodPhotoList.appendChild(itemDiv);
+      });
+      
+      if(currentProductBlobs.length === 0) {
+          imageCompressMsg.style.display = 'none';
       }
     }
 
     function showProductModal(mode, product) {
       productModal.reset(); 
       modalError.textContent = ''; 
-      prodPhotoFileName.textContent = ''; 
-      currentProductBlob = null; 
+      currentProductBlobs = []; 
       imageCompressMsg.style.display = 'none'; 
-      updatePhotoPreviewUI();
       
       if (mode === 'add') {
         modalTitle.textContent = "Add Product"; productEditing = null;
-        prodName.value = ""; prodBarcode.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = ""; prodPhoto.value = ""; prodCamera.value = "";
+        prodName.value = ""; prodBarcode.value = ""; prodMrp.value = ""; prodCost.value = ""; prodQty.value = ""; prodCategory.value = activeCategoryFilter || ""; prodNotes.value = "";
       } else {
         modalTitle.textContent = "Edit Product"; productEditing = product;
-        prodName.value = product.name || ""; prodBarcode.value = product.barcode || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || ""; prodPhoto.value = ""; prodCamera.value = "";
+        prodName.value = product.name || ""; prodBarcode.value = product.barcode || ""; prodMrp.value = product.mrp !== undefined ? product.mrp : ""; prodCost.value = product.cost !== undefined ? product.cost : ""; prodQty.value = product.qty !== undefined ? product.qty : ""; prodCategory.value = product.category || ""; prodNotes.value = product.notes || "";
         
-        // Handle existing photo (Blob or String)
-        if (product.photo) {
-            currentProductBlob = product.photo; 
-            updatePhotoPreviewUI();
+        // Load existing photos
+        if (product.photos && Array.isArray(product.photos)) {
+            currentProductBlobs = [...product.photos];
+        } else if (product.photo) {
+            currentProductBlobs = [product.photo]; // Backward compatibility
         }
       }
+      updatePhotoPreviewUI();
       productModalBackdrop.classList.remove('hide');
       if (!document.body.classList.contains('modal-open')) { document.body.dataset.scrollY = window.scrollY; document.body.style.top = `-${window.scrollY}px`; document.body.classList.add('modal-open'); }
       setTimeout(()=>prodName.focus(),150);
@@ -2161,43 +2683,37 @@
     let prodPhotoLastPendingPromise = null;
 
     // --- SHARED IMAGE HANDLER FOR BOTH BUTTONS ---
-    function handleImageSelection(file) {
-        if(!file) return;
-        prodPhotoFileName.textContent = file.name; 
-        imageCompressMsg.textContent = "Processing image..."; 
+    function handleImageSelection(files) {
+        if(!files || files.length === 0) return;
+        
+        imageCompressMsg.textContent = `Processing ${files.length} image(s)...`; 
         imageCompressMsg.style.display = 'block';
         
-        const filePromise = compressImageFileToBlob(file, 600, 0.70).then(blob => {
-          const kb = Math.round(blob.size / 1024); 
-          currentProductBlob = blob; // Store Blob, NOT string
-          updatePhotoPreviewUI();
-          imageCompressMsg.textContent = `Photo processed: ~${kb} KB`; 
-          imageCompressMsg.style.display = 'block';
-        }).catch(err => { 
+        const promises = Array.from(files).map(file => compressImageFileToBlob(file, 600, 0.70));
+        
+        const allPromise = Promise.all(promises).then(blobs => {
+             blobs.forEach(blob => {
+                 if(blob) currentProductBlobs.push(blob);
+             });
+             updatePhotoPreviewUI();
+             imageCompressMsg.textContent = `${currentProductBlobs.length} photo(s) attached`;
+        }).catch(err => {
             console.error(err);
-            modalError.textContent = String(err) || "Photo processing failed."; 
-            prodPhoto.value = ''; 
-            prodCamera.value = '';
-            prodPhotoFileName.textContent = ''; 
-            imageCompressMsg.style.display = 'none'; 
-            currentProductBlob = null; 
-            updatePhotoPreviewUI(); 
+            modalError.textContent = "Some photos failed to process.";
         });
-        prodPhotoLastPendingPromise = filePromise;
+        
+        prodPhotoLastPendingPromise = allPromise;
     }
 
     prodPhoto.addEventListener('change', function () {
       if (prodPhoto.files && prodPhoto.files.length) {
-          handleImageSelection(prodPhoto.files[0]);
-      } else {
-          currentProductBlob = null; 
-          updatePhotoPreviewUI();
+          handleImageSelection(prodPhoto.files);
       }
     });
     
     prodCamera.addEventListener('change', function () {
       if (prodCamera.files && prodCamera.files.length) {
-          handleImageSelection(prodCamera.files[0]);
+          handleImageSelection(prodCamera.files);
       }
     });
 
@@ -2210,10 +2726,12 @@
 
     productModal.onsubmit = async function(e) {
       e.preventDefault(); modalError.textContent = "";
-      if (firstSubmitAttempt && (prodPhoto.files.length || prodCamera.files.length) && !currentProductBlob && prodPhotoLastPendingPromise) {
-        try { await prodPhotoLastPendingPromise; } catch (err) { modalError.textContent = "Image failed to load, please select again."; return; }
-        firstSubmitAttempt = false; productModal.onsubmit(e); return;
+      
+      // Wait for images to finish processing
+      if (prodPhotoLastPendingPromise) {
+          try { await prodPhotoLastPendingPromise; } catch(e) {}
       }
+
       firstSubmitAttempt = false;
       const name = (prodName.value || '').trim(); const barcodeVal = (prodBarcode.value || '').trim(); const mrpVal = prodMrp.value; const costVal = prodCost.value; const qtyVal = prodQty.value; const notes = (prodNotes.value || '').trim();
       
@@ -2226,9 +2744,11 @@
       if (mrpVal === "" || isNaN(Number(mrpVal)) || Number(mrpVal) < 0) { modalError.textContent = "Valid MRP required."; return; }
       if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
       
-      // Store the BLOB directly
-      // Added barcode property
-      const productObj = { id: productEditing ? productEditing.id : genID(), name, barcode: barcodeVal, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photo: currentProductBlob };
+      // Store the Array of BLOBS
+      const productObj = { id: productEditing ? productEditing.id : genID(), name, barcode: barcodeVal, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photos: currentProductBlobs };
+      
+      // Remove old photo property if it exists on edit
+      if(productObj.photo) delete productObj.photo;
       
       if (!productEditing) products.push(productObj); else { const idx = products.findIndex(p => p.id === productEditing.id); if (idx >= 0) products[idx] = productObj; else products.push(productObj); }
       
@@ -2284,7 +2804,22 @@
         const printableArea = document.getElementById('printableArea');
         let fullHtml = '';
         productsToShareQueue.forEach(prod => {
-            const imgSrc = getPhotoSrc(prod.photo);
+            
+            // Collect all photos
+            let photoHtml = "";
+            if (chkPhoto.checked && prod.photos && prod.photos.length > 0) {
+                photoHtml = `<div class="print-gallery">`;
+                prod.photos.forEach(p => {
+                    const src = getPhotoSrc(p);
+                    if(src) photoHtml += `<img src="${src}" class="print-product-img" />`;
+                });
+                photoHtml += `</div>`;
+            } else if (chkPhoto.checked && prod.photo) {
+                // legacy
+                 const src = getPhotoSrc(prod.photo);
+                 if(src) photoHtml = `<div class="print-gallery"><img src="${src}" class="print-product-img" /></div>`;
+            }
+
             let html = `
                 <div class="print-product-page">
                     <div class="print-header">
@@ -2294,8 +2829,8 @@
                         <div style="font-size:12px;color:#777">Generated: ${new Date().toLocaleDateString()}</div>
                     </div>
                     <h1 style="text-align:center;margin-top:20px;">${escapeHTML(prod.name)}</h1>
+                    ${photoHtml}
             `;
-            if(chkPhoto.checked && imgSrc) { html += `<img src="${imgSrc}" class="print-product-img" />`; }
             html += `<table class="print-details-table"><tbody>`;
             if(chkCategory.checked && prod.category) { html += `<tr><td class="print-label">Category</td><td>${escapeHTML(prod.category)}</td></tr>`; }
             // Include barcode in print
@@ -2305,7 +2840,7 @@
             if(chkCost.checked && prod.cost !== null && prod.cost !== undefined) { html += `<tr><td class="print-label">Cost Price</td><td>₨ ${Number(prod.cost).toLocaleString()}</td></tr>`; }
             html += `</tbody></table>`;
             if(chkNotes.checked && prod.notes) { html += `<div class="print-notes-box"><strong>Notes:</strong><br/>${escapeHTML(prod.notes)}</div>`; }
-            html += `<div style="text-align:center; margin-top:50px; font-size:12px; color:#888;">Thank you for your interest.For any detail contact on this Phone number:0300-3685270</div></div>`;
+            html += `<div style="text-align:center; margin-top:50px; font-size:12px; color:#888;">Thank you for your interest. For any detail contact on this Phone number:0300-3685270</div></div>`;
             fullHtml += html;
         });
         printableArea.innerHTML = fullHtml;
@@ -2314,79 +2849,183 @@
     };
 
     /****************************************************************
-     * FIX NO 3: BARCODE SCANNER LOGIC (Native API)
+     * FIX NO 3: SUPER SCANNER LOGIC (Confirm/Retry)
      ****************************************************************/
     const scanSearchBtn = document.getElementById('scanSearchBtn');
     const scanModalBtn = document.getElementById('scanModalBtn');
     const scannerOverlay = document.getElementById('scannerOverlay');
     const scannerVideo = document.getElementById('scannerVideo');
     const closeScannerBtn = document.getElementById('closeScannerBtn');
+    const zoomControl = document.getElementById('zoomControl');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const toggleTorchBtn = document.getElementById('toggleTorchBtn');
+    
+    // Confirmation UI Elements
+    const scanConfirmation = document.getElementById('scanConfirmation');
+    const scannedCodeDisplay = document.getElementById('scannedCodeDisplay');
+    const scanRetryBtn = document.getElementById('scanRetryBtn');
+    const scanConfirmBtn = document.getElementById('scanConfirmBtn');
     
     let scannerStream = null;
     let scannerInterval = null;
-    let activeScanTarget = null; // 'search' or 'modal'
+    let activeScanTarget = null;
+    let videoTrack = null;
+    let currentScannedCode = null; // Temp store
 
     async function startScanner(target) {
         if (!('BarcodeDetector' in window)) {
-            alert("Barcode scanning is not supported on this device/browser. Please type manually.");
+            alert("Your browser does not support native Barcode Detection. Please type manually.");
             return;
         }
 
-        activeScanTarget = target; // Remember where to put the result
+        activeScanTarget = target;
+        scanConfirmation.style.display = 'none'; // Hide confirmation initially
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { ideal: "environment" } },
+            // 1. Ask for High Resolution (1080p) to see thin lines
+            const constraints = {
+                video: { 
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    focusMode: { ideal: "continuous" }
+                },
                 audio: false
-            });
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
             scannerStream = stream;
             scannerVideo.srcObject = stream;
             scannerOverlay.classList.add('show');
             
-            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code', 'ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e'] });
+            videoTrack = stream.getVideoTracks()[0];
+            const capabilities = videoTrack.getCapabilities();
 
-            scannerInterval = setInterval(async () => {
-                if (!scannerVideo.videoWidth) return;
-                try {
-                    const barcodes = await barcodeDetector.detect(scannerVideo);
-                    if (barcodes.length > 0) {
-                        const code = barcodes[0].rawValue;
-                        stopScanner();
-                        
-                        // Handle the scanned code based on target
-                        if (activeScanTarget === 'search') {
-                             searchInput.value = code;
-                             searchInput.dispatchEvent(new Event('input')); // Trigger search
-                        } else if (activeScanTarget === 'modal') {
-                             // CHANGED LOGIC: APPEND instead of REPLACE
-                             if(prodBarcode.value) {
-                                 // Check if already exists to avoid duplicates
-                                 if(!prodBarcode.value.includes(code)) {
-                                     prodBarcode.value += ", " + code;
-                                 }
-                             } else {
-                                 prodBarcode.value = code;
-                             }
-                        }
+            // 2. ENABLE ZOOM (If supported)
+            if (capabilities.zoom) {
+                zoomControl.style.display = 'flex';
+                zoomSlider.min = capabilities.zoom.min;
+                zoomSlider.max = capabilities.zoom.max;
+                zoomSlider.step = capabilities.zoom.step;
+                zoomSlider.value = 1; // Start at 1x
+                
+                zoomSlider.oninput = async () => {
+                    await videoTrack.applyConstraints({ advanced: [{ zoom: zoomSlider.value }] });
+                };
+            } else {
+                zoomControl.style.display = 'none';
+            }
 
-                        // Optional: Vibration feedback
-                        if (navigator.vibrate) navigator.vibrate(50);
-                    }
-                } catch (err) {
-                    // console.error(err);
-                }
-            }, 500);
+            // 3. ENABLE TORCH (If supported)
+            if (capabilities.torch) {
+                toggleTorchBtn.style.display = 'block';
+                let torchState = false;
+                toggleTorchBtn.onclick = async () => {
+                    torchState = !torchState;
+                    await videoTrack.applyConstraints({ advanced: [{ torch: torchState }] });
+                    toggleTorchBtn.style.background = torchState ? 'rgba(6, 182, 212, 0.6)' : 'rgba(255,255,255,0.2)';
+                };
+            } else {
+                toggleTorchBtn.style.display = 'none';
+            }
+
+            // 4. DETECT SUPPORTED FORMATS
+            const supportedFormats = await BarcodeDetector.getSupportedFormats();
+            const barcodeDetector = new BarcodeDetector({ formats: supportedFormats });
+
+            startDetectionLoop(barcodeDetector);
 
         } catch (err) {
             console.error(err);
-            alert("Camera access denied or error starting scanner.");
+            alert("Camera error: " + err.message);
             stopScanner();
         }
     }
 
+    function startDetectionLoop(detector) {
+        scannerInterval = setInterval(async () => {
+            if (!scannerVideo.videoWidth) return;
+            try {
+                const barcodes = await detector.detect(scannerVideo);
+                if (barcodes.length > 0) {
+                    const code = barcodes[0].rawValue;
+                    currentScannedCode = code;
+
+                    // DIRECT ACTION FOR SEARCH (No Confirmation)
+                    if (activeScanTarget === 'search') {
+                        stopScanner();
+                        searchInput.value = code;
+                        searchInput.dispatchEvent(new Event('input'));
+                        if (navigator.vibrate) navigator.vibrate(50);
+                        return;
+                    }
+
+                    // CONFIRMATION FOR ADD/EDIT (Modal)
+                    // PAUSE Scanning
+                    clearInterval(scannerInterval);
+                    scannerInterval = null; 
+                    
+                    // Show Confirmation UI
+                    scannedCodeDisplay.textContent = code;
+                    scanConfirmation.style.display = 'flex';
+                    
+                    if (navigator.vibrate) navigator.vibrate(100);
+                }
+            } catch (err) {
+                // console.error(err);
+            }
+        }, 200);
+    }
+
+    // RETRY Button Logic
+    scanRetryBtn.onclick = async () => {
+        scanConfirmation.style.display = 'none';
+        currentScannedCode = null;
+        const supportedFormats = await BarcodeDetector.getSupportedFormats();
+        const barcodeDetector = new BarcodeDetector({ formats: supportedFormats });
+        startDetectionLoop(barcodeDetector);
+    };
+
+    // PASTE/CONFIRM Button Logic
+    scanConfirmBtn.onclick = () => {
+        if(!currentScannedCode) return;
+        
+        // --- FIXED: CAPTURE TARGET BEFORE CLOSING ---
+        const target = activeScanTarget; // Save the target because stopScanner() clears it
+        const code = currentScannedCode;
+        
+        stopScanner();
+        
+        if (target === 'search') {
+             searchInput.value = code;
+             searchInput.dispatchEvent(new Event('input'));
+        } else if (target === 'modal') {
+             const prodBarcode = document.getElementById('prodBarcode');
+             
+             // 1. Get current values into an array
+             // Split by comma, trim whitespace, filter out empty strings
+             let codes = prodBarcode.value ? prodBarcode.value.split(',').map(s => s.trim()).filter(s => s) : [];
+             
+             // 2. Add new code if unique
+             if (!codes.includes(code)) {
+                 codes.push(code);
+                 
+                 // 3. FIFO Logic: If more than 3, remove the first one
+                 if (codes.length > 3) {
+                     codes.shift(); 
+                 }
+                 
+                 // 4. Update Input
+                 prodBarcode.value = codes.join(', ');
+             }
+        }
+    };
+
     function stopScanner() {
         if (scannerStream) {
-            scannerStream.getTracks().forEach(track => track.stop());
+            scannerStream.getTracks().forEach(track => {
+                track.stop();
+            });
             scannerStream = null;
         }
         if (scannerInterval) {
@@ -2394,7 +3033,9 @@
             scannerInterval = null;
         }
         scannerOverlay.classList.remove('show');
+        scanConfirmation.style.display = 'none'; // Hide confirmation on close
         activeScanTarget = null;
+        videoTrack = null;
     }
 
     scanSearchBtn.onclick = () => startScanner('search');
