@@ -367,18 +367,6 @@
       background: #273855;
       display: block;
     }
-    .ai-chip {
-      display:inline-flex; align-items:center; gap:5px;
-      padding: 7px 13px; border-radius: 999px; border: 1px solid var(--accent2,#06b6d4);
-      background: transparent; color: var(--accent2,#06b6d4);
-      font-weight: 700; font-size: .95em; cursor: pointer;
-      transition: background .15s, color .15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .ai-chip:hover, .ai-chip:active { background: var(--accent2,#06b6d4); color: #08131a; }
-    .ai-chip .ai-conf { font-weight: 400; opacity: .75; font-size: .88em; }
-    .ai-chip.ai-dismiss { border-color: var(--text-muted,#8b98ab); color: var(--text-muted,#8b98ab); }
-    .ai-chip.ai-dismiss:hover { background: var(--text-muted,#8b98ab); color: #08131a; }
     .remove-photo-btn {
       position: absolute;
       top: -6px;
@@ -866,28 +854,43 @@
         font-size: 1em;
     }
 
-    /* --- PRINTING STYLES (PDF Generation) --- */
+    /* --- PRINTING STYLES (PDF Generation) — FIXED: blank page issue --- */
     #printableArea {
-        display: none;
+        /* Hide from view but KEEP RENDERED — critical for PDF content to appear */
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         background: white;
         color: black;
+        z-index: -1;
+        opacity: 0;
+        pointer-events: none;
         font-family: 'Arial', sans-serif;
         padding: 40px;
     }
     @media print {
+        /* Hide everything except the printable area */
         body > *:not(#printableArea) {
             display: none !important;
         }
         #printableArea {
+            /* Bring it on-screen for printing */
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
             display: block !important;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: auto;
-            z-index: 9999;
+            z-index: 9999 !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
             background: white !important;
             color: black !important;
+            padding: 40px !important;
+            box-sizing: border-box !important;
         }
         .print-product-page {
             page-break-after: always;
@@ -1267,10 +1270,6 @@
         <button type="submit" id="saveProductBtn" class="rounded-sky-btn">Save</button>
       </div>
       <div id="imageCompressMsg" style="font-size:.99em;color:var(--text-muted);margin-top:10px;user-select:none;display:none"></div>
-      <div id="aiSuggestBox" class="hide" style="margin-top:10px; padding:10px 12px; background:var(--bg3,#1c2431); border:1px solid var(--accent2,#06b6d4); border-radius:12px;">
-        <div id="aiSuggestStatus" style="font-size:.95em; color:var(--text-muted); margin-bottom:6px;">🤖 Analyzing photo…</div>
-        <div id="aiSuggestChips" style="display:flex; flex-wrap:wrap; gap:7px;"></div>
-      </div>
     </form>
   </div>
   
@@ -4294,7 +4293,6 @@ async function saveProductsToDB(productsArray) {
       modalError.textContent = ''; 
       currentProductBlobs = []; 
       imageCompressMsg.style.display = 'none'; 
-      hideAISuggest(); // SMART ADD: clear stale suggestions from a previous open
       
       if (mode === 'add') {
         modalTitle.textContent = "Add Product"; productEditing = null;
@@ -4321,289 +4319,6 @@ async function saveProductsToDB(productsArray) {
     let prodPhotoLastPendingPromise = null;
 
     // --- SHARED IMAGE HANDLER FOR BOTH BUTTONS ---
-    /* ============================================================
-       SMART ADD — on-device AI product recognition (TensorFlow.js
-       MobileNet). Runs entirely in the browser: no API key, no cost,
-       photo never leaves the phone. Model (~8 MB) downloads once on
-       first use and is then served from browser cache.
-       ============================================================ */
-    const aiSuggestBox = document.getElementById('aiSuggestBox');
-    const aiSuggestStatus = document.getElementById('aiSuggestStatus');
-    const aiSuggestChips = document.getElementById('aiSuggestChips');
-    let aiModelPromise = null;
-    let aiRunToken = 0; // cancels stale runs if user re-picks photos quickly
-
-    function loadScriptOnce(src) {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) return resolve();
-        const s = document.createElement('script');
-        s.src = src; s.async = true;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error('Failed to load ' + src));
-        document.head.appendChild(s);
-      });
-    }
-
-    function loadAIModel() {
-      if (aiModelPromise) return aiModelPromise;
-      aiModelPromise = (async () => {
-        await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
-        await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js');
-        // alpha 0.75 = good accuracy/speed balance on budget phones
-        return await window.mobilenet.load({ version: 2, alpha: 0.75 });
-      })();
-      aiModelPromise.catch(() => { aiModelPromise = null; }); // allow retry after failure
-      return aiModelPromise;
-    }
-
-    // UPGRADE (accuracy): a second on-device model that finds each product's
-    // bounding box, so multiple / partial products are handled properly.
-    // Optional — if it fails to load, the multi-crop ensemble still runs.
-    let aiDetectorPromise = null;
-    function loadAIDetector() {
-      if (aiDetectorPromise) return aiDetectorPromise;
-      aiDetectorPromise = (async () => {
-        await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
-        await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
-        return await window.cocoSsd.load({ base: 'lite_mobilenet_v2' });
-      })();
-      aiDetectorPromise.catch(() => { aiDetectorPromise = null; });
-      return aiDetectorPromise;
-    }
-
-    // COCO detection classes that map straight to shop categories
-    const AI_COCO_MAP = {
-      'tv':'TV', 'refrigerator':'Fridge', 'microwave':'Microwave', 'oven':'Kitchen',
-      'toaster':'Kitchen', 'laptop':'Laptop', 'cell phone':'Mobile', 'remote':'Accessories',
-      'keyboard':'Computer', 'mouse':'Computer', 'clock':'Clocks', 'hair drier':'Hair Dryer'
-    };
-    // COCO classes that are definitely NOT shop products — their boxes are ignored
-    const AI_COCO_IGNORE = new Set(['person','bicycle','car','motorcycle','bus','truck','bird','cat','dog','horse','sheep','cow','chair','couch','bed','dining table','potted plant','umbrella','handbag','tie','suitcase']);
-
-    // ImageNet class → shop category/name. Matched as lowercase substrings
-    // against MobileNet's className (which can be e.g. "iron, smoothing iron").
-    const AI_CLASS_MAP = [
-      { m:['television','home theater','home theatre'],            cat:'TV',              name:'TV' },
-      { m:['monitor','screen, crt'],                               cat:'TV',              name:'Monitor' },
-      { m:['refrigerator','icebox'],                               cat:'Fridge',          name:'Refrigerator' },
-      { m:['washer','washing machine'],                            cat:'Washing Machine', name:'Washing Machine' },
-      { m:['microwave'],                                           cat:'Microwave',       name:'Microwave Oven' },
-      { m:['electric fan','fan, electric'],                        cat:'Fan',             name:'Electric Fan' },
-      { m:['space heater','radiator'],                             cat:'Heater',          name:'Heater' },
-      { m:['stove','dutch oven'],                                  cat:'Kitchen',         name:'Stove' },
-      { m:['iron, smoothing','smoothing iron'],                    cat:'Iron',            name:'Electric Iron' },
-      { m:['vacuum'],                                              cat:'Vacuum',          name:'Vacuum Cleaner' },
-      { m:['loudspeaker','speaker'],                               cat:'Speaker',         name:'Speaker' },
-      { m:['radio,'],                                              cat:'Audio',           name:'Radio' },
-      { m:['tape player','cassette player','cd player'],           cat:'Audio',           name:'Audio Player' },
-      { m:['cellular telephone','cellphone','mobile phone','ipod'],cat:'Mobile',          name:'Mobile Phone' },
-      { m:['laptop','notebook, notebook computer'],                cat:'Laptop',          name:'Laptop' },
-      { m:['desktop computer','desk computer'],                    cat:'Computer',        name:'Desktop Computer' },
-      { m:['printer'],                                             cat:'Printer',         name:'Printer' },
-      { m:['projector'],                                           cat:'Projector',       name:'Projector' },
-      { m:['hand blower','blow dryer','hair drier'],               cat:'Hair Dryer',      name:'Hair Dryer' },
-      { m:['toaster'],                                             cat:'Kitchen',         name:'Toaster' },
-      { m:['espresso maker','coffeepot','coffee maker'],           cat:'Kitchen',         name:'Coffee Maker' },
-      { m:['waffle iron'],                                         cat:'Kitchen',         name:'Waffle Iron' },
-      { m:['dishwasher'],                                          cat:'Kitchen',         name:'Dishwasher' },
-      { m:['sewing machine'],                                      cat:'Sewing Machine',  name:'Sewing Machine' },
-      { m:['remote control'],                                      cat:'Accessories',     name:'Remote Control' },
-      { m:['mouse, computer mouse','computer mouse'],              cat:'Computer',        name:'Computer Mouse' },
-      { m:['computer keyboard','typewriter keyboard'],             cat:'Computer',        name:'Keyboard' },
-      { m:['modem'],                                               cat:'Networking',      name:'Modem / Router' },
-      { m:['switch, electric switch'],                             cat:'Electrical',      name:'Electric Switch' },
-      { m:['solar dish','solar collector'],                        cat:'Solar',           name:'Solar Panel' },
-      { m:['digital watch','analog clock','wall clock'],           cat:'Clocks',          name:'Clock' },
-      { m:['digital clock'],                                       cat:'Clocks',          name:'Digital Clock' },
-    ];
-
-    // Map raw MobileNet predictions → deduped shop suggestions.
-    // Exposed on window for testability.
-    window.mapAIPredictions = function(preds, existingCategories) {
-      const out = []; const seen = new Set();
-      (preds || []).forEach(p => {
-        const cn = (p.className || '').toLowerCase();
-        for (const row of AI_CLASS_MAP) {
-          if (row.m.some(k => cn.includes(k))) {
-            if (!seen.has(row.cat)) {
-              seen.add(row.cat);
-              // reuse the shop's existing category spelling if one matches
-              let cat = row.cat;
-              const hit = (existingCategories || []).find(c => c && c.toLowerCase() === row.cat.toLowerCase());
-              if (hit) cat = hit;
-              out.push({ cat, name: row.name, prob: p.probability || 0 });
-            } else {
-              const ex = out.find(o => o.cat.toLowerCase() === row.cat.toLowerCase());
-              if (ex) ex.prob += (p.probability || 0); // fold duplicate classes into one chip
-            }
-            break;
-          }
-        }
-      });
-      return out.filter(o => o.prob >= 0.06).sort((a,b) => b.prob - a.prob).slice(0, 3);
-    };
-
-    function drawCrop(bmp, sx, sy, sw, sh, letterbox) {
-      const c = document.createElement('canvas'); c.width = 224; c.height = 224;
-      const cx = c.getContext('2d');
-      cx.imageSmoothingEnabled = true; cx.imageSmoothingQuality = 'high';
-      if (letterbox) {
-        cx.fillStyle = '#000'; cx.fillRect(0, 0, 224, 224);
-        const f = Math.min(224 / sw, 224 / sh);
-        const dw = sw * f, dh = sh * f;
-        cx.drawImage(bmp, sx, sy, sw, sh, (224 - dw) / 2, (224 - dh) / 2, dw, dh);
-      } else {
-        cx.drawImage(bmp, sx, sy, sw, sh, 0, 0, 224, 224);
-      }
-      return c;
-    }
-
-    // UPGRADE (accuracy): the old version classified ONE centre crop, so
-    // off-centre, partially visible, or multiple products were missed.
-    // Now: (1) COCO-SSD finds each object's box and every box is classified
-    // individually — two identical products = two boxes = "×2" (auto-fills
-    // Quantity); (2) a 7-crop ensemble (full letterboxed frame, centre,
-    // zoomed centre, left/right/top/bottom halves) covers half-visible
-    // products even when the detector misses. Scores aggregate by MAX
-    // across crops; counts come from the boxes.
-    async function analyzeProductPhoto(blob, existingCategories) {
-      const model = await loadAIModel();      // required
-      let detector = null;
-      try { detector = await loadAIDetector(); } catch (_) { /* ensemble-only */ }
-
-      const bmp = await createImageBitmap(blob);
-      const W = bmp.width, H = bmp.height, side = Math.min(W, H);
-
-      // --- stage 1: object boxes (optional) ---
-      let boxes = [];
-      if (detector) {
-        try {
-          // detect on a downscaled frame for speed
-          const scale = Math.min(1, 640 / Math.max(W, H));
-          const dc = document.createElement('canvas');
-          dc.width = Math.max(1, Math.round(W * scale)); dc.height = Math.max(1, Math.round(H * scale));
-          const dctx = dc.getContext('2d');
-          dctx.drawImage(bmp, 0, 0, dc.width, dc.height);
-          const dets = await detector.detect(dc, 8, 0.35);
-          dc.width = 0; dc.height = 0;
-          boxes = (dets || [])
-            .filter(d => !AI_COCO_IGNORE.has(d.class))
-            .map(d => ({ cls: d.class, score: d.score,
-                         x: d.bbox[0] / scale, y: d.bbox[1] / scale,
-                         w: d.bbox[2] / scale, h: d.bbox[3] / scale }))
-            .filter(d => d.w * d.h > W * H * 0.02)   // ignore specks
-            .sort((a, b) => (b.w * b.h) - (a.w * a.h))
-            .slice(0, 4);
-        } catch (_) { boxes = []; }
-      }
-
-      // --- stage 2: crops to classify ---
-      const crops = [];
-      boxes.forEach(bx => {
-        // pad the box 8% so edges aren't shaved off
-        const px = bx.w * 0.08, py = bx.h * 0.08;
-        const sx = Math.max(0, bx.x - px), sy = Math.max(0, bx.y - py);
-        const sw = Math.min(W - sx, bx.w + 2 * px), sh = Math.min(H - sy, bx.h + 2 * py);
-        crops.push({ canvas: drawCrop(bmp, sx, sy, sw, sh, true), box: bx });
-      });
-      // global ensemble crops (always) — catch what the detector missed
-      crops.push({ canvas: drawCrop(bmp, 0, 0, W, H, true) });                                   // full frame, letterboxed
-      crops.push({ canvas: drawCrop(bmp, (W - side) / 2, (H - side) / 2, side, side, false) });  // centre square
-      const z = side * 0.6;
-      crops.push({ canvas: drawCrop(bmp, (W - z) / 2, (H - z) / 2, z, z, false) });              // zoomed centre
-      crops.push({ canvas: drawCrop(bmp, 0, 0, W / 2, H, true) });                               // left half
-      crops.push({ canvas: drawCrop(bmp, W / 2, 0, W / 2, H, true) });                           // right half
-      crops.push({ canvas: drawCrop(bmp, 0, 0, W, H / 2, true) });                               // top half
-      crops.push({ canvas: drawCrop(bmp, 0, H / 2, W, H / 2, true) });                           // bottom half
-      bmp.close();
-
-      // --- stage 3: classify every crop, aggregate by MAX prob per category ---
-      const agg = {};   // cat -> {cat, name, prob, count}
-      const bump = (sug, isBox) => {
-        const key = sug.cat.toLowerCase();
-        if (!agg[key]) agg[key] = { cat: sug.cat, name: sug.name, prob: 0, count: 0 };
-        agg[key].prob = Math.max(agg[key].prob, sug.prob);
-        if (isBox) agg[key].count += 1;
-      };
-      for (const cr of crops) {
-        let preds = [];
-        try { preds = await model.classify(cr.canvas, 4); } catch (_) {}
-        cr.canvas.width = 0; cr.canvas.height = 0;
-        const mapped = window.mapAIPredictions(preds, existingCategories);
-        if (cr.box) {
-          // per-box verdict: MobileNet's best mapped guess, else COCO's own label
-          let best = mapped[0];
-          if (!best && AI_COCO_MAP[cr.box.cls]) {
-            const catRaw = AI_COCO_MAP[cr.box.cls];
-            const hit = (existingCategories || []).find(c => c && c.toLowerCase() === catRaw.toLowerCase());
-            best = { cat: hit || catRaw, name: catRaw === 'TV' ? 'TV' : catRaw, prob: cr.box.score * 0.9 };
-          }
-          if (best) bump(best, true);
-        } else {
-          mapped.forEach(sg => bump(sg, false));
-        }
-      }
-
-      return Object.values(agg)
-        .filter(o => o.prob >= 0.10)
-        .sort((a, b) => b.prob - a.prob)
-        .slice(0, 3)
-        .map(o => ({ ...o, count: Math.max(1, o.count) }));
-    }
-
-    function hideAISuggest() { aiSuggestBox.classList.add('hide'); aiSuggestChips.innerHTML = ''; aiRunToken++; }
-
-    async function maybeSuggestFromPhoto(blob) {
-      if (!blob || !(blob instanceof Blob)) return;
-      const token = ++aiRunToken;
-      aiSuggestBox.classList.remove('hide');
-      aiSuggestChips.innerHTML = '';
-      aiSuggestStatus.textContent = aiModelPromise ? '🤖 Analyzing photo…' : '🤖 Loading AI models (first time only, ~14 MB)…';
-      // warm the optional detector in parallel with the classifier
-      loadAIDetector().catch(() => {});
-      let suggestions;
-      const existingCats = [...new Set(products.map(p => p.category).filter(Boolean))];
-      try {
-        suggestions = await analyzeProductPhoto(blob, existingCats);
-      } catch (e) {
-        if (token !== aiRunToken) return;
-        aiSuggestStatus.textContent = '🤖 AI unavailable (offline?). Enter details manually.';
-        setTimeout(() => { if (token === aiRunToken) hideAISuggest(); }, 4000);
-        return;
-      }
-      if (token !== aiRunToken) return; // user re-picked photos meanwhile
-      if (!suggestions.length) {
-        aiSuggestStatus.textContent = "🤖 Couldn't recognize this product — enter details manually.";
-        setTimeout(() => { if (token === aiRunToken) hideAISuggest(); }, 4000);
-        return;
-      }
-      aiSuggestStatus.textContent = '🤖 Looks like — tap to fill category & name:';
-      suggestions.forEach(sg => {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'ai-chip';
-        const countTag = sg.count > 1 ? ` ×${sg.count}` : '';
-        chip.innerHTML = `${categoryEmoji(sg.cat)} ${escapeHTML(sg.cat)}${countTag} <span class="ai-conf">${Math.round(sg.prob * 100)}%</span>`;
-        chip.onclick = () => {
-          document.getElementById('prodCategory').value = sg.cat;
-          const nameEl = document.getElementById('prodName');
-          if (!nameEl.value.trim()) nameEl.value = sg.name;
-          // multiple identical items detected → pre-fill Quantity (never overwrite)
-          const qtyEl = document.getElementById('prodQty');
-          if (sg.count > 1 && !qtyEl.value.trim()) qtyEl.value = sg.count;
-          hideAISuggest();
-          nameEl.focus();
-        };
-        aiSuggestChips.appendChild(chip);
-      });
-      const dismiss = document.createElement('button');
-      dismiss.type = 'button';
-      dismiss.className = 'ai-chip ai-dismiss';
-      dismiss.textContent = '✕ None of these';
-      dismiss.onclick = hideAISuggest;
-      aiSuggestChips.appendChild(dismiss);
-    }
-
     function handleImageSelection(files) {
         if(!files || files.length === 0) return;
         
@@ -4621,12 +4336,6 @@ async function saveProductsToDB(productsArray) {
              });
              updatePhotoPreviewUI();
              imageCompressMsg.textContent = `${currentProductBlobs.length} photo(s) attached`;
-             // SMART ADD: identify the product from the newest photo and offer
-             // category/name suggestions (skipped if both fields already filled).
-             const nameFilled = document.getElementById('prodName').value.trim() !== '';
-             const catFilled = document.getElementById('prodCategory').value.trim() !== '';
-             const newest = blobs.filter(Boolean).pop();
-             if (newest && (!nameFilled || !catFilled)) maybeSuggestFromPhoto(newest);
         }).catch(err => {
             console.error(err);
             modalError.textContent = "Some photos failed to process.";
@@ -5161,7 +4870,7 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
   })();
   function lockUrl() { const cfg = getRepoCfg(); return apiUrl({ ...cfg, path: 'lock.json' }); }
 
-  // Try to acquire the lock. Returns the lock file's sha (to release) or null if busy.
+  // Try to acquire the lock. Returns the lock file's sha (to release) or null.
   async function acquireLock() {
     const cfg = getRepoCfg();
     let sha = null, holder = null;
