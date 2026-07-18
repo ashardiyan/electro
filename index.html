@@ -854,43 +854,39 @@
         font-size: 1em;
     }
 
-    /* --- PRINTING STYLES (PDF Generation) — FIXED: blank page issue --- */
+    /* --- PRINTING STYLES (PDF Generation) --- */
     #printableArea {
-        /* Hide from view but KEEP RENDERED — critical for PDF content to appear */
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
+        display: none;
         background: white;
         color: black;
-        z-index: -1;
-        opacity: 0;
-        pointer-events: none;
         font-family: 'Arial', sans-serif;
         padding: 40px;
     }
     @media print {
-        /* Hide everything except the printable area */
+        /* FIX: if a modal scroll-lock class is still on <body> (e.g. the user
+           opened Share from inside the edit/detail modal), it forces
+           position:fixed/overflow:hidden on body, which stops mobile print
+           engines from paginating the document at all. Reset it during print. */
+        html, body, body.modal-open, body.detail-modal-open {
+            position: static !important;
+            overflow: visible !important;
+            height: auto !important;
+            min-height: auto !important;
+            background: white !important;
+        }
         body > *:not(#printableArea) {
             display: none !important;
         }
         #printableArea {
-            /* Bring it on-screen for printing */
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
             display: block !important;
-            z-index: 9999 !important;
-            opacity: 1 !important;
-            pointer-events: auto !important;
-            width: 100% !important;
-            max-width: 100% !important;
+            /* FIX: position:absolute was causing mobile PDF generators to
+               collapse/clip the content to a single page. Static keeps it in
+               normal flow so it paginates correctly. */
+            position: static !important;
+            width: 100%;
+            height: auto;
             background: white !important;
             color: black !important;
-            padding: 40px !important;
-            box-sizing: border-box !important;
         }
         .print-product-page {
             page-break-after: always;
@@ -4469,7 +4465,27 @@ async function saveProductsToDB(productsArray) {
     }
     closeShareBtn.onclick = () => { shareModalBackdrop.classList.add('hide'); productsToShareQueue = []; };
     
-    generatePdfBtn.onclick = function() {
+    // FIX: On mobile, calling window.print() while the images inside
+    // #printableArea (the logo + product photos) are still fetching causes
+    // the print/PDF engine to snapshot the page before it has any real
+    // height, which is what produces a single blank white page. This waits
+    // for every <img> to finish loading (or error out) first, with a hard
+    // timeout so a slow/broken image can never block printing forever.
+    function waitForPrintImages(container, timeoutMs = 4000) {
+        const imgs = Array.from(container.querySelectorAll('img'));
+        if (imgs.length === 0) return Promise.resolve();
+        const loaders = imgs.map(img => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
+        });
+        const timeout = new Promise(resolve => setTimeout(resolve, timeoutMs));
+        return Promise.race([Promise.all(loaders), timeout]);
+    }
+
+    generatePdfBtn.onclick = async function() {
         if(productsToShareQueue.length === 0) return;
         const printableArea = document.getElementById('printableArea');
         let fullHtml = '';
@@ -4515,7 +4531,11 @@ async function saveProductsToDB(productsArray) {
         });
         printableArea.innerHTML = fullHtml;
         shareModalBackdrop.classList.add('hide');
-        setTimeout(() => {
+        setTimeout(async () => {
+            // FIX: wait for the logo + product photos to actually finish
+            // loading before opening the print dialog — printing too early
+            // is what was producing the blank/white PDF page.
+            await waitForPrintImages(printableArea);
             window.print();
             productsToShareQueue = [];
             // FIX: clear the hidden print area afterwards — it used to keep the
@@ -4870,7 +4890,7 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
   })();
   function lockUrl() { const cfg = getRepoCfg(); return apiUrl({ ...cfg, path: 'lock.json' }); }
 
-  // Try to acquire the lock. Returns the lock file's sha (to release) or null.
+  // Try to acquire the lock. Returns the lock file's sha (to release) or null if busy.
   async function acquireLock() {
     const cfg = getRepoCfg();
     let sha = null, holder = null;
