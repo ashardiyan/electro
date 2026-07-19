@@ -58,11 +58,6 @@
     .top-controls { display:flex; align-items:center; gap:10px; }
     button.icon-btn { background:none; border:none; color:var(--accent2); font-size:1.23rem; padding:8px 10px; border-radius:9px; cursor:pointer; outline:none; }
     button#settingsBtn { font-size:1.33rem; color:var(--text); background:#1b2430; padding:8px 11px; border-radius:9px; box-shadow:0 1px 6px #0008; }
-    button#refreshAllBtn { font-size:1.2rem; color:var(--text); background:#1b2430; padding:8px 11px; border-radius:9px; box-shadow:0 1px 6px #0008; border:none; cursor:pointer; margin-right:8px; }
-    button#refreshAllBtn:active { transform:scale(.94); }
-    button#refreshAllBtn.spinning { pointer-events:none; }
-    button#refreshAllBtn.spinning span { display:inline-block; animation:spin360 .8s linear infinite; }
-    @keyframes spin360 { from { transform:rotate(0); } to { transform:rotate(360deg); } }
     #installPromptBtn { display:none; align-items:center; gap:6px; font-size:.95em; padding:8px 14px; border-radius:999px; background:linear-gradient(91deg,var(--accent2),var(--accent)); color:#fff; font-weight:700; border:none; cursor:pointer; box-shadow:0 1px 11px #2e5fad33; white-space:nowrap; line-height:1; transition:transform .12s, box-shadow .15s; }
     #installPromptBtn:active { transform:scale(.96); }
     #installPromptBtn:disabled { opacity:.6; cursor:wait; }
@@ -521,11 +516,7 @@
     .modal h3 { margin:0 0 18px 0; color:var(--accent2); text-align:center; font-weight:800; font-size:1.26em; letter-spacing:-.2px; }
     .modal-close { position:absolute; top:13px; right:14px; background:none; border:none; color:var(--accent2); font-size:1.24em; cursor:pointer; font-weight:bold; outline:none; }
     .modal label { font-weight:600; font-size:.96em; color:var(--text-muted); margin-bottom:4px; }
-    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal input[type=tel], .modal input[type=email], .modal textarea { border-radius:7px; border:1.5px solid #253048; background:var(--bg3); color:var(--text); font-size:1em; padding:8px 11px; margin-bottom:13px; margin-top:2px; outline:none; width:100%; box-sizing:border-box; transition:border .13s; }
-    /* Khata rows lay out inputs side-by-side — kill the stacked-form margins there */
-    #khataModal input, #khataDetailModal input { margin-bottom:0; margin-top:0; }
-    #khataModal .rounded-sky-btn, #khataDetailModal .rounded-sky-btn { white-space:nowrap; }
-    #statsModal input[type=number] { margin-bottom:0; margin-top:0; }
+    .modal input[type=text], .modal input[type=number], .modal input[type=file], .modal input[type=password], .modal textarea { border-radius:7px; border:1.5px solid #253048; background:var(--bg3); color:var(--text); font-size:1em; padding:8px 11px; margin-bottom:13px; margin-top:2px; outline:none; width:100%; box-sizing:border-box; transition:border .13s; }
     .modal textarea { min-height:54px; resize:vertical; }
     
     /* FIX: Added flex-shrink:0 */
@@ -661,46 +652,8 @@
         /* Hide scrollbar */
         scrollbar-width: none;
         -ms-overflow-style: none;
-        touch-action: pan-x; /* allow horizontal swipe, but let images claim pinch */
     }
-    #imageViewerSlider img {
-        /* FIX (zoom reliability): pan-x let the BROWSER own 1-finger swipes, so
-           when a pinch's two fingers landed a few ms apart the browser had
-           already claimed the gesture as a scroll and the pinch was ignored —
-           zoom "sometimes worked, sometimes didn't". JS now owns ALL touch
-           gestures (touch-action:none) and implements the swipe itself in
-           makeImageZoomable, so pinch can never lose the race. */
-        touch-action: none;
-        -webkit-user-select: none; user-select: none;
-        -webkit-user-drag: none;
-        cursor: zoom-in;
-    }
-    #imageViewerSlider.zoomed { touch-action: none; overflow: hidden; }
-    #imageViewerSlider.zoomed img { touch-action: none; cursor: grab; }
     #imageViewerSlider::-webkit-scrollbar { display: none; }
-
-    /* FIX (swipe UX): arrows + counter so multiple images are discoverable
-       and navigable on desktop too */
-    .iv-nav-btn {
-        position: absolute; top: 50%; transform: translateY(-50%);
-        width: 44px; height: 44px; border-radius: 50%;
-        border: none; background: rgba(255,255,255,0.12); color: #fff;
-        font-size: 1.5rem; line-height: 1; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        z-index: 8001; transition: background .2s, opacity .2s;
-        -webkit-tap-highlight-color: transparent;
-    }
-    .iv-nav-btn:hover { background: rgba(255,255,255,0.28); }
-    .iv-nav-btn.disabled { opacity: .25; pointer-events: none; }
-    #ivPrevBtn { left: 12px; }
-    #ivNextBtn { right: 12px; }
-    #ivCounter {
-        position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-        background: rgba(0,0,0,0.55); color: #fff; font-weight: 700;
-        font-size: .95em; padding: 5px 14px; border-radius: 999px;
-        z-index: 8001; letter-spacing: 1px; pointer-events: none;
-    }
-    #imageViewerSlider.zoomed ~ .iv-nav-btn { opacity: 0; pointer-events: none; }
 
     /* NEW: Individual Slides */
     .full-screen-slide {
@@ -862,69 +815,101 @@
         font-family: 'Arial', sans-serif;
         padding: 40px;
     }
+    /* FIX: html2canvas clones the page into a render frame sized to the
+       viewport — an element positioned far off-screen (e.g. left:-99999px)
+       falls outside that frame and captures as blank. Instead, this class
+       shows #printableArea right at the viewport origin (covering
+       everything else) for the brief moment html2canvas needs to capture
+       it, which is the reliable way to do this. */
+    body.pdf-render-mode > *:not(#printableArea) {
+        display: none !important;
+    }
+    body.pdf-render-mode #printableArea {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        z-index: 99999;
+        background: white !important;
+        color: black !important;
+    }
+    /* FIX: these were previously nested only inside @media print, so they
+       never applied when capturing via html2canvas (screen media) — the
+       captured content would render, but completely unstyled. These classes
+       only ever exist inside #printableArea, so it's safe to make them
+       unconditional. */
+    .print-product-page {
+        page-break-after: always;
+        margin-bottom: 50px;
+    }
+    .print-product-page:last-child {
+        page-break-after: auto;
+    }
+    .print-header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .print-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+    .print-title { font-size: 24px; font-weight: bold; margin: 10px 0; color: #000; }
+    .print-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .print-product-img {
+        max-width: 250px;
+        max-height: 250px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+    }
+    .print-details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 18px;
+        color: #000;
+    }
+    .print-details-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        color: #000;
+    }
+    .print-label { font-weight: bold; width: 40%; }
+    .print-notes-box {
+        margin-top: 30px;
+        padding: 15px;
+        border: 1px dashed #aaa;
+        background: #f9f9f9;
+        color: #000;
+    }
     @media print {
+        html, body, body.modal-open, body.detail-modal-open {
+            position: static !important;
+            overflow: visible !important;
+            height: auto !important;
+            min-height: auto !important;
+            background: white !important;
+        }
         body > *:not(#printableArea) {
             display: none !important;
         }
         #printableArea {
             display: block !important;
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: static !important;
             width: 100%;
             height: auto;
-            z-index: 9999;
             background: white !important;
             color: black !important;
-        }
-        .print-product-page {
-            page-break-after: always;
-            margin-bottom: 50px;
-        }
-        .print-product-page:last-child {
-            page-break-after: auto;
-        }
-        .print-header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .print-logo {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-        }
-        .print-title { font-size: 24px; font-weight: bold; margin: 10px 0; }
-        .print-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .print-product-img {
-            max-width: 250px;
-            max-height: 250px;
-            object-fit: contain;
-            border: 1px solid #ddd;
-        }
-        .print-details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        .print-details-table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-        .print-label { font-weight: bold; width: 40%; }
-        .print-notes-box {
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px dashed #aaa;
-            background: #f9f9f9;
         }
     }
 
@@ -1007,18 +992,6 @@
     .khata-row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid #1f2733; cursor:pointer; border-radius:8px; }
     .khata-row:hover { background:rgba(255,255,255,0.03); }
     .low-stock-row { display:flex; justify-content:space-between; padding:7px 4px; border-bottom:1px solid #1f2733; font-size:.95em; }
-    .log-row { padding:9px 4px; border-bottom:1px solid #1f2733; font-size:.9em; }
-    .log-row .log-head { display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
-    .log-row .log-prod { font-weight:700; }
-    .log-row .log-when { color:var(--text-muted); font-size:.82em; white-space:nowrap; }
-    .log-row .log-detail { color:var(--text-muted); margin-top:2px; }
-    .log-row .log-old { color:#e08a8a; text-decoration:line-through; }
-    .log-row .log-new { color:#8ae0a8; }
-    .log-badge { display:inline-block; font-size:.74em; padding:1px 7px; border-radius:999px; margin-right:6px; vertical-align:middle; }
-    .log-badge.edit { background:#23314a; color:#8fb6ff; }
-    .log-badge.sale { background:#1c3a2a; color:#9af0c0; }
-    .log-badge.create { background:#2b2f3a; color:#cdd6e6; }
-    .log-badge.delete { background:#3a2326; color:#ffb1b8; }
     
     .keep-logged-toggle {
       display: flex;
@@ -1151,7 +1124,6 @@
         </div>
         <div class="top-controls">
           <button id="installPromptBtn" title="Install as App">📲 Install</button>
-          <button id="refreshAllBtn" title="Refresh / sync now"><span>🔄</span></button>
           <span id="settingsBtnWrap"><button id="settingsBtn" title="Settings (⋮)">⋮</button><span id="cloudDot" title="Cloud sync active"></span></span>
         </div>
       </header>
@@ -1177,7 +1149,6 @@
             <button type="button" id="historyBtn" class="rounded-sky-btn">📜 History</button>
             <button type="button" id="khataBtn" class="rounded-sky-btn">💳 Khata</button>
             <button type="button" id="statsBtn" class="rounded-sky-btn">📊 Stats</button>
-            <button type="button" id="logsBtn" class="rounded-sky-btn">📋 Logs</button>
             <button type="button" id="addProductBtn" class="rounded-sky-btn">➕ Add</button>
             <button type="button" id="categoryFilterBtn" class="rounded-sky-btn">🗂️ Category</button>
             <button type="button" id="exportBtn" class="rounded-sky-btn">📤 Export</button>
@@ -1300,6 +1271,18 @@
     </div>
   </div>
 
+  <div class="modal-backdrop hide" id="pdfPreviewModalBackdrop">
+    <div class="modal" id="pdfPreviewModal" style="width:96vw; max-width:720px; height:88vh; padding:16px;">
+      <button class="modal-close" type="button" id="closePdfPreviewBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
+      <h3>📄 PDF Preview</h3>
+      <iframe id="pdfPreviewFrame" title="PDF preview" style="flex:1; width:100%; border:none; border-radius:8px; background:#fff; min-height:0;"></iframe>
+      <div class="modal-btnbar">
+        <button type="button" id="pdfPreviewShareBtn" class="rounded-sky-btn" style="display:none;">📤 Share</button>
+        <button type="button" id="pdfPreviewDownloadBtn" class="rounded-sky-btn">⬇️ Download</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop hide" id="deleteModalBackdrop">
     <form class="modal" id="deleteModal">
       <button class="modal-close" type="button" id="closeDeleteBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
@@ -1408,25 +1391,6 @@
     </div>
   </div>
 
-  <div class="modal-backdrop hide" id="logsModalBackdrop">
-    <div class="modal" id="logsModal">
-      <button class="modal-close" type="button" id="closeLogsBtn" title="Close">✖</button>
-      <h3>📋 Activity Logs</h3>
-      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <input type="text" id="logsSearch" placeholder="Search product, person, field…" style="flex:1 1 160px;" />
-        <select id="logsFilter" style="flex:0 0 auto;background:var(--bg3);color:var(--text);border:1.5px solid #253048;border-radius:7px;padding:8px;">
-          <option value="">All actions</option>
-          <option value="edit">Edits</option>
-          <option value="sale">Sales</option>
-          <option value="create">New items</option>
-          <option value="delete">Deletes</option>
-        </select>
-      </div>
-      <div style="color:var(--text-muted);font-size:.83em;margin-bottom:8px;">Newest first · synced from all devices · stored in <b>logs.json</b></div>
-      <div id="logsList" class="history-list" style="max-height:60vh;"></div>
-    </div>
-  </div>
-
   <div class="modal-backdrop hide" id="detailModalBackdrop">
     <div class="modal" id="detailModal" tabindex="-1">
       <button class="modal-close" type="button" id="closeDetailModalBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
@@ -1438,7 +1402,7 @@
   <div class="modal-backdrop hide" id="settingsBackdrop">
     <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
       <button class="modal-close" type="button" id="closeSettingsBtn" title="Close" aria-label="Close dialog" role="button">✖</button>
-      <h3 id="settingsTitle">Settings <span style="font-size:.6em;color:var(--text-muted);font-weight:400;">v3.7</span></h3>
+      <h3 id="settingsTitle">Settings <span style="font-size:.6em;color:var(--text-muted);font-weight:400;">v2.4</span></h3>
 
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1530,7 +1494,6 @@
 
         <div id="cloudConnectedBlock" style="display:none;flex-direction:column;gap:8px;">
           <div style="font-size:.92em;color:var(--text-muted);">Connected to <b id="cloudUserEmail" style="color:var(--text);"></b></div>
-          <div style="font-size:.86em;color:var(--text-muted);" id="cloudLastSync">Last sync: never</div>
           <button id="cloudPushBtn" class="rounded-sky-btn" style="background:#2b2f3a;border:1px solid #364052;">🔄 Sync now</button>
           <button id="cloudSignOutBtn" class="rounded-sky-btn cancel">Disconnect this device</button>
         </div>
@@ -1541,6 +1504,10 @@
 
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
 
+  <!-- FIX: PDF generation now happens fully in JS instead of relying on
+       window.print(), which is unreliable inside an installed/standalone
+       PWA on Android (no OS print pipeline available to the app's window). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
   /****************************************************************
@@ -1722,30 +1689,14 @@
     }
     function stopSessionTimeoutMonitor() { if (timeoutCountdownInterval) clearInterval(timeoutCountdownInterval); showTimeoutNotice(""); }
     
-    // FIX (lock hygiene): logging out / auto-locking used to close only the
-    // scanner and image viewer. Any other open modal (Settings, Khata, Stats…)
-    // stayed un-hidden behind the lock screen and popped straight back up after
-    // unlock, and the body scroll-lock classes leaked onto the login screen.
-    function closeAllModalsForLock() {
-      if (typeof stopScanner === 'function') stopScanner();
-      const so = document.getElementById('scannerOverlay'); if (so) so.classList.remove('show');
-      if (typeof closeImageViewer === 'function') closeImageViewer();
-      ['productModalBackdrop','deleteModalBackdrop','settingsBackdrop','detailModalBackdrop',
-       'shareModalBackdrop','categoryModalBackdrop','quickSellModalBackdrop','khataDetailModalBackdrop',
-       'khataModalBackdrop','statsModalBackdrop','logsModalBackdrop','historyModalBackdrop'
-      ].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hide'); });
-      document.body.classList.remove('detail-modal-open');
-      if (document.body.classList.contains('modal-open')) {
-        document.body.classList.remove('modal-open');
-        document.body.style.top = '';
-        delete document.body.dataset.scrollY;
-      }
-    }
-
     function manualLogoutDueToTimeout() {
       stopSessionTimeoutMonitor();
       clearKeepSession();
-      closeAllModalsForLock();
+      // FIX: Ensure scanner is closed before showing login
+      if(typeof stopScanner === 'function') stopScanner();
+      if(document.getElementById('imageViewerOverlay') && document.getElementById('imageViewerOverlay').classList.contains('show')) {
+         document.getElementById('imageViewerOverlay').classList.remove('show');
+      }
       
       document.getElementById('dealerApp').style.display = 'none';
       showLoginModal("Session expired for security. Please login again.");
@@ -1776,7 +1727,7 @@
       })();
 
       const swScript = `
-        const CACHE_NAME = 'local-dealer-cache-v33';
+        const CACHE_NAME = 'local-dealer-cache-v20';
         const OFFLINE_URL = self.registration.scope.endsWith('/') ? self.registration.scope + 'index.html' : self.registration.scope + '/index.html';
         const FILES_TO_CACHE = [ OFFLINE_URL, './index.html' ];
         
@@ -1904,7 +1855,7 @@
     (function handleAndroidBackButton() {
       let isHandlerAttached = false;
       let openedModals = [];
-      const modalPriority = ['scannerOverlay', 'imageViewerOverlay', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop', 'quickSellModalBackdrop', 'khataDetailModalBackdrop', 'khataModalBackdrop', 'statsModalBackdrop', 'logsModalBackdrop', 'historyModalBackdrop'];
+      const modalPriority = ['scannerOverlay', 'imageViewerOverlay', 'pdfPreviewModalBackdrop', 'productModalBackdrop', 'deleteModalBackdrop', 'settingsBackdrop', 'detailModalBackdrop', 'shareModalBackdrop', 'categoryModalBackdrop', 'quickSellModalBackdrop', 'khataDetailModalBackdrop', 'khataModalBackdrop', 'statsModalBackdrop', 'historyModalBackdrop'];
 
       function pushMainStateToHistory() { try { history.replaceState({dealerAppMain: true}, document.title, window.location.href); } catch (e) {} }
       function pushModalState(modalId) { try { history.pushState({modal: modalId}, document.title, window.location.href); openedModals.push(modalId); } catch (e) {} }
@@ -2024,40 +1975,7 @@
         const rawBits = await window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 3000, hash: "SHA-256" }, baseKey, 256);
         const hashArr = new Uint8Array(rawBits);
         return Array.from(hashArr).map(b => b.toString(16).padStart(2,'0')).join('');
-      } catch (e) {
-        // FIX (security): the old fallback returned `pin + salt` — the PIN was
-        // stored essentially in PLAINTEXT in localStorage on any browser without
-        // SubtleCrypto (e.g. file:// or non-HTTPS). Use an iterated pure-JS hash
-        // instead. Not PBKDF2-grade, but no longer readable at a glance.
-        return jsFallbackHash(pin, salt);
-      }
-    }
-    function jsFallbackHash(pin, salt) {
-      let h1 = 0x811c9dc5 | 0, h2 = 0x01000193 | 0;
-      const s = salt + ':' + pin;
-      for (let round = 0; round < 1000; round++) {
-        for (let i = 0; i < s.length; i++) {
-          h1 = ((h1 ^ s.charCodeAt(i)) * 16777619) | 0;
-          h2 = (((h2 << 5) + h2) ^ s.charCodeAt(i) ^ h1) | 0;
-        }
-        h1 = (h1 ^ (h2 >>> 13)) | 0;
-        h2 = (h2 ^ (h1 >>> 7)) | 0;
-      }
-      return 'jsf1:' + (h1 >>> 0).toString(16).padStart(8,'0') + (h2 >>> 0).toString(16).padStart(8,'0');
-    }
-    // Verify a PIN against the stored hash. Accepts (and silently upgrades)
-    // hashes created by the old plaintext-ish fallback so nobody gets locked out.
-    async function verifyPIN(pin) {
-      const stored = window.localStorage.getItem('dealer-hash');
-      if (!stored) return false;
-      const fresh = await hashPIN(pin);
-      if (stored === fresh) return true;
-      const salt = window.localStorage.getItem('dealer-app-salt') || '';
-      if (stored === pin + salt || stored === jsFallbackHash(pin, salt)) {
-        try { window.localStorage.setItem('dealer-hash', fresh); } catch(e){}
-        return true;
-      }
-      return false;
+      } catch (e) { return pin + salt; }
     }
     function getHasPIN() { return !!window.localStorage.getItem('dealer-hash'); }
     
@@ -2103,23 +2021,18 @@
     // (which waited for every image and font before showing anything).
     async function appStartup() {
       updatePINUI(getHasPIN());
-      // Load ALL local data FIRST, so any sync that starts below merges against the
-      // real on-disk state — never against an empty array (which caused races where
-      // freshly-synced data got overwritten by a late local load, and vice-versa).
-      try { await hydratePhotoCache(); } catch(e) {}
-      try { await loadProducts(); } catch(e) {}
-      try { await ensureHistoryMigrated(); } catch(e) {}
-      try { khataCustomers = await loadKhataFromDB(); } catch(e) { khataCustomers = []; }
-      try { auditLogs = await loadLogsFromDB(); } catch(e) { auditLogs = []; }
-      refreshProductList();
-
-      // Only NOW is it safe to show the cloud gate / start syncing.
+      // If a shared cloud database is configured and this device hasn't signed in yet,
+      // show the cloud login gate first (one time per device). Otherwise open instantly.
       if (typeof cloudGateNeeded === 'function' && cloudGateNeeded()) {
         showCloudGate();
       } else {
         routeStartupScreen();
         if (typeof cloudInitIfConfigured === 'function') { setTimeout(cloudInitIfConfigured, 250); }
       }
+      try { await loadProducts(); } catch(e) {}
+      refreshProductList();
+      try { await ensureHistoryMigrated(); } catch(e) {}
+      try { khataCustomers = await loadKhataFromDB(); } catch(e) { khataCustomers = []; }
       setTimeout(function() { if ("serviceWorker" in navigator && window.matchMedia('(display-mode: standalone)').matches) { try { history.replaceState({start:true}, document.title, window.location.href); } catch (e) {} } }, 180);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', appStartup);
@@ -2183,8 +2096,8 @@
           justSetPIN = true; updatePINUI(true); loginError.style.color = 'var(--success)'; loginError.textContent = "PIN set. Now use it to unlock."; loginBtn.disabled = false; loginPIN.value = '';
           setTimeout(()=>{ loginError.textContent = ''; loginError.style.color=''; }, 1500); keepLoggedInToggle.checked = false; return;
         }
-        const userOk = await verifyPIN(pinVal);
-        if (userOk) {
+        const userHash = window.localStorage.getItem('dealer-hash');
+        if (userHash === hash) {
           if (keepLoggedInToggle.checked) { setKeepSessionActive(Date.now() + KEEP_LOGGED_TIMEOUT_MS); startSessionTimeoutMonitor(); } else { clearKeepSession(); stopSessionTimeoutMonitor(); }
           showDealerApp(); loginBtn.disabled = false; loginError.textContent = ''; loginError.style.color = ''; justSetPIN = false;
         } else { loginBtn.disabled = false; loginError.style.color='var(--danger)'; loginError.textContent = 'Incorrect PIN / Password.'; }
@@ -2194,11 +2107,15 @@
     keepLoggedInToggle.onchange = function() { showTimeoutNotice(""); if (!this.checked) clearKeepSession(); };
     document.getElementById('login-modal').addEventListener('transitionend', function() { loginPIN.value = ''; });
     
-    // FIX: close every open modal/viewer on logout, not just scanner + viewer
+    // FIX: Ensure scanner/viewer are closed on logout
     function doLogout(showMsg) { 
         stopSessionTimeoutMonitor(); 
         clearKeepSession(); 
-        closeAllModalsForLock();
+        
+        if(typeof stopScanner === 'function') stopScanner();
+        if(document.getElementById('imageViewerOverlay') && document.getElementById('imageViewerOverlay').classList.contains('show')) {
+           document.getElementById('imageViewerOverlay').classList.remove('show');
+        }
 
         document.getElementById('dealerApp').style.display = 'none'; 
         showLoginModal(showMsg || 'You have been logged out.'); 
@@ -2249,31 +2166,6 @@
 
     settingsBtn.onclick = () => { settingsBackdrop.classList.remove('hide'); document.getElementById('deviceNameInput').value = getDeviceName(); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmPin').value = ''; resetPinError.textContent = ''; resetPinError.style.color = ''; renderSecuritySettings(); if (typeof renderCloudSettings === 'function') renderCloudSettings(); };
     closeSettingsBtn.onclick = () => settingsBackdrop.classList.add('hide');
-
-    // Header REFRESH button: reload everything from local storage, force a cloud
-    // sync, pull latest logs, and re-render whatever is on screen.
-    const refreshAllBtn = document.getElementById('refreshAllBtn');
-    if (refreshAllBtn) refreshAllBtn.onclick = async function() {
-      if (refreshAllBtn.classList.contains('spinning')) return;
-      refreshAllBtn.classList.add('spinning');
-      try {
-        // 1) force a cloud sync if connected (this also pulls others' edits)
-        if (typeof cloudForceSync === 'function') {
-          try { await cloudForceSync(); } catch(e){}
-        }
-        // 2) reload local data from the database (in case sync changed it)
-        try { await loadProducts(); } catch(e){}
-        try { khataCustomers = await loadKhataFromDB(); } catch(e){}
-        try { auditLogs = await loadLogsFromDB(); } catch(e){}
-        // 3) re-render whatever view is open
-        refreshProductList();
-        if (typeof renderKhataList === 'function' && !document.getElementById('khataModalBackdrop').classList.contains('hide')) renderKhataList();
-        if (typeof renderLogsList === 'function' && !document.getElementById('logsModalBackdrop').classList.contains('hide')) renderLogsList();
-        if (typeof renderStats === 'function' && !document.getElementById('statsModalBackdrop').classList.contains('hide')) renderStats();
-        if (typeof refreshOpenDetailModal === 'function') refreshOpenDetailModal();
-      } catch(e) { console.error('Refresh failed', e); }
-      setTimeout(() => refreshAllBtn.classList.remove('spinning'), 500);
-    };
     document.getElementById('deviceNameInput').onchange = function() { setDeviceName(this.value); };
     logoutBtn.onclick = () => { settingsBackdrop.classList.add('hide'); doLogout(); };
     resetPinCancel.onclick = () => { resetPinError.textContent = ''; resetPinError.style.color = ''; settingsBackdrop.classList.add('hide'); };
@@ -2291,8 +2183,9 @@
       resetPinSubmit.disabled = true;
       try {
         if (hadPIN) {
-          const okOld = await verifyPIN(oldPin);
-          if (!okOld) { resetPinError.textContent = "Current PIN is incorrect."; resetPinError.style.color='var(--danger)'; resetPinSubmit.disabled = false; return; }
+          const oldHash = await hashPIN(oldPin);
+          const stored = window.localStorage.getItem('dealer-hash');
+          if (stored !== oldHash) { resetPinError.textContent = "Current PIN is incorrect."; resetPinError.style.color='var(--danger)'; resetPinSubmit.disabled = false; return; }
         }
         const newHash = await hashPIN(newPin);
         window.localStorage.setItem('dealer-hash', newHash);
@@ -2310,8 +2203,8 @@
       resetPinError.textContent = ''; resetPinError.style.color = '';
       const oldPin = (document.getElementById('oldPin').value || '').trim();
       if (!oldPin) { resetPinError.textContent = "Enter your current PIN above to remove security."; resetPinError.style.color='var(--danger)'; return; }
-      const okOld = await verifyPIN(oldPin);
-      if (!okOld) { resetPinError.textContent = "Current PIN is incorrect."; resetPinError.style.color='var(--danger)'; return; }
+      const oldHash = await hashPIN(oldPin);
+      if (window.localStorage.getItem('dealer-hash') !== oldHash) { resetPinError.textContent = "Current PIN is incorrect."; resetPinError.style.color='var(--danger)'; return; }
       if (!confirm("Remove the PIN and fingerprint lock? The app will open directly without asking for security.")) return;
       try {
         localStorage.removeItem('dealer-hash');
@@ -2345,37 +2238,27 @@
     const STORE_NAME = 'products';
     const STORE_HISTORY = 'sales_history'; // NEW STORE
     const STORE_KHATA = 'khata';
-    const STORE_PHOTOCACHE = 'photo_cache';
-    const STORE_LOGS = 'audit_logs';
-    const DB_VERSION = 6; // v6: adds audit logs store
+    const DB_VERSION = 4; // v4: adds khata store
 
-    // Single cached connection. Opening a fresh one on every call (dozens during a
-    // sync) leaks connections and lets a future version-upgrade hang forever if an
-    // old connection is still open — so we reuse one and handle blocked/close.
-    let __dbPromise = null;
     function openDB() {
-        if (__dbPromise) return __dbPromise;
-        __dbPromise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
             request.onupgradeneeded = function(e) {
                 const db = e.target.result;
-                if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-                if (!db.objectStoreNames.contains(STORE_HISTORY)) db.createObjectStore(STORE_HISTORY, { keyPath: 'id', autoIncrement: true });
-                if (!db.objectStoreNames.contains(STORE_KHATA)) db.createObjectStore(STORE_KHATA, { keyPath: 'id' });
-                if (!db.objectStoreNames.contains(STORE_PHOTOCACHE)) db.createObjectStore(STORE_PHOTOCACHE, { keyPath: 'ref' });
-                if (!db.objectStoreNames.contains(STORE_LOGS)) db.createObjectStore(STORE_LOGS, { keyPath: 'id' });
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains(STORE_HISTORY)) {
+                    // Create History Store
+                    db.createObjectStore(STORE_HISTORY, { keyPath: 'id', autoIncrement: true });
+                }
+                if (!db.objectStoreNames.contains(STORE_KHATA)) {
+                    db.createObjectStore(STORE_KHATA, { keyPath: 'id' });
+                }
             };
-            request.onsuccess = e => {
-                const db = e.target.result;
-                // If another tab triggers a version change, close so we don't block it
-                db.onversionchange = () => { try { db.close(); } catch(_){} __dbPromise = null; };
-                db.onclose = () => { __dbPromise = null; };
-                resolve(db);
-            };
-            request.onerror = e => { __dbPromise = null; reject(e.target.error); };
-            request.onblocked = () => { console.warn('IndexedDB upgrade blocked by another open connection'); };
+            request.onsuccess = e => resolve(e.target.result);
+            request.onerror = e => reject(e.target.error);
         });
-        return __dbPromise;
     }
 
 
@@ -2452,13 +2335,10 @@ async function saveProductsToDB(productsArray) {
         const db = await openDB();
         const tx = db.transaction(STORE_HISTORY, 'readwrite');
         const store = tx.objectStore(STORE_HISTORY);
-        // put() (upsert) — our entries carry an explicit string id, so this is
-        // idempotent and won't throw a ConstraintError if an id ever repeats.
-        store.put(entry);
+        store.add(entry);
         return new Promise((resolve, reject) => {
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => reject(tx.error);
-            tx.onabort = () => reject(tx.error || new Error('Transaction aborted (storage full?)'));
+            tx.oncomplete = resolve;
+            tx.onerror = reject;
         });
     }
     
@@ -2539,41 +2419,6 @@ async function saveProductsToDB(productsArray) {
         if (typeof cloudPushDebounced === 'function') cloudPushDebounced();
     }
 
-    /**** AUDIT LOGS ****/
-    let auditLogs = [];
-    const FIELD_LABELS = { name:'Name', barcode:'Barcode', mrp:'Price (MRP)', cost:'Cost', category:'Category', notes:'Notes', photos:'Photos', qty:'Stock' };
-    async function loadLogsFromDB() {
-        const db = await openDB();
-        if (!db.objectStoreNames.contains(STORE_LOGS)) return [];
-        const tx = db.transaction(STORE_LOGS, 'readonly');
-        return new Promise((res, rej) => { const r = tx.objectStore(STORE_LOGS).getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); });
-    }
-    async function replaceLogsInDB(arr) {
-        const db = await openDB();
-        const tx = db.transaction(STORE_LOGS, 'readwrite');
-        const store = tx.objectStore(STORE_LOGS);
-        await new Promise((res, rej) => { const r = store.clear(); r.onsuccess = res; r.onerror = rej; });
-        arr.forEach(l => store.put(l));
-        return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
-    }
-    async function addLogEntry(entry) {
-        auditLogs.push(entry);
-        // keep memory bounded; full history still lives in the cloud logs.json
-        if (auditLogs.length > 3000) auditLogs = auditLogs.slice(-3000);
-        try { const db = await openDB(); const tx = db.transaction(STORE_LOGS, 'readwrite'); tx.objectStore(STORE_LOGS).put(entry); } catch(e){}
-    }
-    // Queue of new local log entries waiting to be merged into the cloud logs.json
-    function queueLog(entry) {
-        addLogEntry(entry);
-        try {
-            const k = 'dealer-gh-logq';
-            const q = JSON.parse(localStorage.getItem(k) || '[]');
-            q.push(entry);
-            localStorage.setItem(k, JSON.stringify(q.slice(-1000)));
-        } catch(e){}
-    }
-    function genLogId() { return 'lg' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-
     async function saveProducts() { 
         // We update memory immediately, but save async
         try { await saveProductsToDB(products); } catch(e){ console.error("Save failed", e); }
@@ -2642,8 +2487,21 @@ async function saveProductsToDB(productsArray) {
         if (typeof images === 'string') images = [images];
         if (!images || !Array.isArray(images) || images.length === 0) return;
 
-        // Slider container exists in this HTML build (#imageViewerSlider).
+        // Try to find slider container first (new HTML), fallback to old img tag
         let slider = document.getElementById('imageViewerSlider');
+        
+        // If the HTML hasn't been updated to include the slider div, we create/inject it dynamically
+        // or clear the existing image tag and use it as a container if needed.
+        if (!slider) {
+            // Fallback for previous HTML structure: replace img with div
+            const oldImg = document.getElementById('imageViewerImg');
+            if (oldImg) {
+                slider = document.createElement('div');
+                slider.id = 'imageViewerSlider';
+                slider.style.cssText = "display:flex; overflow-x:auto; scroll-snap-type:x mandatory; width:100%; height:100%; align-items:center;";
+                oldImg.parentNode.replaceChild(slider, oldImg);
+            }
+        }
         
         if(!slider) return;
         
@@ -2652,69 +2510,12 @@ async function saveProductsToDB(productsArray) {
         images.forEach(src => {
             const img = document.createElement('img');
             img.src = src;
-            // FIX (swipe): apply the .full-screen-slide class so scroll-snap-stop
-            // works; inline styles kept as fallback but WITHOUT the old
-            // touch-action:none that blocked native swiping.
-            img.className = 'full-screen-slide';
+            // Add inline styles to ensure swipe works even if CSS is missing
             img.style.cssText = "flex: 0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:center; display:block; transform-origin:center center; will-change:transform;";
             img.draggable = false;
             slider.appendChild(img);
             makeImageZoomable(img, slider);
         });
-
-        // FIX (swipe UX): prev/next arrows + "n / total" counter for multi-image
-        // products, plus keyboard navigation. Rebuilt fresh on every open.
-        imageViewerOverlay.querySelectorAll('.iv-nav-btn, #ivCounter').forEach(el => el.remove());
-        if (imageViewerOverlay.__ivKeyHandler) { document.removeEventListener('keydown', imageViewerOverlay.__ivKeyHandler); imageViewerOverlay.__ivKeyHandler = null; }
-
-        if (images.length > 1) {
-            const prevBtn = document.createElement('button');
-            prevBtn.id = 'ivPrevBtn'; prevBtn.className = 'iv-nav-btn'; prevBtn.type = 'button';
-            prevBtn.setAttribute('aria-label', 'Previous image'); prevBtn.textContent = '‹';
-            const nextBtn = document.createElement('button');
-            nextBtn.id = 'ivNextBtn'; nextBtn.className = 'iv-nav-btn'; nextBtn.type = 'button';
-            nextBtn.setAttribute('aria-label', 'Next image'); nextBtn.textContent = '›';
-            const counter = document.createElement('div');
-            counter.id = 'ivCounter';
-            imageViewerOverlay.appendChild(prevBtn);
-            imageViewerOverlay.appendChild(nextBtn);
-            imageViewerOverlay.appendChild(counter);
-
-            const curIdx = () => Math.max(0, Math.min(images.length - 1, Math.round(slider.scrollLeft / Math.max(1, slider.clientWidth))));
-            const updateUI = () => {
-                const i = curIdx();
-                counter.textContent = (i + 1) + ' / ' + images.length;
-                prevBtn.classList.toggle('disabled', i <= 0);
-                nextBtn.classList.toggle('disabled', i >= images.length - 1);
-            };
-            const goTo = (i) => {
-                i = Math.max(0, Math.min(images.length - 1, i));
-                // Reset any zoom first so the slider can actually scroll
-                slider.classList.remove('zoomed');
-                slider.querySelectorAll('img').forEach(im => { if (im.__resetZoom) im.__resetZoom(); });
-                slider.scrollTo({ left: slider.clientWidth * i, behavior: 'smooth' });
-            };
-            prevBtn.onclick = (e) => { e.stopPropagation(); goTo(curIdx() - 1); };
-            nextBtn.onclick = (e) => { e.stopPropagation(); goTo(curIdx() + 1); };
-
-            let rafPending = false;
-            slider.onscroll = () => {
-                if (rafPending) return;
-                rafPending = true;
-                requestAnimationFrame(() => { rafPending = false; updateUI(); });
-            };
-
-            const keyHandler = (e) => {
-                if (!imageViewerOverlay.classList.contains('show')) return;
-                if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(curIdx() - 1); }
-                if (e.key === 'ArrowRight') { e.preventDefault(); goTo(curIdx() + 1); }
-            };
-            document.addEventListener('keydown', keyHandler);
-            imageViewerOverlay.__ivKeyHandler = keyHandler;
-            updateUI();
-        } else {
-            slider.onscroll = null;
-        }
 
         imageViewerOverlay.classList.add('show');
         
@@ -2727,265 +2528,140 @@ async function saveProductsToDB(productsArray) {
         }
     }
     
-    function closeImageViewer() {
-        imageViewerOverlay.classList.remove('show');
+    imageViewerClose.onclick = () => { 
+        imageViewerOverlay.classList.remove('show'); 
         const slider = document.getElementById('imageViewerSlider');
-        if (slider) { slider.classList.remove('zoomed'); slider.onscroll = null; slider.querySelectorAll('img').forEach(im => { if (im.__resetZoom) im.__resetZoom(); }); slider.innerHTML = ''; }
-        imageViewerOverlay.querySelectorAll('.iv-nav-btn, #ivCounter').forEach(el => el.remove());
-        if (imageViewerOverlay.__ivKeyHandler) { document.removeEventListener('keydown', imageViewerOverlay.__ivKeyHandler); imageViewerOverlay.__ivKeyHandler = null; }
-        if (typeof flushDeferredRevokes === 'function') flushDeferredRevokes();
-    }
-    imageViewerClose.onclick = closeImageViewer;
-    imageViewerOverlay.onclick = (e) => { if (e.target === imageViewerOverlay) closeImageViewer(); };
+        if(slider) {
+            slider.innerHTML = '';
+        }
+    };
+    
+    imageViewerOverlay.onclick = (e) => {
+        if(e.target === imageViewerOverlay) { 
+            imageViewerOverlay.classList.remove('show'); 
+            const slider = document.getElementById('imageViewerSlider');
+            if(slider) {
+                
+                slider.innerHTML = '';
+            }
+        }
+    };
 
     /****************************************************************
      * IMAGE ZOOM: pinch-to-zoom, drag-to-pan, double-tap to zoom in/out
      ****************************************************************/
     function makeImageZoomable(img, slider) {
         let scale = 1, tx = 0, ty = 0;
-        let pinchStart = null;   // { dist, scale, cx, cy, tx, ty }
-        let panStart = null;     // { x, y }
-        let lastTap = 0, lx = 0, ly = 0;
-        let moved = false;
-        // FIX (swipe, JS-driven): with touch-action:none the browser no longer
-        // scrolls for us, so we drive slider.scrollLeft from the finger directly.
-        let swipeStart = null;   // { x, y, sl, t }
-        let lastX = 0;
+        const pointers = new Map();
+        let startDist = 0, startScale = 1;
+        let panStart = null;
+        let lastTap = 0, lastTapX = 0, lastTapY = 0;
 
-        function apply() { img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; }
-        // FIX (zoom): smooth animated zoom for double-tap / reset, instant for
-        // pinch & pan (a transition during pinch feels laggy and rubbery).
-        function applySmooth() {
-            img.style.transition = 'transform 0.25s cubic-bezier(.2,.7,.3,1)';
-            apply();
-            setTimeout(() => { img.style.transition = 'none'; }, 260);
+        function applyTransform() {
+            img.style.transform = scale > 1.02 ? `translate(${tx}px, ${ty}px) scale(${scale})` : '';
         }
-        function zoomedMode(on) {
-            slider.classList.toggle('zoomed', on);
+        function setZoomMode(on) {
+            // While zoomed, the horizontal pan must move the IMAGE, not swipe the slider
+            slider.style.overflowX = on ? 'hidden' : 'auto';
+            slider.style.scrollSnapType = on ? 'none' : 'x mandatory';
+            img.style.touchAction = on ? 'none' : '';
         }
-        // FIX (zoom): the old clamp used img.clientWidth/Height — the ELEMENT box,
-        // which fills the whole screen — so with object-fit:contain you could pan
-        // the picture completely off into black space. Clamp against the actual
-        // RENDERED image size instead.
-        function renderedSize() {
-            const cw = img.clientWidth, ch = img.clientHeight;
-            const nw = img.naturalWidth || cw, nh = img.naturalHeight || ch;
-            const fit = Math.min(cw / nw, ch / nh);
-            return { rw: nw * fit, rh: nh * fit, cw, ch };
+        function clampPan() {
+            const maxX = (img.clientWidth  * (scale - 1)) / 2;
+            const maxY = (img.clientHeight * (scale - 1)) / 2;
+            tx = Math.max(-maxX, Math.min(maxX, tx));
+            ty = Math.max(-maxY, Math.min(maxY, ty));
         }
-        function clamp() {
-            const { rw, rh, cw, ch } = renderedSize();
-            const mx = Math.max(0, (rw * scale - cw) / 2);
-            const my = Math.max(0, (rh * scale - ch) / 2);
-            tx = Math.max(-mx, Math.min(mx, tx));
-            ty = Math.max(-my, Math.min(my, ty));
-        }
-        function reset(smooth) { scale = 1; tx = 0; ty = 0; pinchStart = null; panStart = null; zoomedMode(false); if (smooth) applySmooth(); else apply(); }
-        function zoomTo(ns, cx, cy, baseScale, baseTx, baseTy, smooth) {
-            ns = Math.max(1, Math.min(4, ns));
+        function resetZoom() { scale = 1; tx = 0; ty = 0; setZoomMode(false); applyTransform(); }
+        function zoomTo(s, cx, cy) {
             const rect = img.getBoundingClientRect();
-            const px = cx - (rect.left + rect.width / 2);
-            const py = cy - (rect.top + rect.height / 2);
-            const ratio = ns / baseScale;
-            tx = baseTx * ratio - px * (ratio - 1);
-            ty = baseTy * ratio - py * (ratio - 1);
-            scale = ns;
-            if (scale <= 1.02) { reset(smooth); return; }
-            zoomedMode(true); clamp();
-            if (smooth) applySmooth(); else apply();
+            // zoom towards the tapped/pinched point
+            const px = cx - rect.left - rect.width / 2;
+            const py = cy - rect.top - rect.height / 2;
+            const ratio = s / scale;
+            tx = tx * ratio - px * (ratio - 1);
+            ty = ty * ratio - py * (ratio - 1);
+            scale = Math.max(1, Math.min(4, s));
+            if (scale <= 1.02) { resetZoom(); return; }
+            setZoomMode(true); clampPan(); applyTransform();
         }
-        const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-        const mid  = (a, b) => ({ x:(a.clientX+b.clientX)/2, y:(a.clientY+b.clientY)/2 });
 
-        img.addEventListener('touchstart', e => {
-            moved = false;
-            img.style.transition = 'none'; // FIX (zoom): never animate during finger contact
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                // FIX (zoom reliability): a pinch always wins. If a swipe-drag was
-                // in progress, park the slider on the nearest slide first.
-                if (swipeStart) {
-                    swipeStart = null;
-                    const w = Math.max(1, slider.clientWidth);
-                    slider.scrollTo({ left: Math.round(slider.scrollLeft / w) * w, behavior: 'auto' });
-                    slider.style.scrollSnapType = '';
-                }
-                const m = mid(e.touches[0], e.touches[1]);
-                // Reference centre that is independent of the current transform:
-                // back out the live transform to find the element's untransformed centre.
-                const r = img.getBoundingClientRect();
-                const centreX = (r.left + r.width / 2) - tx;
-                const centreY = (r.top + r.height / 2) - ty;
-                pinchStart = { dist: dist(e.touches[0], e.touches[1]), scale, cx: m.x, cy: m.y, tx, ty, centreX, centreY };
+        img.addEventListener('pointerdown', e => {
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            try { img.setPointerCapture(e.pointerId); } catch(_){}
+            if (pointers.size === 2) {
+                const [a, b] = [...pointers.values()];
+                startDist = Math.hypot(a.x - b.x, a.y - b.y);
+                startScale = scale;
                 panStart = null;
-            } else if (e.touches.length === 1 && scale > 1.02) {
-                panStart = { x: e.touches[0].clientX - tx, y: e.touches[0].clientY - ty };
-                swipeStart = null;
-            } else if (e.touches.length === 1) {
-                // Not zoomed: this may become a swipe between slides.
-                swipeStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, sl: slider.scrollLeft, t: Date.now() };
-                lastX = e.touches[0].clientX;
-            }
-        }, { passive: false });
-
-        img.addEventListener('touchmove', e => {
-            // FIX (zoom reliability): safety net — if the 2nd finger's touchstart
-            // was somehow missed, adopt the pinch from the first 2-finger move.
-            if (e.touches.length === 2 && !pinchStart) {
-                const m = mid(e.touches[0], e.touches[1]);
-                const r = img.getBoundingClientRect();
-                pinchStart = { dist: dist(e.touches[0], e.touches[1]), scale, cx: m.x, cy: m.y, tx, ty,
-                               centreX: (r.left + r.width / 2) - tx, centreY: (r.top + r.height / 2) - ty };
-                swipeStart = null; panStart = null;
-            }
-            if (e.touches.length === 2 && pinchStart) {
                 e.preventDefault();
-                moved = true;
-                const d = dist(e.touches[0], e.touches[1]);
-                const m = mid(e.touches[0], e.touches[1]);
-                const ns = Math.max(1, Math.min(4, pinchStart.scale * (d / pinchStart.dist)));
-                // Rebuild from the pinch baseline each frame so there is no drift:
-                // 1) zoom around the ORIGINAL anchor, then 2) translate by how far the
-                //    midpoint has moved since the pinch began. Applied exactly once.
-                const ratio = ns / pinchStart.scale;
-                // anchor relative to the UNTRANSFORMED centre captured at pinch start
-                const ax = pinchStart.cx - pinchStart.centreX;
-                const ay = pinchStart.cy - pinchStart.centreY;
-                scale = ns;
-                tx = pinchStart.tx * ratio - ax * (ratio - 1) + (m.x - pinchStart.cx);
-                ty = pinchStart.ty * ratio - ay * (ratio - 1) + (m.y - pinchStart.cy);
-                if (scale <= 1.02) { reset(); }
-                else { zoomedMode(true); clamp(); apply(); }
-            } else if (e.touches.length === 1 && scale > 1.02) {
-                // FIX (zoom): lazily (re)anchor the pan if it wasn't set — covers
-                // the very common gesture of pinch-zooming, lifting ONE finger,
-                // and continuing to pan with the finger still on the screen.
-                if (!panStart) panStart = { x: e.touches[0].clientX - tx, y: e.touches[0].clientY - ty };
+            } else if (pointers.size === 1 && scale > 1.02) {
+                panStart = { x: e.clientX - tx, y: e.clientY - ty };
                 e.preventDefault();
-                moved = true;
-                tx = e.touches[0].clientX - panStart.x;
-                ty = e.touches[0].clientY - panStart.y;
-                clamp(); apply();
-            } else if (e.touches.length === 1 && swipeStart && scale <= 1.02) {
-                // FIX (swipe, JS-driven): drag the slider with the finger.
-                e.preventDefault();
-                const x = e.touches[0].clientX, y = e.touches[0].clientY;
-                lastX = x;
-                const dx = x - swipeStart.x, dy = y - swipeStart.y;
-                if (!moved && Math.hypot(dx, dy) > 10) {
-                    moved = true; // also stops swipes from counting as taps (fake double-tap zoom)
-                    slider.style.scrollSnapType = 'none'; // don't fight the drag
-                }
-                if (moved) slider.scrollLeft = swipeStart.sl - dx;
-            }
-        }, { passive: false });
-
-        img.addEventListener('touchend', e => {
-            if (e.touches.length < 2) pinchStart = null;
-            // FIX (zoom): a pinch just ended but ONE finger is still down —
-            // hand over to panning from that finger's current position.
-            if (e.touches.length === 1 && scale > 1.02) {
-                panStart = { x: e.touches[0].clientX - tx, y: e.touches[0].clientY - ty };
-            }
-            if (e.touches.length === 0) {
-                panStart = null;
-                // FIX (swipe, JS-driven): decide which slide to settle on —
-                // flick (fast, short) or drag past threshold moves one slide,
-                // otherwise snap back to the nearest.
-                if (swipeStart) {
-                    const w = Math.max(1, slider.clientWidth);
-                    const n = Math.max(1, slider.children.length);
-                    if (moved) {
-                        const dx = lastX - swipeStart.x;
-                        const dt = Date.now() - swipeStart.t;
-                        const base = Math.round(swipeStart.sl / w);
-                        let idx = Math.round(slider.scrollLeft / w);
-                        if (dx <= -50 || (dx < -20 && dt < 250)) idx = base + 1;
-                        else if (dx >= 50 || (dx > 20 && dt < 250)) idx = base - 1;
-                        else idx = base;
-                        idx = Math.max(0, Math.min(n - 1, idx));
-                        slider.scrollTo({ left: idx * w, behavior: 'smooth' });
-                        setTimeout(() => { slider.style.scrollSnapType = ''; }, 420);
-                    } else {
-                        slider.style.scrollSnapType = '';
-                    }
-                    swipeStart = null;
-                }
-                if (!moved && e.changedTouches.length === 1) {
-                    const t = e.changedTouches[0];
-                    const nt = Date.now();
-                    if (nt - lastTap < 300 && Math.hypot(t.clientX - lx, t.clientY - ly) < 40) {
-                        if (scale > 1.02) reset(true);
-                        else zoomTo(2.5, t.clientX, t.clientY, 1, 0, 0, true);
-                        lastTap = 0;
-                    } else { lastTap = nt; lx = t.clientX; ly = t.clientY; }
-                }
-                if (scale <= 1.02) reset();
             }
         });
-        img.addEventListener('touchcancel', () => { pinchStart = null; panStart = null; if (swipeStart) { swipeStart = null; slider.style.scrollSnapType = ''; } if (scale <= 1.02) reset(); });
 
-        /* desktop */
-        img.addEventListener('dblclick', e => { e.preventDefault(); if (scale > 1.02) reset(true); else zoomTo(2.5, e.clientX, e.clientY, 1, 0, 0, true); });
-        img.addEventListener('mousedown', e => {
-            if (scale <= 1.02) return; e.preventDefault();
-            img.style.transition = 'none';
-            const s = { x: e.clientX - tx, y: e.clientY - ty };
-            const mv = ev => { tx = ev.clientX - s.x; ty = ev.clientY - s.y; clamp(); apply(); };
-            const up = () => { window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up); };
-            window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
+        img.addEventListener('pointermove', e => {
+            if (!pointers.has(e.pointerId)) return;
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 2) {
+                const [a, b] = [...pointers.values()];
+                const dist = Math.hypot(a.x - b.x, a.y - b.y);
+                if (startDist > 0) {
+                    const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+                    zoomTo(startScale * (dist / startDist), cx, cy);
+                }
+                e.preventDefault();
+            } else if (pointers.size === 1 && panStart && scale > 1.02) {
+                tx = e.clientX - panStart.x;
+                ty = e.clientY - panStart.y;
+                clampPan(); applyTransform();
+                e.preventDefault();
+            }
         });
+
+        function endPointer(e) {
+            // Double-tap detection (single finger, not a pan)
+            if (pointers.size === 1 && !panStartMoved(e)) {
+                const nowT = Date.now();
+                if (nowT - lastTap < 320 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 40) {
+                    if (scale > 1.02) resetZoom();
+                    else zoomTo(2.5, e.clientX, e.clientY);
+                    lastTap = 0;
+                } else {
+                    lastTap = nowT; lastTapX = e.clientX; lastTapY = e.clientY;
+                }
+            }
+            pointers.delete(e.pointerId);
+            if (pointers.size < 2) startDist = 0;
+            if (pointers.size === 0) panStart = null;
+        }
+        function panStartMoved(e) {
+            if (!panStart) return false;
+            return Math.hypot((e.clientX - tx) - panStart.x, (e.clientY - ty) - panStart.y) > 12;
+        }
+        img.addEventListener('pointerup', endPointer);
+        img.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); if (pointers.size === 0) { startDist = 0; panStart = null; } });
+
+        // Desktop conveniences: double-click and ctrl/cmd+wheel zoom
+        img.addEventListener('dblclick', e => { e.preventDefault(); if (scale > 1.02) resetZoom(); else zoomTo(2.5, e.clientX, e.clientY); });
         img.addEventListener('wheel', e => {
-            // FIX (zoom): plain vertical wheel now zooms (no Ctrl needed).
-            // Mostly-horizontal wheel/trackpad gestures fall through to the
-            // slider's native scroll so desktop can still swipe between images.
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && scale <= 1.02) return;
+            if (!e.ctrlKey && !e.metaKey && scale <= 1.02) return;
             e.preventDefault();
-            zoomTo(scale * (e.deltaY < 0 ? 1.15 : 0.87), e.clientX, e.clientY, scale, tx, ty);
+            zoomTo(scale * (e.deltaY < 0 ? 1.15 : 0.87), e.clientX, e.clientY);
         }, { passive: false });
 
-        img.__resetZoom = reset;
+        // Reset when the viewer closes / slide is rebuilt
+        img.__resetZoom = resetZoom;
     }
 
     // --- HELPER: GET URL FROM BLOB OR STRING (WITH TRACKING) ---
-    /**** PHOTO CACHE: cloud photos are separate files ("ghp:photos/x.jpg" refs).
-         Blobs live in IndexedDB; this in-memory map holds ready object-URLs. ****/
-    const photoMemCache = new Map(); // ref -> objectURL
-    async function photoCachePut(ref, blob) {
-        try {
-            const db = await openDB();
-            const tx = db.transaction(STORE_PHOTOCACHE, 'readwrite');
-            tx.objectStore(STORE_PHOTOCACHE).put({ ref, blob });
-            await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
-        } catch(e) { console.error('photo cache put', e); }
-        if (!photoMemCache.has(ref)) photoMemCache.set(ref, URL.createObjectURL(blob));
-    }
-    async function hydratePhotoCache() {
-        try {
-            const db = await openDB();
-            if (!db.objectStoreNames.contains(STORE_PHOTOCACHE)) return;
-            const tx = db.transaction(STORE_PHOTOCACHE, 'readonly');
-            const all = await new Promise((res, rej) => {
-                const r = tx.objectStore(STORE_PHOTOCACHE).getAll();
-                r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error);
-            });
-            all.forEach(e => { if (e && e.ref && e.blob && !photoMemCache.has(e.ref)) photoMemCache.set(e.ref, URL.createObjectURL(e.blob)); });
-        } catch(e) { console.error('photo cache hydrate', e); }
-    }
-
     function getPhotoSrc(photo) {
         if (!photo) return null;
         if (photo instanceof Blob) {
             const url = URL.createObjectURL(photo);
             activeObjectUrls.push(url); // Track for cleanup
             return url;
-        }
-        if (typeof photo === 'string' && photo.startsWith('ghp:')) {
-            const cached = photoMemCache.get(photo);
-            if (cached) return cached;
-            // not downloaded yet — queue it and show placeholder for now
-            if (typeof cloudQueuePhotoDownload === 'function') cloudQueuePhotoDownload(photo);
-            return null;
         }
         return photo; // Base64 string fallback
     }
@@ -3095,16 +2771,7 @@ async function saveProductsToDB(productsArray) {
         updateMultiSelectControls(); 
     });
     
-    document.getElementById("deleteSelectedBtn").onclick = function() { if (selectedProductIds.size === 0) return; if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return; 
-        // FIX (audit consistency): single delete logs to the audit trail but bulk
-        // delete didn't — items could disappear with no trace in Logs.
-        const ts = Date.now(); const device = getDeviceName() || 'Unknown';
-        selectedProductIds.forEach(id => { 
-            const prod = products.find(p => p.id === id);
-            queueLog({ id: genLogId(), ts, device, productId: id, productName: (prod && prod.name) || '', action: 'delete', field: '', oldVal: '', newVal: '' });
-            recordProductDeletion(id); 
-        }); 
-        products = products.filter(p => !selectedProductIds.has(p.id)); selectedProductIds.clear(); saveProducts(); updateMultiSelectControls(); };
+    document.getElementById("deleteSelectedBtn").onclick = function() { if (selectedProductIds.size === 0) return; if (!confirm(`Are you sure you want to delete ${selectedProductIds.size} selected item(s)?`)) return; products = products.filter(p => !selectedProductIds.has(p.id)); selectedProductIds.clear(); saveProducts(); updateMultiSelectControls(); };
 
     document.getElementById("shareSelectedBtn").onclick = function() {
         if (selectedProductIds.size === 0) return;
@@ -3124,15 +2791,6 @@ async function saveProductsToDB(productsArray) {
                 let photoDataArray = [];
                 if(p.photos && p.photos.length > 0) {
                      photoDataArray = await Promise.all(p.photos.map(async (photo) => {
-                         // Cloud photo reference → pull the actual image from the local cache
-                         if (typeof photo === 'string' && photo.startsWith('ghp:')) {
-                             try {
-                                 const db = await openDB();
-                                 const tx = db.transaction(STORE_PHOTOCACHE, 'readonly');
-                                 const rec = await new Promise((res) => { const r = tx.objectStore(STORE_PHOTOCACHE).get(photo); r.onsuccess = () => res(r.result); r.onerror = () => res(null); });
-                                 photo = (rec && rec.blob) ? rec.blob : null;
-                             } catch(e) { photo = null; }
-                         }
                          if (photo instanceof Blob) {
                             return await new Promise((resolve) => {
                                 const reader = new FileReader();
@@ -3332,17 +2990,7 @@ async function saveProductsToDB(productsArray) {
         }
     };
 
-    let currentDetailProductId = null;
-    function refreshOpenDetailModal() {
-        try {
-            if (currentDetailProductId && !detailModalBackdrop.classList.contains('hide')) {
-                const fresh = products.find(p => p.id === currentDetailProductId);
-                if (fresh) showDetailModal(fresh, true);
-            }
-        } catch(e) {}
-    }
-    function showDetailModal(product, _isRefresh) {
-        currentDetailProductId = product.id;
+    function showDetailModal(product) {
       const nameSafe = escapeHTML(product.name || 'Unnamed');
       
       // Prepare photos for viewer
@@ -3379,7 +3027,6 @@ async function saveProductsToDB(productsArray) {
           ${product.category?`<li><b>Category:</b> <span style="color:var(--accent2);font-weight:600">${escapeHTML(String(product.category))}</span></li>`:""}
           <li><b>Stock:</b> <span style="color:var(--accent2);font-weight:600">${Number(product.qty)||0}</span></li>
           <li><b>MRP:</b> <span style="color:var(--accent2);font-weight:600">₨${mrpNum.toLocaleString(undefined,{maximumFractionDigits:2})}</span></li>
-          ${product.updatedAt?`<li><b>Last updated:</b> <span style="color:var(--text-muted);">${new Date(product.updatedAt).toLocaleDateString()} ${new Date(product.updatedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}${product.updatedBy?' · by <b style=\"color:var(--accent2)\">'+escapeHTML(product.updatedBy)+'</b>':''}</span></li>`:""}
           ${costNum!==null?`<li><b>Cost:</b> <span id="detailCostVal" style="color:var(--accent2);font-weight:600;letter-spacing:2px;">••••••</span> <button type="button" id="detailCostToggle" style="margin-left:8px;background:#222b3a;border:1px solid #2b3a55;color:var(--text-muted);border-radius:7px;padding:3px 10px;font-size:.85em;cursor:pointer;">👁 Show</button></li>`:""}
         </ul>
         ${product.notes?`<div style="margin-top:.8em;color:var(--text-muted);background:#213047;border-radius:8px;padding:.7em .9em">${escapeHTML(String(product.notes))}</div>`:""}
@@ -3400,13 +3047,15 @@ async function saveProductsToDB(productsArray) {
 
       detailModalBackdrop.classList.remove('hide'); disableDetailBackgroundScroll(); setTimeout(()=>document.getElementById('closeDetailModalBtn').focus(),100);
     }
-    document.getElementById('closeDetailModalBtn').onclick = function(){ detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML = ''; currentDetailProductId = null; enableDetailBackgroundScroll(); if (typeof flushDeferredRevokes === 'function') flushDeferredRevokes(); };
+    document.getElementById('closeDetailModalBtn').onclick = function(){ detailModalBackdrop.classList.add('hide'); detailModalBody.innerHTML = ''; enableDetailBackgroundScroll(); };
     
     document.addEventListener('keydown', function(e){
       if (e.key === "Escape") {
         let closedAModal = false;
         if(document.getElementById('imageViewerOverlay') && document.getElementById('imageViewerOverlay').classList.contains('show')) { 
-            closeImageViewer(); // FIX: also removes nav arrows/counter and the arrow-key listener
+            document.getElementById('imageViewerOverlay').classList.remove('show'); 
+            const slider = document.getElementById('imageViewerSlider');
+            if(slider) slider.innerHTML = '';
             closedAModal=true; 
         }
         else if(document.getElementById('scannerOverlay') && document.getElementById('scannerOverlay').classList.contains('show')) { stopScanner(); document.getElementById('scannerOverlay').classList.remove('show'); closedAModal=true; }
@@ -3419,12 +3068,6 @@ async function saveProductsToDB(productsArray) {
         // NEW MODAL ESC HANDLERS
         else if (!quickSellModalBackdrop.classList.contains('hide')) { quickSellModalBackdrop.classList.add('hide'); closedAModal = true; }
         else if (!historyModalBackdrop.classList.contains('hide')) { historyModalBackdrop.classList.add('hide'); closedAModal = true; }
-        // FIX: these four modals previously ignored the Escape key entirely.
-        // Khata DETAIL must be checked before the khata LIST so ESC closes the top-most one first.
-        else if (!khataDetailModalBackdrop.classList.contains('hide')) { khataDetailModalBackdrop.classList.add('hide'); closedAModal = true; }
-        else if (!khataModalBackdrop.classList.contains('hide')) { khataModalBackdrop.classList.add('hide'); closedAModal = true; }
-        else if (!statsModalBackdrop.classList.contains('hide')) { statsModalBackdrop.classList.add('hide'); closedAModal = true; }
-        else if (!logsModalBackdrop.classList.contains('hide')) { logsModalBackdrop.classList.add('hide'); closedAModal = true; }
         
         if (closedAModal) enableDetailBackgroundScroll();
       }
@@ -3440,12 +3083,7 @@ async function saveProductsToDB(productsArray) {
         (!categoryModalBackdrop || categoryModalBackdrop.classList.contains('hide')) &&
         // NEW
         (!quickSellModalBackdrop || quickSellModalBackdrop.classList.contains('hide')) &&
-        (!historyModalBackdrop || historyModalBackdrop.classList.contains('hide')) &&
-        // FIX: these were missing, so scroll could stay locked after closing them
-        (!khataDetailModalBackdrop || khataDetailModalBackdrop.classList.contains('hide')) &&
-        (!khataModalBackdrop || khataModalBackdrop.classList.contains('hide')) &&
-        (!statsModalBackdrop || statsModalBackdrop.classList.contains('hide')) &&
-        (!logsModalBackdrop || logsModalBackdrop.classList.contains('hide'))
+        (!historyModalBackdrop || historyModalBackdrop.classList.contains('hide'))
       ) {
         enableDetailBackgroundScroll();
       }
@@ -3490,17 +3128,9 @@ async function saveProductsToDB(productsArray) {
     };
     
     function openQuickSellModal(product) {
-        // FIX: never open the sell dialog for an item with no stock —
-        // selling it would corrupt inventory vs. sales history.
-        const availableQty = Number(product.qty) || 0;
-        if (availableQty <= 0) {
-            alert(`"${product.name}" is out of stock (0 left).\n\nRestock it first, or edit the product to correct the quantity.`);
-            return;
-        }
         quickSellProductTarget = product;
         quickSellName.textContent = `Sell: ${product.name}`;
         quickSellQty.value = 1;
-        quickSellQty.max = availableQty; // FIX: browser-level cap at available stock
         quickSellPrice.value = product.mrp || 0; // Pre-fill with MRP
         
         quickSellModalBackdrop.classList.remove('hide');
@@ -3515,34 +3145,27 @@ async function saveProductsToDB(productsArray) {
         e.preventDefault();
         if(!quickSellProductTarget) return;
         
-        let qtyToSell = parseInt(quickSellQty.value);
+        const qtyToSell = parseInt(quickSellQty.value);
         const actualSellPrice = parseFloat(quickSellPrice.value) || 0;
         
-        // FIX: parseInt('') is NaN and (NaN <= 0) is false, so a blank/garbage
-        // quantity used to slip through and set stock to NaN. Guard properly.
-        if(!Number.isFinite(qtyToSell) || qtyToSell <= 0) { alert("Enter a valid quantity (1 or more)."); return; }
+        if(qtyToSell <= 0) return;
         if(actualSellPrice < 0) { alert("Price cannot be negative."); return; }
         
-        const currentQty = Number(quickSellProductTarget.qty) || 0;
-        // FIX: OVERSELL PROTECTION. Previously the stock was silently clamped to 0
-        // while History recorded the full oversold qty/revenue/profit — corrupting
-        // inventory vs. accounting. Now we never sell more than what exists.
-        if (currentQty <= 0) { alert(`"${quickSellProductTarget.name}" is out of stock. Sale not recorded.`); quickSellModalBackdrop.classList.add('hide'); return; }
-        if (qtyToSell > currentQty) {
-            const sellAvailable = confirm(`Only ${currentQty} in stock — you entered ${qtyToSell}.\n\n• [OK] Sell the available ${currentQty} instead.\n• [Cancel] Go back and change the quantity.`);
-            if (!sellAvailable) return;
-            qtyToSell = currentQty;
-        }
-        const newQty = currentQty - qtyToSell;
+        // Update Stock
+        const currentQty = quickSellProductTarget.qty || 0;
+        const newQty = Math.max(0, currentQty - qtyToSell);
+        quickSellProductTarget.qty = newQty;
+        
+        // Calculate Profit
         const costPrice = quickSellProductTarget.cost || 0;
         const profit = (actualSellPrice - costPrice) * qtyToSell;
-
+        
+        // Log to History
         const logEntry = {
             id: genUID('h'),
             productId: quickSellProductTarget.id,
             productName: quickSellProductTarget.name,
             qtySold: qtyToSell,
-            deductedQty: qtyToSell, // FIX: exact stock deducted, used for accurate restore on delete
             salePricePerUnit: actualSellPrice,
             costPricePerUnit: costPrice,
             totalValue: qtyToSell * actualSellPrice,
@@ -3550,24 +3173,18 @@ async function saveProductsToDB(productsArray) {
             device: getDeviceName(),
             timestamp: new Date().toISOString()
         };
-
+        
         try {
-            // 1) Record the sale FIRST. If this fails (e.g. storage full), we bail
-            //    out BEFORE touching stock, so qty can never drop without a sale.
             await logSaleToDB(logEntry);
-            // 2) Only now deduct stock and save.
-            const _oldQty = quickSellProductTarget.qty;
-            quickSellProductTarget.qty = newQty;
-            quickSellProductTarget.updatedAt = Date.now();
-            quickSellProductTarget.updatedBy = getDeviceName();
-            queueLog({ id: genLogId(), ts: Date.now(), device: getDeviceName() || 'Unknown', productId: quickSellProductTarget.id, productName: quickSellProductTarget.name, action: 'sale', field: 'qty', oldVal: String(_oldQty), newVal: String(newQty) + ' (sold ' + qtyToSell + ')' });
-            await saveProducts(); // saves qty, refreshes UI, triggers cloud sync
-
+            await saveProducts(); // Saves updated qty, refreshes UI, and triggers cloud sync
+            
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            
+            // Close
             quickSellModalBackdrop.classList.add('hide');
             quickSellProductTarget = null;
         } catch(err) {
-            alert("Error saving sale: " + (err && err.message ? err.message : err) + "\n\nNothing was changed — please try again.");
+            alert("Error saving sale: " + err.message);
         }
     };
     
@@ -3618,7 +3235,7 @@ async function saveProductsToDB(productsArray) {
                             <div style="font-size:0.85em; color:var(--text-muted);">Total: ₨${item.totalValue.toLocaleString()}</div>
                             <div class="history-profit" style="color:${profitColor}">${profitSign}₨${profit.toLocaleString()}</div>
                         </div>
-                        <button class="history-delete-btn" data-id="${item.id}" data-prod-id="${item.productId}" data-qty="${item.deductedQty !== undefined ? item.deductedQty : item.qtySold}" title="Delete & Restore Stock">✖</button>
+                        <button class="history-delete-btn" data-id="${item.id}" data-prod-id="${item.productId}" data-qty="${item.qtySold}" title="Delete & Restore Stock">✖</button>
                     </div>
                 `;
             });
@@ -3630,8 +3247,7 @@ async function saveProductsToDB(productsArray) {
                     let id = this.getAttribute('data-id');
                     if (/^\d+$/.test(id)) id = Number(id); // pre-migration numeric ids
                     const prodId = this.getAttribute('data-prod-id');
-                    let qty = Number(this.getAttribute('data-qty'));
-                    if (!Number.isFinite(qty) || qty < 0) qty = 0; // FIX: never let NaN reach stock
+                    const qty = Number(this.getAttribute('data-qty'));
                     
                     if(!confirm("Remove this record and restore " + qty + " item(s) to stock?")) return;
                     
@@ -3641,8 +3257,6 @@ async function saveProductsToDB(productsArray) {
                         const product = products.find(p => p.id === prodId);
                         if(product) {
                             product.qty = (product.qty || 0) + qty;
-                            product.updatedAt = Date.now();
-                            product.updatedBy = getDeviceName();
                             await saveProducts(); 
                         } else if (typeof cloudPushDebounced === 'function') {
                             cloudPushDebounced(); // still sync the deleted history record
@@ -3803,15 +3417,8 @@ async function saveProductsToDB(productsArray) {
         const c = khataCustomers.find(x => x.id === khataActiveCustomerId);
         if (!c) return;
         if (!c.phone) { const e = document.getElementById('khataDetailError'); e.textContent = "No phone number saved for this customer."; e.style.color='var(--danger)'; return; }
-        // Normalise to international digits for wa.me:
-        //  +92xxxxxxxxxx / 0092… → strip the +/00; 03xxxxxxxxx (PK local) → 92xxxxxxxxx;
-        //  bare 92… left as-is; anything else used as typed (already has country code).
-        let raw = c.phone.trim();
-        let digits = raw.replace(/[^\d+]/g, '');
-        if (digits.startsWith('+')) digits = digits.slice(1);
-        else if (digits.startsWith('00')) digits = digits.slice(2);
-        else if (digits.startsWith('0')) digits = '92' + digits.slice(1); // PK local
-        digits = digits.replace(/\D/g, '');
+        let digits = c.phone.replace(/\D/g, '');
+        if (digits.startsWith('0')) digits = '92' + digits.slice(1); // PK local format → international
         const bal = khataBalance(c);
         const msg = "*Al Rehman Electronics*\nDear " + c.name + ", your outstanding balance is " + fmtRs(bal) + ". Kindly arrange the payment at your convenience. Thank you!";
         window.open('https://wa.me/' + digits + '?text=' + encodeURIComponent(msg), '_blank');
@@ -3882,51 +3489,6 @@ async function saveProductsToDB(productsArray) {
         renderStats();
     };
 
-    /****************************************************************
-     * FEATURE: ACTIVITY LOGS (who changed what, when, old → new)
-     ****************************************************************/
-    const logsModalBackdrop = document.getElementById('logsModalBackdrop');
-    window.renderLogsList = function() {
-        const listEl = document.getElementById('logsList');
-        const q = (document.getElementById('logsSearch').value || '').trim().toLowerCase();
-        const filter = document.getElementById('logsFilter').value;
-        let rows = [...auditLogs].sort((a,b) => (b.ts||0) - (a.ts||0));
-        if (filter) rows = rows.filter(l => l.action === filter);
-        if (q) rows = rows.filter(l =>
-            (l.productName||'').toLowerCase().includes(q) ||
-            (l.device||'').toLowerCase().includes(q) ||
-            (FIELD_LABELS[l.field]||l.field||'').toLowerCase().includes(q) ||
-            (l.newVal||'').toLowerCase().includes(q) || (l.oldVal||'').toLowerCase().includes(q)
-        );
-        rows = rows.slice(0, 500); // cap rendering
-        if (!rows.length) { listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:18px;">No matching activity.</div>'; return; }
-        listEl.innerHTML = rows.map(l => {
-            const d = new Date(l.ts || 0);
-            const when = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-            const who = l.device ? escapeHTML(l.device) : 'Unknown';
-            let detail = '';
-            if (l.action === 'create') detail = 'Added this product';
-            else if (l.action === 'delete') detail = 'Deleted this product';
-            else if (l.action === 'sale') detail = 'Sold — stock <span class="log-old">' + escapeHTML(l.oldVal) + '</span> → <span class="log-new">' + escapeHTML(l.newVal) + '</span>';
-            else if (l.field === 'photos') detail = 'Photos updated <span class="log-new">(' + escapeHTML(l.newVal) + ')</span>';
-            else {
-                const label = FIELD_LABELS[l.field] || l.field;
-                detail = '<b>' + escapeHTML(label) + '</b>: <span class="log-old">' + (escapeHTML(l.oldVal) || '—') + '</span> → <span class="log-new">' + (escapeHTML(l.newVal) || '—') + '</span>';
-            }
-            return '<div class="log-row"><div class="log-head"><span class="log-prod"><span class="log-badge ' + l.action + '">' + l.action + '</span>' + escapeHTML(l.productName || '(unknown)') + '</span><span class="log-when">' + when + '</span></div>' +
-                   '<div class="log-detail">' + detail + ' · by <b style="color:var(--accent2)">' + who + '</b></div></div>';
-        }).join('');
-    };
-    document.getElementById('logsBtn').onclick = async function() {
-        try { if (!auditLogs.length) auditLogs = await loadLogsFromDB(); } catch(e){}
-        renderLogsList();
-        logsModalBackdrop.classList.remove('hide');
-        if (typeof syncLogs === 'function') setTimeout(syncLogs, 150); // pull latest from cloud
-    };
-    document.getElementById('closeLogsBtn').onclick = () => logsModalBackdrop.classList.add('hide');
-    document.getElementById('logsSearch').oninput = renderLogsList;
-    document.getElementById('logsFilter').onchange = renderLogsList;
-
     // --- NEW: CATEGORY BUTTON & MODAL LOGIC ---
     const categoryBtn = document.getElementById('categoryFilterBtn');
     const categoryModalBackdrop = document.getElementById('categoryModalBackdrop');
@@ -3968,22 +3530,13 @@ async function saveProductsToDB(productsArray) {
             }
         });
         
-        // FIX: was onclick="selectCategory('${cat}')" — a category name containing an
-        // apostrophe (e.g. "Men's Items") broke the inline JS and the filter silently
-        // failed. Use data attributes + addEventListener instead (injection-safe too).
-        let html = `<div class="category-item-btn ${activeCategoryFilter === null ? 'active' : ''}" data-cat="">📦 All Categories</div>`;
+        let html = `<div class="category-item-btn ${activeCategoryFilter === null ? 'active' : ''}" onclick="selectCategory(null)">📦 All Categories</div>`;
         cleanedCats.forEach(cat => {
             const isActive = (activeCategoryFilter && activeCategoryFilter.toLowerCase() === cat.toLowerCase()) ? 'active' : '';
-            html += `<div class="category-item-btn ${isActive}" data-cat="${escapeHTML(cat)}"><span style="font-size:1.25em;margin-right:6px;">${categoryEmoji(cat)}</span>${escapeHTML(cat)}</div>`;
+            html += `<div class="category-item-btn ${isActive}" onclick="selectCategory('${escapeHTML(cat)}')"><span style="font-size:1.25em;margin-right:6px;">${categoryEmoji(cat)}</span>${escapeHTML(cat)}</div>`;
         });
         
         categoryGrid.innerHTML = html;
-        categoryGrid.querySelectorAll('.category-item-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const c = this.getAttribute('data-cat');
-                selectCategory(c === '' ? null : c);
-            });
-        });
         categoryModalBackdrop.classList.remove('hide');
     };
 
@@ -4004,26 +3557,9 @@ async function saveProductsToDB(productsArray) {
         refreshProductList();
     };
 
-    let deferredRevokeUrls = []; // URLs awaiting revoke until an open viewer closes
-    function aViewerIsOpen() {
-      const v = document.getElementById('imageViewerOverlay');
-      const d = document.getElementById('detailModalBackdrop');
-      return (v && v.classList.contains('show')) || (d && !d.classList.contains('hide'));
-    }
-    function flushDeferredRevokes() {
-      if (aViewerIsOpen()) return;
-      deferredRevokeUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(_){} });
-      deferredRevokeUrls = [];
-    }
     function refreshProductList() {
-      // Memory-leak protection — but if a popup/viewer is showing one of these
-      // images, defer its revoke so the picture doesn't break mid-view.
-      if (aViewerIsOpen()) {
-        deferredRevokeUrls.push(...activeObjectUrls);
-      } else {
-        activeObjectUrls.forEach(url => { try { URL.revokeObjectURL(url); } catch(_){} });
-        flushDeferredRevokes();
-      }
+      // FIX NO 1: Memory Leak Protection - Revoke old object URLs
+      activeObjectUrls.forEach(url => URL.revokeObjectURL(url));
       activeObjectUrls = [];
 
       productListElem.innerHTML = '';
@@ -4118,41 +3654,25 @@ async function saveProductsToDB(productsArray) {
     /****************************************************************
      * BINARY BLOB COMPRESSION (NO BASE64 STRINGS)
      ****************************************************************/
-    async function compressImageFileToBlob(file, maxDim = 2000, quality = 0.92) { 
+    async function compressImageFileToBlob(file, maxDim = 800, quality = 0.85) { 
       // 1. SAFETY CHECK
       if (file.size > 20 * 1024 * 1024) return Promise.reject("File too large (>20MB).");
       if (!/^image\//.test(file.type)) return Promise.reject("Not an image file.");
       
       // 2. ATTEMPT: createImageBitmap (Low Memory)
-      // FIX (quality): let the browser do the resize with resizeQuality:'high'
-      // (Lanczos-class filtering) and honour EXIF rotation. The old code drew
-      // the full bitmap onto the canvas in ONE step with default (fast/bilinear)
-      // smoothing — large photos came out soft and aliased.
       if ('createImageBitmap' in window) {
           try {
-              let bitmap;
-              const probe = await createImageBitmap(file);
-              let { width, height } = probe;
+              const bitmap = await createImageBitmap(file);
+              let { width, height } = bitmap;
               if (width > maxDim || height > maxDim) {
                   const scale = maxDim / Math.max(width, height);
-                  const rw = Math.round(width * scale);
-                  const rh = Math.round(height * scale);
-                  probe.close();
-                  try {
-                      bitmap = await createImageBitmap(file, { resizeWidth: rw, resizeHeight: rh, resizeQuality: 'high', imageOrientation: 'from-image' });
-                  } catch(_) {
-                      bitmap = await createImageBitmap(file, { resizeWidth: rw, resizeHeight: rh, resizeQuality: 'high' });
-                  }
-                  width = bitmap.width; height = bitmap.height;
-              } else {
-                  bitmap = probe;
+                  width = Math.round(width * scale);
+                  height = Math.round(height * scale);
               }
               const canvas = document.createElement('canvas');
               canvas.width = width;
               canvas.height = height;
               const ctx = canvas.getContext('2d');
-              ctx.imageSmoothingEnabled = true;
-              ctx.imageSmoothingQuality = 'high';
               ctx.drawImage(bitmap, 0, 0, width, height);
               bitmap.close(); 
               
@@ -4179,29 +3699,10 @@ async function saveProductsToDB(productsArray) {
             if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
             else { w = Math.round(w * maxDim / h); h = maxDim; }
           }
-          // FIX (quality): step-down halving. Shrinking e.g. a 4000px photo to
-          // 2000px in one drawImage call discards detail; halving repeatedly
-          // until within 2x of the target, then doing the final resize with
-          // high-quality smoothing, keeps edges crisp.
-          let src = img, sw = img.naturalWidth, sh = img.naturalHeight;
-          while (sw / 2 >= w * 1.0 && sh / 2 >= h * 1.0 && sw > w) {
-            const step = document.createElement('canvas');
-            step.width = Math.max(w, Math.round(sw / 2));
-            step.height = Math.max(h, Math.round(sh / 2));
-            const sctx = step.getContext('2d');
-            sctx.imageSmoothingEnabled = true;
-            sctx.imageSmoothingQuality = 'high';
-            sctx.drawImage(src, 0, 0, step.width, step.height);
-            if (src instanceof HTMLCanvasElement) { src.width = 0; src.height = 0; }
-            src = step; sw = step.width; sh = step.height;
-          }
           const canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext('2d');
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(src, 0, 0, w, h);
-          if (src instanceof HTMLCanvasElement) { src.width = 0; src.height = 0; }
+          ctx.drawImage(img, 0, 0, w, h);
           URL.revokeObjectURL(url);
           img.src = ""; img = null;
 
@@ -4217,43 +3718,20 @@ async function saveProductsToDB(productsArray) {
     }
 
     // UPDATE UI TO SHOW LIST OF THUMBNAILS
-    // FIX (edit-modal blank images): preview object URLs are ours to clean up
-    let previewObjectUrls = [];
     function updatePhotoPreviewUI() {
-      previewObjectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(_){} });
-      previewObjectUrls = [];
       prodPhotoList.innerHTML = '';
       currentProductBlobs.forEach((blob, index) => {
           const itemDiv = document.createElement('div');
           itemDiv.className = 'photo-preview-item';
           
-          // FIX (edit-modal blank images): after cloud sync, photos are stored as
-          // 'ghp:...' reference strings, not Blobs. The old code set
-          // img.src = "ghp:..." — an invalid URL — so every synced product showed
-          // a broken-image icon in Edit. Resolve refs through getPhotoSrc() like
-          // the product list does; show a placeholder while a photo downloads.
-          let src = null;
+          const img = document.createElement('img');
+          // Handle Blob vs String
           if (blob instanceof Blob) {
-              src = URL.createObjectURL(blob);
-              previewObjectUrls.push(src);
+              img.src = URL.createObjectURL(blob);
           } else {
-              src = getPhotoSrc(blob); // handles 'ghp:' refs + base64/data-URL strings
+              img.src = blob; 
           }
-          
-          if (src) {
-              const img = document.createElement('img');
-              img.src = src;
-              img.className = 'photo-preview-img-thumb';
-              itemDiv.appendChild(img);
-          } else {
-              // 'ghp:' photo not downloaded yet — getPhotoSrc has queued it.
-              const ph = document.createElement('div');
-              ph.className = 'photo-preview-img-thumb';
-              ph.style.cssText = 'display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--text-muted);font-size:1.3em;';
-              ph.textContent = '⏳';
-              ph.title = 'Photo is downloading from cloud…';
-              itemDiv.appendChild(ph);
-          }
+          img.className = 'photo-preview-img-thumb';
           
           const removeBtn = document.createElement('button');
           removeBtn.type = 'button'; 
@@ -4264,6 +3742,7 @@ async function saveProductsToDB(productsArray) {
               updatePhotoPreviewUI();
           };
           
+          itemDiv.appendChild(img);
           itemDiv.appendChild(removeBtn);
           prodPhotoList.appendChild(itemDiv);
       });
@@ -4310,10 +3789,7 @@ async function saveProductsToDB(productsArray) {
         imageCompressMsg.textContent = `Processing ${files.length} image(s)...`; 
         imageCompressMsg.style.display = 'block';
         
-        // FIX (quality): was 1200px @ 0.90 — soft on modern phone screens.
-        // 2000px @ 0.92 with high-quality resampling looks crisp fullscreen;
-        // cloud sync still re-compresses separately (900px) so sync stays light.
-        const promises = Array.from(files).map(file => compressImageFileToBlob(file, 2000, 0.92));
+        const promises = Array.from(files).map(file => compressImageFileToBlob(file, 1200, 0.90));
         
         const allPromise = Promise.all(promises).then(blobs => {
              blobs.forEach(blob => {
@@ -4369,25 +3845,7 @@ async function saveProductsToDB(productsArray) {
       if (qtyVal === "" || isNaN(Number(qtyVal)) || Number(qtyVal) < 0) { modalError.textContent = "Valid quantity required."; return; }
       
       // Store the Array of BLOBS
-      const productObj = { id: productEditing ? productEditing.id : genID(), name, barcode: barcodeVal, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photos: currentProductBlobs, createdAt: (productEditing && productEditing.createdAt) || Date.now(), updatedAt: Date.now(), updatedBy: getDeviceName() };
-
-      // --- AUDIT LOG: record exactly what changed (old → new), per field ---
-      const device = getDeviceName() || 'Unknown';
-      const ts = Date.now();
-      if (!productEditing) {
-        queueLog({ id: genLogId(), ts, device, productId: productObj.id, productName: name, action: 'create', field: '', oldVal: '', newVal: '' });
-      } else {
-        const old = productEditing;
-        const cmp = [['name',old.name,name],['barcode',old.barcode,barcodeVal],['mrp',old.mrp,Number(mrpVal)],['cost',old.cost,(costVal!==""?Number(costVal):null)],['qty',old.qty,Number(qtyVal)],['category',old.category,category],['notes',old.notes,notes]];
-        cmp.forEach(([f,ov,nv]) => {
-          const a = ov == null ? '' : String(ov), b = nv == null ? '' : String(nv);
-          if (a !== b) queueLog({ id: genLogId(), ts, device, productId: productObj.id, productName: name, action: 'edit', field: f, oldVal: a, newVal: b });
-        });
-        // photos: log only that they changed, never the image data
-        const oldN = Array.isArray(old.photos) ? old.photos.length : 0;
-        const newN = Array.isArray(currentProductBlobs) ? currentProductBlobs.length : 0;
-        if (oldN !== newN) queueLog({ id: genLogId(), ts, device, productId: productObj.id, productName: name, action: 'edit', field: 'photos', oldVal: oldN + ' photo(s)', newVal: newN + ' photo(s)' });
-      }
+      const productObj = { id: productEditing ? productEditing.id : genID(), name, barcode: barcodeVal, mrp: Number(mrpVal), cost: costVal !== "" ? Number(costVal) : null, qty: Number(qtyVal), category, notes, photos: currentProductBlobs };
       
       // Remove old photo property if it exists on edit
       if(productObj.photo) delete productObj.photo;
@@ -4408,21 +3866,8 @@ async function saveProductsToDB(productsArray) {
 
     function showDeleteModal(product) { deleteModalBackdrop.classList.remove('hide'); deleteName.textContent = product.name || ''; productToDelete = product; setTimeout(()=>document.getElementById('cancelDeleteBtn').focus(),60); }
     document.getElementById('closeDeleteBtn').onclick = document.getElementById('cancelDeleteBtn').onclick = () => { deleteModalBackdrop.classList.add('hide'); productToDelete = null; };
-    deleteModal.onsubmit = function(e){ e.preventDefault(); if (!productToDelete) return; const deletedId = productToDelete.id; queueLog({ id: genLogId(), ts: Date.now(), device: getDeviceName() || 'Unknown', productId: deletedId, productName: productToDelete.name, action: 'delete', field: '', oldVal: '', newVal: '' }); recordProductDeletion(deletedId); products = products.filter(p => p.id !== deletedId); saveProducts(); deleteModalBackdrop.classList.add('hide'); productToDelete = null; selectedProductIds.delete(deletedId); updateMultiSelectControls(); };
+    deleteModal.onsubmit = function(e){ e.preventDefault(); if (!productToDelete) return; const deletedId = productToDelete.id; products = products.filter(p => p.id !== deletedId); saveProducts(); deleteModalBackdrop.classList.add('hide'); productToDelete = null; selectedProductIds.delete(deletedId); updateMultiSelectControls(); };
     function genID() { return 'p' + (Date.now() + ('' + Math.random()).slice(2,7)); }
-
-    // Record a product the USER explicitly deleted, so the sync deletes it in the
-    // cloud too — WITHOUT ever inferring deletions from mere local absence.
-    function recordProductDeletion(id) {
-        if (!id) return;
-        try {
-            const k = 'dealer-gh-pdel';
-            const m = JSON.parse(localStorage.getItem(k) || '{}');
-            m[id] = Date.now();
-            localStorage.setItem(k, JSON.stringify(m));
-        } catch(e){}
-    }
-    window.recordProductDeletion = recordProductDeletion;
 
     /****************************************************************
      * SHARE / PDF LOGIC
@@ -4453,8 +3898,69 @@ async function saveProductsToDB(productsArray) {
         shareModalBackdrop.classList.remove('hide');
     }
     closeShareBtn.onclick = () => { shareModalBackdrop.classList.add('hide'); productsToShareQueue = []; };
+
+    // FIX: preview the generated PDF in-app instead of forcing an immediate
+    // download — the user can check it looks right, then download or share it.
+    const pdfPreviewModalBackdrop = document.getElementById('pdfPreviewModalBackdrop');
+    const pdfPreviewFrame = document.getElementById('pdfPreviewFrame');
+    const closePdfPreviewBtn = document.getElementById('closePdfPreviewBtn');
+    const pdfPreviewDownloadBtn = document.getElementById('pdfPreviewDownloadBtn');
+    const pdfPreviewShareBtn = document.getElementById('pdfPreviewShareBtn');
+    let currentPdfBlobUrl = null;
+    let currentPdfFilename = '';
+
+    function closePdfPreview() {
+        pdfPreviewModalBackdrop.classList.add('hide');
+        pdfPreviewFrame.src = 'about:blank';
+        if (currentPdfBlobUrl) { URL.revokeObjectURL(currentPdfBlobUrl); currentPdfBlobUrl = null; }
+    }
+    closePdfPreviewBtn.onclick = closePdfPreview;
+
+    pdfPreviewDownloadBtn.onclick = () => {
+        if (!currentPdfBlobUrl) return;
+        const a = document.createElement('a');
+        a.href = currentPdfBlobUrl;
+        a.download = currentPdfFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    };
+
+    pdfPreviewShareBtn.onclick = async () => {
+        if (!currentPdfBlobUrl) return;
+        try {
+            const resp = await fetch(currentPdfBlobUrl);
+            const blob = await resp.blob();
+            const file = new File([blob], currentPdfFilename, { type: 'application/pdf' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: currentPdfFilename });
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') alert('Could not share the PDF: ' + err.message);
+        }
+    };
     
-    generatePdfBtn.onclick = function() {
+    // FIX: On mobile, calling window.print() while the images inside
+    // #printableArea (the logo + product photos) are still fetching causes
+    // the PDF engine to snapshot before it has real content, and inside an
+    // installed standalone PWA window.print() may not work at all. This
+    // waits for every <img> to finish loading (or error out) first, with a
+    // hard timeout so a slow/broken image can never block generation.
+    function waitForPrintImages(container, timeoutMs = 4000) {
+        const imgs = Array.from(container.querySelectorAll('img'));
+        if (imgs.length === 0) return Promise.resolve();
+        const loaders = imgs.map(img => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
+        });
+        const timeout = new Promise(resolve => setTimeout(resolve, timeoutMs));
+        return Promise.race([Promise.all(loaders), timeout]);
+    }
+
+    generatePdfBtn.onclick = async function() {
         if(productsToShareQueue.length === 0) return;
         const printableArea = document.getElementById('printableArea');
         let fullHtml = '';
@@ -4478,7 +3984,7 @@ async function saveProductsToDB(productsArray) {
             let html = `
                 <div class="print-product-page">
                     <div class="print-header">
-                        <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" class="print-logo" />
+                        <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" class="print-logo" crossorigin="anonymous" />
                         <div class="print-title">Al Rehman Electronics</div>
                         <div style="font-size:14px;color:#555">Product Specification Sheet</div>
                         <div style="font-size:12px;color:#777">Generated: ${new Date().toLocaleDateString()}</div>
@@ -4500,30 +4006,46 @@ async function saveProductsToDB(productsArray) {
         });
         printableArea.innerHTML = fullHtml;
         shareModalBackdrop.classList.add('hide');
-        setTimeout(() => {
-            // FIX: wait for every image in the printable area (product photos +
-            // header logo) to actually finish loading/decoding before opening the
-            // print dialog. These are often blob:/data: URLs that need an extra
-            // render tick, and on slower mobile hardware (or a cold-cache fetch of
-            // the logo) that can take longer than a fixed delay — so window.print()
-            // was firing while images were still blank, producing a PDF with
-            // missing photos/logo. Each image gets a 3s cap so one broken/offline
-            // image can't block printing forever.
-            const imgsToLoad = Array.from(printableArea.querySelectorAll('img'));
-            Promise.all(imgsToLoad.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
-                const done = () => { img.removeEventListener('load', done); img.removeEventListener('error', done); resolve(); };
-                img.addEventListener('load', done);
-                img.addEventListener('error', done);
-                setTimeout(done, 3000);
-            }))).then(() => {
-                window.print();
-                productsToShareQueue = [];
-                // FIX: clear the hidden print area afterwards — it used to keep the
-                // whole generated document (incl. now-stale object URLs) in the DOM
-                // forever after every print.
-                setTimeout(() => { printableArea.innerHTML = ''; }, 1000);
-            });
-        }, 300);
+
+        // FIX: show #printableArea at the real viewport origin (covering
+        // everything else) instead of shoving it off-screen — html2canvas
+        // was capturing blank because the off-screen position fell outside
+        // its render frame.
+        window.scrollTo(0, 0);
+        document.body.classList.add('pdf-render-mode');
+
+        // FIX: wait for the logo + product photos to actually finish loading
+        // before rasterizing — otherwise photos come out blank in the PDF.
+        await waitForPrintImages(printableArea);
+
+        const rawName = (productsToShareQueue.length === 1 && productsToShareQueue[0].name)
+            ? productsToShareQueue[0].name
+            : `products-${Date.now()}`;
+        const filename = `${rawName.replace(/[\\/:*?"<>|]/g, '').trim() || 'product'}.pdf`;
+
+        try {
+            const pdfBlob = await html2pdf().set({
+                margin: 0,
+                filename,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
+                jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css'], after: '.print-product-page' }
+            }).from(printableArea).outputPdf('blob');
+
+            if (currentPdfBlobUrl) URL.revokeObjectURL(currentPdfBlobUrl);
+            currentPdfFilename = filename;
+            currentPdfBlobUrl = URL.createObjectURL(pdfBlob);
+            pdfPreviewFrame.src = currentPdfBlobUrl;
+            pdfPreviewShareBtn.style.display = (navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], filename, { type: 'application/pdf' })] })) ? '' : 'none';
+            pdfPreviewModalBackdrop.classList.remove('hide');
+        } catch (err) {
+            alert('Could not generate the PDF: ' + err.message);
+        }
+
+        productsToShareQueue = [];
+        document.body.classList.remove('pdf-render-mode');
+        printableArea.innerHTML = '';
     };
 
     /****************************************************************
@@ -4808,10 +4330,6 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
   function hashStr(s) { let h = 5381; for (let i = 0; i < s.length; i++) { h = ((h << 5) + h + s.charCodeAt(i)) | 0; } return String(h); }
   function getBaseHashes() { try { return JSON.parse(localStorage.getItem(BASE_KEY) || '{}'); } catch(e){ return {}; } }
   function setBaseHashes(map) { try { localStorage.setItem(BASE_KEY, JSON.stringify(map)); } catch(e){} }
-  // Per-field base (hashes + times + base qty) for field-level merge
-  const FBASE_KEY = 'dealer-gh-fbase';
-  function getFieldBase() { try { return JSON.parse(localStorage.getItem(FBASE_KEY) || '{}'); } catch(e){ return {}; } }
-  function setFieldBase(map) { try { localStorage.setItem(FBASE_KEY, JSON.stringify(map)); } catch(e){} }
 
   /* ---------- status UI ---------- */
   function setStatus(text, ok) {
@@ -4838,8 +4356,6 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
     if (changeBtn) changeBtn.style.display = isEmbeddedCfg() ? 'none' : '';
     if (cfg && tok) {
       document.getElementById('cloudUserEmail').textContent = cfg.owner + '/' + cfg.repo;
-      const ls = document.getElementById('cloudLastSync');
-      if (ls) ls.textContent = lastSyncOK ? ('Last sync: ' + new Date(lastSyncOK).toLocaleTimeString()) : 'Last sync: not yet in this session';
       setStatus(cloudActive ? 'live' : 'connecting…', cloudActive);
     } else {
       setStatus(cfg ? 'key needed' : 'off', false);
@@ -4860,68 +4376,12 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
     return "Cloud error (HTTP " + status + ").";
   }
 
-  /* ---------------- DISTRIBUTED SYNC LOCK ----------------
-     A small lock.json in the repo holds { owner, ts }. A device must claim it
-     before syncing; others wait their turn. The lock auto-expires after 45s so a
-     crashed device can never block everyone forever. This makes 2-3 devices sync
-     strictly one-after-another instead of colliding. */
-  const LOCK_TTL = 45000;
-  const myDeviceId = (() => {
-    try { let v = localStorage.getItem('dealer-gh-devid'); if (!v) { v = 'd' + Math.random().toString(36).slice(2,10); localStorage.setItem('dealer-gh-devid', v); } return v; } catch(e){ return 'd' + Math.random().toString(36).slice(2,10); }
-  })();
-  function lockUrl() { const cfg = getRepoCfg(); return apiUrl({ ...cfg, path: 'lock.json' }); }
-
-  // Try to acquire the lock. Returns the lock file's sha (to release) or null if busy.
-  async function acquireLock() {
+  // Returns { missing:true } or { sha, data:{products:{}, deleted:{}} }
+  async function pullRemote() {
     const cfg = getRepoCfg();
-    let sha = null, holder = null;
-    try {
-      const res = await fetch(lockUrl() + '?ref=' + encodeURIComponent(cfg.branch), { headers: headers('application/vnd.github.object+json') });
-      if (res.ok) {
-        const meta = await res.json();
-        sha = meta.sha;
-        try { holder = JSON.parse(b64decodeUtf8(meta.content)); } catch(e) { holder = null; }
-      } else if (res.status !== 404) {
-        return { ok: false, transient: true }; // can't read lock — treat as busy, retry later
-      }
-    } catch(e) { return { ok: false, transient: true }; }
-
-    // Someone else holds a still-valid lock?
-    if (holder && holder.owner && holder.owner !== myDeviceId && (Date.now() - (holder.ts || 0)) < LOCK_TTL) {
-      return { ok: false, heldBy: holder.owner };
-    }
-    // Claim it (using sha if a file/expired-lock already exists)
-    const body = { message: 'lock', branch: cfg.branch, content: b64encodeUtf8(JSON.stringify({ owner: myDeviceId, ts: Date.now() })) };
-    if (sha) body.sha = sha;
-    try {
-      const put = await fetch(lockUrl(), { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
-      if (put.ok) { const o = await put.json(); return { ok: true, sha: (o.content && o.content.sha) || null }; }
-      // 409/422 → another device claimed it the same instant
-      return { ok: false, heldBy: 'other' };
-    } catch(e) { return { ok: false, transient: true }; }
-  }
-
-  async function releaseLock(sha) {
-    if (!sha) return;
-    const cfg = getRepoCfg();
-    try {
-      await fetch(lockUrl(), { method: 'DELETE', headers: headers(), body: JSON.stringify({ message: 'unlock', branch: cfg.branch, sha }) });
-    } catch(e) { /* lock will expire on its own */ }
-  }
-
-  let lastETag = null;
-  // Returns { missing:true } | { unchanged:true } | { sha, data:{...} }
-  async function pullRemote(allowUnchanged) {
-    const cfg = getRepoCfg();
-    const h = headers('application/vnd.github.object+json');
-    // Conditional request: if nothing changed, GitHub replies 304 (doesn't count
-    // against the rate limit) and we skip downloading/parsing entirely.
-    if (allowUnchanged && lastETag) h['If-None-Match'] = lastETag;
-    const metaRes = await fetch(apiUrl(cfg) + '?ref=' + encodeURIComponent(cfg.branch), { headers: h });
-    if (metaRes.status === 304) return { unchanged: true };
+    const metaRes = await fetch(apiUrl(cfg) + '?ref=' + encodeURIComponent(cfg.branch), { headers: headers('application/vnd.github.object+json') });
     if (metaRes.status === 404) return { missing: true };
     if (!metaRes.ok) throw new Error(friendlyHttpError(metaRes.status) || ('HTTP ' + metaRes.status));
-    const et = metaRes.headers.get('etag'); if (et) lastETag = et;
     const meta = await metaRes.json();
     let text;
     if (meta.content) {
@@ -4946,271 +4406,36 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
     const body = { message: 'sync ' + new Date().toISOString(), branch: cfg.branch, content: b64encodeUtf8(JSON.stringify(data)) };
     if (sha) body.sha = sha;
     const res = await fetch(apiUrl(cfg), { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
-    if (res.status === 409) return { conflict: true };
-    if (res.status === 413) return { tooLarge: true };
-    if (res.status === 422) {
-      // 422 is either a sha mismatch (conflict) or a real validation error — read which
-      let msg = '';
-      try { const j = await res.json(); msg = (j && j.message) || ''; } catch(e){}
-      if (/sha|does not match/i.test(msg)) return { conflict: true };
-      if (/too large|size|exceed/i.test(msg)) return { tooLarge: true };
-      throw new Error("GitHub rejected the upload: " + (msg || '422'));
-    }
+    if (res.status === 409 || res.status === 422) return { conflict: true };
     if (!res.ok) throw new Error(friendlyHttpError(res.status) || ('HTTP ' + res.status));
     const out = await res.json();
     return { sha: out.content && out.content.sha };
   }
 
-  /* ----------------------------------------------------------------
-     TWO-STAGE PHOTO SYNC
-     Stage 1 (instant): products.json carries only tiny photo REFERENCES
-     like "ghp:photos/ab12cd.jpg" — so product data always syncs fast.
-     Stage 2 (background): the actual image files are uploaded /
-     downloaded one at a time to/from the repo's photos/ folder.
-  ----------------------------------------------------------------- */
-  const PUP_KEY = 'dealer-gh-pup'; // refs whose image file still needs uploading
-  function getPendingUploads() { try { return JSON.parse(localStorage.getItem(PUP_KEY) || '[]'); } catch(e){ return []; } }
-  function setPendingUploads(arr) { try { localStorage.setItem(PUP_KEY, JSON.stringify(arr)); } catch(e){} }
-  function addPendingUpload(ref) { const a = getPendingUploads(); if (!a.includes(ref)) { a.push(ref); setPendingUploads(a); } }
-  function removePendingUpload(ref) { setPendingUploads(getPendingUploads().filter(r => r !== ref)); }
-
-  function repoFileUrl(path) {
-    const cfg = getRepoCfg();
-    return 'https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + '/contents/' + path;
-  }
-  function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onloadend = () => resolve(String(r.result).split(',')[1] || '');
-      r.onerror = reject;
-      r.readAsDataURL(blob);
-    });
-  }
-  // Compress any image blob to a good-quality upload (900px, JPEG)
-  function blobToUploadJpeg(blob) {
+  /* ---------- photo shrinking (JSON can't hold Blobs) ---------- */
+  function photoToDataURL(photo) {
+    if (!photo) return Promise.resolve(null);
+    if (typeof photo === 'string') return Promise.resolve(photo.length < 220000 ? photo : null);
+    if (!(photo instanceof Blob)) return Promise.resolve(null);
     return new Promise(resolve => {
-      const bail = setTimeout(() => resolve(null), 5000);
-      const done = v => { clearTimeout(bail); resolve(v); };
-      try {
-        const url = URL.createObjectURL(blob);
-        const img = new Image();
-        img.onload = () => {
-          try {
-            let w = img.naturalWidth, h = img.naturalHeight;
-            const MAX = 900;
-            if (w > MAX || h > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s); }
-            const c = document.createElement('canvas'); c.width = w; c.height = h;
-            c.getContext('2d').drawImage(img, 0, 0, w, h);
-            URL.revokeObjectURL(url);
-            c.toBlob(b => { c.width = 0; c.height = 0; done(b); }, 'image/jpeg', 0.75);
-          } catch(e) { URL.revokeObjectURL(url); done(null); }
-        };
-        img.onerror = () => { URL.revokeObjectURL(url); done(null); };
-        img.src = url;
-      } catch(e) { done(null); }
+      const url = URL.createObjectURL(photo);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          let w = img.naturalWidth, h = img.naturalHeight;
+          const MAX = 420;
+          if (w > MAX || h > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s); }
+          const c = document.createElement('canvas'); c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(url);
+          const d = c.toDataURL('image/jpeg', 0.55);
+          c.width = 0; c.height = 0;
+          resolve(d.length < 220000 ? d : null);
+        } catch(e) { URL.revokeObjectURL(url); resolve(null); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+      img.src = url;
     });
-  }
-  async function dataURLToBlob(d) { try { return await (await fetch(d)).blob(); } catch(e) { return null; } }
-
-  // Turn every local photo into a ref; queue brand-new images for upload.
-  // Mutates the product's own photos array (so refs are stable between syncs).
-  async function refifyPhotos(p) {
-    if (!Array.isArray(p.photos) || p.photos.length === 0) return false;
-    let changed = false;
-    const out = [];
-    for (let j = 0; j < Math.min(p.photos.length, 4); j++) {
-      let ph = p.photos[j];
-      if (typeof ph === 'string' && ph.startsWith('ghp:')) { out.push(ph); continue; }
-      let blob = null;
-      if (ph instanceof Blob) blob = ph;
-      else if (typeof ph === 'string' && ph.startsWith('data:')) blob = await dataURLToBlob(ph);
-      if (!blob) continue;
-      // FIX (quality regression): the old code compressed to 900px HERE and cached
-      // that small JPEG as the local copy — so after the first sync, the viewer
-      // quality silently dropped from 2000px to 900px. Now the FULL-quality
-      // original stays in the local cache; the 900px compression happens only at
-      // upload time (runPhotoUploads), so sync bandwidth is unchanged.
-      const ref = 'ghp:photos/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.jpg';
-      await photoCachePut(ref, blob);   // full-quality copy, instantly available locally
-      addPendingUpload(ref);            // compressed file goes to the repo in stage 2
-      out.push(ref);
-      changed = true;
-    }
-    if (changed || out.length !== p.photos.length) { p.photos = out; changed = true; }
-    return changed;
-  }
-
-  /* ---- Stage 2a: background UPLOAD worker ---- */
-  let uploadBusy = false;
-  let uploadBackoffUntil = 0;
-  async function runPhotoUploads() {
-    if (uploadBusy || !getToken() || !getRepoCfg()) return;
-    if (Date.now() < uploadBackoffUntil) return; // honour rate-limit cooldown
-    const pending = getPendingUploads();
-    if (!pending.length) return;
-    uploadBusy = true;
-    setStatus('photos ↑ ' + pending.length, true);
-    for (const ref of pending) {
-      try {
-        const db = await openDB();
-        const tx = db.transaction(STORE_PHOTOCACHE, 'readonly');
-        const rec = await new Promise(res => { const r = tx.objectStore(STORE_PHOTOCACHE).get(ref); r.onsuccess = () => res(r.result); r.onerror = () => res(null); });
-        if (!rec || !rec.blob) { removePendingUpload(ref); continue; } // nothing to upload
-        // FIX (quality regression): the cache now holds the FULL-quality original;
-        // compress to the small upload size here so the repo/bandwidth stays light.
-        const uploadBlob = (await blobToUploadJpeg(rec.blob)) || rec.blob;
-        const b64 = await blobToBase64(uploadBlob);
-        const res = await fetch(repoFileUrl(ref.slice(4)), {
-          method: 'PUT', headers: headers(),
-          body: JSON.stringify({ message: 'photo', content: b64, branch: getRepoCfg().branch })
-        });
-        if (res.ok || res.status === 422) { removePendingUpload(ref); }   // 422 = already exists
-        else if (res.status === 401) break;                                // bad token: stop, fix in settings
-        else if (res.status === 403 || res.status === 429) {
-          // Rate limited — record when GitHub says it resets, then stop this round
-          const reset = parseInt(res.headers.get('x-ratelimit-reset') || '0', 10);
-          uploadBackoffUntil = reset ? reset * 1000 : (Date.now() + 60000);
-          break;
-        }
-        await new Promise(r => setTimeout(r, 350));
-      } catch(e) { break; } // offline etc. — retry on next sync
-    }
-    uploadBusy = false;
-    setStatus(cloudActive ? 'live' : 'off', cloudActive);
-  }
-
-  /* ---- Stage 2b: background DOWNLOAD worker ---- */
-  const dlQueue = new Set();
-  const dlAttempts = {};
-  let dlBusy = false;
-  let lastListRefresh = 0;
-  window.cloudQueuePhotoDownload = function(ref) {
-    if (photoMemCache.has(ref) || (dlAttempts[ref] || 0) >= 5) return;
-    dlQueue.add(ref);
-    setTimeout(runPhotoDownloads, 50);
-  };
-  async function runPhotoDownloads() {
-    if (dlBusy || !getToken() || !getRepoCfg() || dlQueue.size === 0) return;
-    dlBusy = true;
-    let got = 0;
-    for (const ref of [...dlQueue]) {
-      if (photoMemCache.has(ref)) { dlQueue.delete(ref); continue; }
-      try {
-        const res = await fetch(repoFileUrl(ref.slice(4)) + '?ref=' + encodeURIComponent(getRepoCfg().branch), { headers: headers('application/vnd.github.raw+json') });
-        if (res.ok) {
-          const blob = await res.blob();
-          await photoCachePut(ref, blob);
-          dlQueue.delete(ref); got++;
-        } else {
-          // 404: the other phone hasn't finished uploading it yet — retry later
-          dlAttempts[ref] = (dlAttempts[ref] || 0) + 1;
-          dlQueue.delete(ref);
-          if (dlAttempts[ref] < 5) setTimeout(() => { dlQueue.add(ref); runPhotoDownloads(); }, 20000);
-        }
-        await new Promise(r => setTimeout(r, 250));
-      } catch(e) { break; } // offline — leave queue for next round
-    }
-    dlBusy = false;
-    // Photos arrived: redraw the list so they appear (throttled)
-    if (got > 0 && Date.now() - lastListRefresh > 4000) {
-      lastListRefresh = Date.now();
-      if (typeof refreshProductList === 'function') refreshProductList();
-    }
-  }
-  function queueMissingPhotoDownloads() {
-    (Array.isArray(products) ? products : []).forEach(p => {
-      (Array.isArray(p.photos) ? p.photos : []).forEach(ph => {
-        if (typeof ph === 'string' && ph.startsWith('ghp:') && !photoMemCache.has(ph)) window.cloudQueuePhotoDownload(ph);
-      });
-    });
-  }
-
-  // ---- FIELD-LEVEL MERGE SUPPORT ----
-  // Fields we merge independently (each carries its own timestamp in _fts).
-  const MERGE_FIELDS = ['name','barcode','mrp','cost','category','notes','photos'];
-
-  // A stable hash of a single field's value (used to detect which fields changed).
-  function fieldHash(v) { return hashStr(typeof v === 'object' ? JSON.stringify(v) : String(v)); }
-
-  // Compute/refresh a product's per-field timestamps by comparing to the last
-  // synced snapshot (base.fields[id]). Only changed fields get a new timestamp.
-  function computeFieldTimes(p, baseFields, now) {
-    const prev = (baseFields && baseFields._h) || {};   // last-synced field hashes
-    const prevT = (baseFields && baseFields._t) || {};  // last-synced field times
-    const fts = {}, hashes = {};
-    MERGE_FIELDS.forEach(f => {
-      let v = p[f];
-      if (f === 'photos') v = (Array.isArray(p.photos) ? p.photos.filter(x => typeof x === 'string' && x.startsWith('ghp:')) : []);
-      const h = fieldHash(v == null ? '' : v);
-      hashes[f] = h;
-      // unchanged → keep old time; changed (or new) → bump to now
-      fts[f] = (prev[f] === h && prevT[f]) ? prevT[f] : Math.max(now, (prevT[f] || 0) + 1);
-    });
-    return { fts, hashes };
-  }
-
-  /* ----------------------------------------------------------------
-     AUDIT LOG SYNC — kept in a SEPARATE file (logs.json) in the repo so
-     it never bloats products.json. Append-only union merge by log id.
-  ----------------------------------------------------------------- */
-  let logsETag = null;
-  let logSyncBusy = false;
-  function logsFileUrl() { const cfg = getRepoCfg(); return apiUrl({ ...cfg, path: 'logs.json' }); }
-
-  async function syncLogs() {
-    if (logSyncBusy || !getToken() || !getRepoCfg()) return;
-    logSyncBusy = true;
-    try {
-      const cfg = getRepoCfg();
-      // pull existing logs.json (conditional)
-      const h = headers('application/vnd.github.object+json');
-      if (logsETag) h['If-None-Match'] = logsETag;
-      let remoteLogs = {}, sha = null, unchanged = false;
-      const res = await fetch(logsFileUrl() + '?ref=' + encodeURIComponent(cfg.branch), { headers: h });
-      if (res.status === 304) { unchanged = true; }
-      else if (res.status === 404) { /* no file yet */ }
-      else if (res.ok) {
-        const et = res.headers.get('etag'); if (et) logsETag = et;
-        const meta = await res.json();
-        sha = meta.sha;
-        let text = meta.content ? b64decodeUtf8(meta.content) : '';
-        try { const d = JSON.parse(text); remoteLogs = (d && d.logs) || {}; } catch(e) { remoteLogs = {}; }
-      } else { logSyncBusy = false; return; }
-
-      // local queue of new entries
-      let localQueue = [];
-      try { localQueue = JSON.parse(localStorage.getItem('dealer-gh-logq') || '[]'); } catch(e){}
-
-      if (unchanged && localQueue.length === 0) { logSyncBusy = false; return; }
-
-      // union by id (logs are immutable, append-only)
-      const merged = { ...remoteLogs };
-      localQueue.forEach(l => { if (l && l.id) merged[l.id] = l; });
-      // also fold in anything we have locally that the cloud lacks
-      auditLogs.forEach(l => { if (l && l.id && !merged[l.id]) merged[l.id] = l; });
-
-      // cap stored cloud logs to most recent ~5000 to keep the file reasonable
-      let entries = Object.values(merged).sort((a,b) => (a.ts||0) - (b.ts||0));
-      if (entries.length > 5000) entries = entries.slice(-5000);
-      const cappedMap = {}; entries.forEach(l => cappedMap[l.id] = l);
-
-      const newJson = JSON.stringify({ logs: cappedMap });
-      const oldJson = JSON.stringify({ logs: remoteLogs });
-      if (newJson !== oldJson) {
-        const body = { message: 'logs ' + new Date().toISOString(), branch: cfg.branch, content: b64encodeUtf8(newJson) };
-        if (sha) body.sha = sha;
-        const put = await fetch(logsFileUrl(), { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
-        if (put.ok) { const o = await put.json(); logsETag = (o.content && o.content.etag) || null; }
-        else if (put.status === 409 || put.status === 422) { logsETag = null; logSyncBusy = false; setTimeout(syncLogs, 1500); return; }
-      }
-
-      // apply merged logs locally + clear the queue
-      auditLogs = entries;
-      try { await replaceLogsInDB(entries); } catch(e){}
-      try { localStorage.setItem('dealer-gh-logq', '[]'); } catch(e){}
-      if (typeof renderLogsList === 'function' && !document.getElementById('logsModalBackdrop').classList.contains('hide')) renderLogsList();
-    } catch(e) { console.error('Log sync failed', e); }
-    logSyncBusy = false;
   }
 
   async function serializeProduct(p, idx) {
@@ -5218,116 +4443,36 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
       id: p.id, name: p.name || '', barcode: p.barcode || '',
       mrp: p.mrp ?? 0, cost: p.cost ?? null, qty: p.qty ?? 0,
       category: p.category || '', notes: p.notes || '',
-      updatedBy: p.updatedBy || '', updatedAt: p.updatedAt || 0, createdAt: p.createdAt || 0,
-      _idx: idx, photos: (Array.isArray(p.photos) ? p.photos.filter(ph => typeof ph === 'string' && ph.startsWith('ghp:')) : [])
+      _idx: idx, photos: []
     };
-    return out;
-  }
-
-  // Merge two product records FIELD BY FIELD using their per-field timestamps.
-  // qty is special: merged by applying the net change each side made vs the base.
-  function mergeProductRecords(L, R, baseQty) {
-    // start from whichever has the newer overall record as the skeleton
-    const out = { id: (L||R).id };
-    const lf = (L && L._fts) || {}, rf = (R && R._fts) || {};
-    MERGE_FIELDS.forEach(f => {
-      const lt = lf[f] || 0, rt = rf[f] || 0;
-      if (L && R) out[f] = (lt >= rt) ? L[f] : R[f];   // newest field wins; tie → local (already applied)
-      else out[f] = (L || R)[f];
-    });
-    // updatedBy follows the side that made the newest change (computed below via updatedAt)
-    // --- qty via delta merge: base + (local-base) + (remote-base) ---
-    if (L && R && typeof baseQty === 'number') {
-      const dL = (L.qty ?? baseQty) - baseQty;
-      const dR = (R.qty ?? baseQty) - baseQty;
-      out.qty = Math.max(0, baseQty + dL + dR);
-    } else {
-      out.qty = (L && L.qty != null) ? L.qty : (R && R.qty != null ? R.qty : 0);
+    const photos = Array.isArray(p.photos) ? p.photos.slice(0, 3) : [];
+    let budget = 450000;
+    for (const ph of photos) {
+      const d = await photoToDataURL(ph);
+      if (d && d.length < budget) { out.photos.push(d); budget -= d.length; }
     }
-    // "Edited by/at" follows whichever side made the NEWEST field change. We compare
-    // each side's latest field-timestamp; the larger one owns the attribution. This
-    // way a device that only RECEIVES another's edit never claims authorship.
-    const lMax = Math.max(0, ...MERGE_FIELDS.map(f => lf[f] || 0));
-    const rMax = Math.max(0, ...MERGE_FIELDS.map(f => rf[f] || 0));
-    if (lMax >= rMax) {
-      out.updatedAt = (L && L.updatedAt) || lMax;
-      out.updatedBy = (L && L.updatedBy) || '';
-    } else {
-      out.updatedAt = (R && R.updatedAt) || rMax;
-      out.updatedBy = (R && R.updatedBy) || '';
-    }
-    out.createdAt = Math.min((L && L.createdAt) || Infinity, (R && R.createdAt) || Infinity);
-    if (out.createdAt === Infinity) out.createdAt = out.updatedAt;
-    // carry the merged field-timestamps forward (max of both sides)
-    const mf = {};
-    MERGE_FIELDS.forEach(f => { mf[f] = Math.max(lf[f]||0, rf[f]||0); });
-    out._fts = mf;
     return out;
   }
   // Hash ignores display order so re-sorting alone doesn't count as an "edit"
-  function productHash(s) {
-    // Hash ONLY real content fields, in a fixed order — never internal keys
-    // (_fts, _h, __fhashes, __baseQty, _idx) or bookkeeping (updatedAt/By, createdAt).
-    const photos = Array.isArray(s.photos) ? s.photos.filter(x => typeof x === 'string' && x.startsWith('ghp:')) : [];
-    const content = { name:s.name||'', barcode:s.barcode||'', mrp:s.mrp??0, cost:s.cost??null, qty:s.qty??0, category:s.category||'', notes:s.notes||'', photos };
-    return hashStr(JSON.stringify(content));
-  }
+  function productHash(s) { const { _idx, updatedAt, ...rest } = s; return hashStr(JSON.stringify(rest)); }
 
   /* ---------- the sync core (pull → 3-way merge → push if needed) ---------- */
-  function remoteCountCheck(remoteMap, deleted, base) {
-    return Object.keys(remoteMap).length === 0 && Object.keys(deleted).length === 0 && Object.keys(base).length > 0;
-  }
-  let busySince = 0;
-  let lastSyncOK = 0;
-  async function syncNow(attempt) {
-    attempt = attempt || 0;
-    if (!getRepoCfg() || !getToken()) { setCloudError("Not connected — enter the access key in Settings → Cloud Sync."); return false; }
-    if (busy) {
-      // Watchdog: a sync stuck >90s is considered dead — don't block forever
-      if (Date.now() - busySince < 90000) { queued = true; return false; }
-      busy = false;
-    }
-    busy = true; busySince = Date.now();
+  async function syncNow() {
+    if (!getRepoCfg() || !getToken()) return;
+    if (busy) { queued = true; return; }
+    busy = true;
     setStatus('syncing…', true);
     try {
-      // 1. Stage-1 prep: photos become tiny refs; new images join the upload queue
+      // 1. Serialize local state and stamp updatedAt using last-synced hashes
       const base = getBaseHashes();
       const now = Date.now();
-      const local = Array.isArray(products) ? products : [];
-      let photosChanged = false;
-      for (const p of local) { if (await refifyPhotos(p)) photosChanged = true; }
-      if (photosChanged) { try { await saveProductsToDB(products); } catch(e){ console.error(e); } }
-
       const localMap = {};
-      const fieldBase = getFieldBase();
-      let isFirstSync = Object.keys(base).length === 0; // this device never synced before
+      const local = Array.isArray(products) ? products : [];
       for (let i = 0; i < local.length; i++) {
         const s = await serializeProduct(local[i], i);
         const h = productHash(s);
-        const b = base[s.id];
-        if (b && b.h === h) s.updatedAt = b.t;
-        else if (b && b.h !== h) s.updatedAt = Math.max(local[i].updatedAt || 0, b.t + 1, now);
-        else s.updatedAt = local[i].updatedAt || (isFirstSync ? 0 : now);
+        s.updatedAt = (base[s.id] && base[s.id].h === h) ? base[s.id].t : now;
         s._h = h;
-        // attach per-field timestamps (only changed fields advance)
-        const fb = fieldBase[s.id];
-        const cft = computeFieldTimes(s, fb, isFirstSync && !fb ? 0 : s.updatedAt);
-        s._fts = cft.fts;
-        s.__fhashes = cft.hashes;       // kept locally only, stripped before upload
-        s.__baseQty = fb ? fb.qty : undefined;
-        // If ANY content field changed vs last sync, this device is the latest editor.
-        const prevH = (fb && fb._h) || {};
-        const changedFields = MERGE_FIELDS.filter(f => {
-          let v = s[f]; if (f === 'photos') v = Array.isArray(s.photos) ? s.photos : [];
-          return prevH[f] !== fieldHash(v == null ? '' : v);
-        });
-        if (fb && changedFields.length) {
-          s.updatedAt = Math.max(s.updatedAt || 0, ...changedFields.map(f => s._fts[f] || 0));
-          s.updatedBy = getDeviceName() || s.updatedBy || '';
-        }
-        // Remember the fields THIS device just changed (vs last sync) so we can make
-        // their timestamps beat the remote's after we pull — defeats clock skew.
-        s.__locallyChanged = (fb ? changedFields : (isFirstSync ? [] : MERGE_FIELDS.slice()));
         localMap[s.id] = s;
       }
 
@@ -5339,135 +4484,75 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
       const localKhataMap = {};
       (Array.isArray(khataCustomers) ? khataCustomers : []).forEach(c => { localKhataMap[c.id] = c; });
 
-      // 2. Pull remote. If nothing local changed AND the cloud is unchanged since
-      //    last time, this returns instantly without downloading the file.
-      const nothingLocalToPush = !__localDirty;
-      let remote = await pullRemote(nothingLocalToPush);
-      if (remote.unchanged) {
-        // Cloud identical to what we already have → skip the merge, but still let
-        // background photo workers catch up (missing downloads / pending uploads).
-        cloudActive = true; lastSyncOK = Date.now();
-        try { queueMissingPhotoDownloads(); } catch(e){}
-        setTimeout(runPhotoDownloads, 100);
-        setTimeout(runPhotoUploads, 300);
-        setTimeout(syncLogs, 500);
-        setStatus('live', true); window.renderCloudSettings(); cloudGateResolve(true);
-        busy = false; if (queued) { queued = false; setTimeout(() => syncNow(0), 300); }
-        return true;
-      }
+      // 2. Pull remote
+      const remote = await pullRemote();
       const remoteMap = remote.missing ? {} : remote.data.products;
-      // CLOCK-SKEW GUARD: for every field this device just edited, ensure its
-      // timestamp is strictly greater than the remote's for that field — otherwise
-      // a remote device with a fast clock could overwrite a genuinely newer edit
-      // (the "I changed the price but it reverted" bug).
-      Object.keys(localMap).forEach(id => {
-        const L = localMap[id], R = remoteMap[id];
-        if (!R || !L.__locallyChanged || !L.__locallyChanged.length) return;
-        const rf = R._fts || {};
-        L.__locallyChanged.forEach(f => {
-          const beat = Math.max((L._fts[f] || 0), (rf[f] || 0) + 1, now);
-          L._fts[f] = beat;
-          if (f !== 'photos') L.updatedAt = Math.max(L.updatedAt || 0, beat);
-        });
-      });
       const deleted = remote.missing ? {} : (remote.data.deleted || {});
       const remoteHist = remote.missing ? {} : (remote.data.history || {});
       const histDeleted = remote.missing ? {} : (remote.data.historyDeleted || {});
       const remoteKhata = remote.missing ? {} : (remote.data.khata || {});
       const khataDeleted = remote.missing ? {} : (remote.data.khataDeleted || {});
 
-      // WIPE GUARD: a mysteriously empty cloud file must never delete local stock.
-      const remoteEmpty = Object.keys(remoteMap).length === 0 && Object.keys(deleted).length === 0;
-      const productsWiped = remoteEmpty && (Object.keys(base).length > 0 || Object.keys(localMap).length > 0);
+      // 3. Local deletions → tombstones (item was synced before but is gone locally now)
+      const pendingDeletes = Object.keys(base).filter(id => !localMap[id] && !deleted[id]);
+      const remoteCount = Object.keys(remoteMap).length;
+      // SAFETY GUARD: deleting many products at once (multi-delete, an old
+      // "Replace" import, or cleared data) must be confirmed by a human before
+      // it is allowed to remove them from the shared cloud database.
+      if (pendingDeletes.length >= 8 || (pendingDeletes.length >= 3 && remoteCount > 0 && pendingDeletes.length >= remoteCount * 0.5)) {
+        const names = pendingDeletes.slice(0, 5).map(id => (remoteMap[id] && remoteMap[id].name) || id);
+        const ok = confirm(
+          "⚠️ This sync would DELETE " + pendingDeletes.length + " product(s) from the shared database on ALL phones" +
+          (names.length ? " (e.g. " + names.join(", ") + (pendingDeletes.length > names.length ? ", …" : "") + ")" : "") +
+          ".\n\n[OK] = yes, really delete them everywhere\n[Cancel] = keep them (they will be restored on this phone from the cloud)"
+        );
+        if (ok) pendingDeletes.forEach(id => { deleted[id] = now; });
+        // Cancel: no tombstones → the merge below re-downloads them locally.
+      } else {
+        pendingDeletes.forEach(id => { deleted[id] = now; });
+      }
+      Object.keys(base).forEach(id => { if (!localMap[id] && deleted[id]) deleted[id] = Math.max(deleted[id], 0); });
 
-      // 3. DELETIONS ARE EXPLICIT ONLY. We never infer "this product vanished
-      //    locally, so delete it everywhere" — that caused accidental wipes and
-      //    the startup popup. A product is removed from the cloud ONLY if the user
-      //    actually pressed delete (recorded in dealer-gh-pdel).
-      let userDeletes = {};
-      try { userDeletes = JSON.parse(localStorage.getItem('dealer-gh-pdel') || '{}'); } catch(e){}
-      Object.keys(userDeletes).forEach(id => { deleted[id] = Math.max(deleted[id] || 0, userDeletes[id]); });
-
-      // 4. FIELD-LEVEL merge: each field independently takes its newest version,
-      //    so a price edit on one phone and a stock/notes edit on another both
-      //    survive. qty merges by deltas so concurrent sales sum correctly.
+      // 4. Merge per product: newest updatedAt wins; tombstones beat older items
       const merged = {};
       const ids = new Set([...Object.keys(localMap), ...Object.keys(remoteMap)]);
       ids.forEach(id => {
         const L = localMap[id], R = remoteMap[id];
-        let result = null;
-        if (productsWiped && L) {
-          result = L;                                              // empty-cloud safety: keep local
-        } else if (L && R) {
-          const baseQty = (L.__baseQty != null) ? L.__baseQty : (R.qty ?? L.qty); // best-effort base for delta
-          result = mergeProductRecords(L, R, baseQty);             // ← per-field merge
-        } else if (L) {
-          result = (deleted[id] && deleted[id] >= (L.updatedAt||0)) ? null : L;
+        let winner = null;
+        if (L && R) winner = (L.updatedAt >= (R.updatedAt || 0)) ? L : R;
+        else if (L) {
+          // exists locally only: keep it unless a NEWER tombstone says it was deleted elsewhere
+          winner = (deleted[id] && deleted[id] >= L.updatedAt) ? null : L;
         } else if (R) {
-          result = (deleted[id] && deleted[id] >= (R.updatedAt||0)) ? null : R;
+          // exists remotely only: new from another device, unless we just deleted it
+          winner = (deleted[id] && deleted[id] >= (R.updatedAt || 0)) ? null : R;
         }
-        if (result) {
-          const w = { ...result };
-          delete w._h; delete w.__fhashes; delete w.__baseQty;
-          if (!w.updatedAt) w.updatedAt = Math.max((L && L.updatedAt)||0, (R && R.updatedAt)||0);
-          if (!w._fts) { const mf = {}; MERGE_FIELDS.forEach(f => mf[f] = w.updatedAt); w._fts = mf; }
-          merged[id] = w;
-          if (deleted[id] && deleted[id] < (w.updatedAt||0)) delete deleted[id];
-        }
+        if (winner) { const w = { ...winner }; delete w._h; merged[id] = w; if (deleted[id] && deleted[id] < (winner.updatedAt||0)) delete deleted[id]; }
       });
       /* ---- HISTORY merge (entries are immutable: union + tombstones) ---- */
       const histBase = (() => { try { return JSON.parse(localStorage.getItem('dealer-gh-hbase') || '[]'); } catch(e){ return []; } })();
       const histBaseSet = new Set(histBase);
-      // WIPE GUARD: if the cloud history section vanished entirely with no
-      // tombstones (an old app version rewrote the file), treat local data as
-      // the survivor and re-upload it instead of deleting it.
-      const histWiped = Object.keys(remoteHist).length === 0 && Object.keys(histDeleted).length === 0 && histBaseSet.size > 0;
-      const histFirstSync = histBaseSet.size === 0;
       // deleted locally since last sync → tombstone
-      if (!histWiped && !histFirstSync) histBaseSet.forEach(id => { if (!localHistMap[id]) histDeleted[id] = Math.max(histDeleted[id] || 0, now); });
+      histBaseSet.forEach(id => { if (!localHistMap[id]) histDeleted[id] = Math.max(histDeleted[id] || 0, now); });
       const mergedHist = {};
       new Set([...Object.keys(localHistMap), ...Object.keys(remoteHist)]).forEach(id => {
         if (histDeleted[id]) return;                       // tombstone always wins
         if (remoteHist[id]) { mergedHist[id] = remoteHist[id]; return; }
         if (localHistMap[id]) {
-          if (!histWiped && !histFirstSync && histBaseSet.has(id)) return;   // was synced before, now gone remotely → deleted elsewhere
-          mergedHist[id] = localHistMap[id];               // new local sale (or survivor of a wipe)
+          if (histBaseSet.has(id)) return;                 // was synced before, now gone remotely → deleted elsewhere
+          mergedHist[id] = localHistMap[id];               // new local sale
         }
       });
 
       /* ---- KHATA merge (mutable customers: newest updatedAt wins + tombstones) ---- */
       const khataBase = (() => { try { return JSON.parse(localStorage.getItem('dealer-gh-kbase') || '{}'); } catch(e){ return {}; } })();
-      // Same wipe guard for khata
-      const khataWiped = Object.keys(remoteKhata).length === 0 && Object.keys(khataDeleted).length === 0 && Object.keys(khataBase).length > 0;
-      const khataFirstSync = Object.keys(khataBase).length === 0;
-      if (!khataWiped && !khataFirstSync) Object.keys(khataBase).forEach(id => { if (!localKhataMap[id]) khataDeleted[id] = Math.max(khataDeleted[id] || 0, now); });
+      Object.keys(khataBase).forEach(id => { if (!localKhataMap[id]) khataDeleted[id] = Math.max(khataDeleted[id] || 0, now); });
       const mergedKhata = {};
-      const khataTxnBase = (() => { try { return JSON.parse(localStorage.getItem('dealer-gh-ktxnbase') || '{}'); } catch(e){ return {}; } })();
       new Set([...Object.keys(localKhataMap), ...Object.keys(remoteKhata)]).forEach(id => {
         const L = localKhataMap[id], R = remoteKhata[id];
         let winner = null;
-        if (L && R) {
-          // Both have this customer → merge their transaction lists by union (txn ids
-          // are unique). A txn that existed in our base but is now gone locally was
-          // deleted by the user, so it stays deleted; everything else is kept.
-          const baseTxns = new Set(khataTxnBase[id] || []);
-          const txnMap = {};
-          (R.txns || []).forEach(t => { if (t && t.id) txnMap[t.id] = t; });
-          (L.txns || []).forEach(t => { if (t && t.id) txnMap[t.id] = t; });
-          // honour local deletions: in base, in remote, but not in local now → drop
-          (R.txns || []).forEach(t => {
-            if (t && t.id && baseTxns.has(t.id) && !(L.txns || []).some(x => x.id === t.id)) delete txnMap[t.id];
-          });
-          // and remote deletions: in base, in local, but not in remote now → drop
-          (L.txns || []).forEach(t => {
-            if (t && t.id && baseTxns.has(t.id) && !(R.txns || []).some(x => x.id === t.id)) delete txnMap[t.id];
-          });
-          const mergedTxns = Object.values(txnMap).sort((a,b) => (a.ts||0) - (b.ts||0));
-          // newest profile fields (name/phone) by updatedAt
-          const newer = ((L.updatedAt||0) >= (R.updatedAt||0)) ? L : R;
-          winner = { id, name: newer.name, phone: newer.phone, createdAt: Math.min(L.createdAt||Infinity, R.createdAt||Infinity) || Date.now(), updatedAt: Math.max(L.updatedAt||0, R.updatedAt||0), txns: mergedTxns };
-        }
-        else if (L) winner = (!khataWiped && !khataFirstSync && khataBase[id] !== undefined) ? null : L;
+        if (L && R) winner = ((L.updatedAt||0) >= (R.updatedAt||0)) ? L : R;
+        else if (L) winner = (khataBase[id] !== undefined) ? null : L;          // synced before & gone remotely → deleted elsewhere
         else if (R) winner = R;
         if (winner && khataDeleted[id] && khataDeleted[id] >= (winner.updatedAt||0)) winner = null;
         if (winner) { mergedKhata[id] = winner; if (khataDeleted[id] && khataDeleted[id] < (winner.updatedAt||0)) delete khataDeleted[id]; }
@@ -5480,48 +4565,12 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
       });
 
       // 5. Push only if merged differs from remote
-      // Build the upload copy: keep _fts (needed for field-merge) and _idx (order),
-      // but never upload purely-local bookkeeping keys.
-      const uploadProducts = {};
-      Object.keys(merged).forEach(id => { const c = { ...merged[id] }; delete c._h; delete c.__fhashes; delete c.__baseQty; delete c.__changed; delete c.__prevValues; delete c.__locallyChanged; uploadProducts[id] = c; });
-      const mergedJson = JSON.stringify({ products: uploadProducts, deleted, history: mergedHist, historyDeleted: histDeleted, khata: mergedKhata, khataDeleted });
+      const mergedJson = JSON.stringify({ products: merged, deleted, history: mergedHist, historyDeleted: histDeleted, khata: mergedKhata, khataDeleted });
       const remoteJson = remote.missing ? '' : JSON.stringify({ products: remoteMap, deleted: remote.data.deleted || {}, history: remoteHist, historyDeleted: remote.data.historyDeleted || {}, khata: remoteKhata, khataDeleted: remote.data.khataDeleted || {} });
       if (mergedJson !== remoteJson) {
-        // We have changes to write → take the distributed lock so only ONE device
-        // writes at a time. If another device holds it, wait and retry the whole
-        // sync shortly (this is what makes 2-3 phones go strictly one-after-another).
-        const lock = await acquireLock();
-        if (!lock.ok) {
-          busy = false; queued = false;
-          if (attempt < 6) {
-            setStatus('waiting…', true);
-            setTimeout(() => syncNow(attempt + 1), 1500 + Math.random()*1500);
-            return false;
-          }
-          throw new Error("Another device is syncing — please try again in a moment.");
-        }
-        try {
-          // Re-pull under the lock in case the holder just changed the file.
-          const fresh = await pullRemote(false);
-          const freshSha = fresh.missing ? null : fresh.sha;
-          let put = await putRemote({ updatedAt: now, products: uploadProducts, deleted, history: mergedHist, historyDeleted: histDeleted, khata: mergedKhata, khataDeleted }, freshSha);
-          if (put.tooLarge) {
-            const noPhotos = {};
-            Object.keys(uploadProducts).forEach(id => { noPhotos[id] = { ...uploadProducts[id], photos: [] }; });
-            put = await putRemote({ updatedAt: now, products: noPhotos, deleted, history: mergedHist, historyDeleted: histDeleted, khata: mergedKhata, khataDeleted }, freshSha);
-            if (!put.conflict && !put.tooLarge) setCloudError("File was too big — synced all data but without photos.");
-          }
-          if (put.conflict) {
-            await releaseLock(lock.sha);
-            busy = false; queued = false;
-            if (attempt < 4) { setTimeout(() => syncNow(attempt + 1), 900 + Math.random()*900); return false; }
-            throw new Error("Sync kept colliding — try Sync now again in a moment.");
-          }
-          if (put.tooLarge) { await releaseLock(lock.sha); throw new Error("Upload is too large even without photos."); }
-          lastSha = put.sha || null;
-        } finally {
-          await releaseLock(lock.sha); // always release, even on error
-        }
+        const put = await putRemote({ updatedAt: now, products: merged, deleted, history: mergedHist, historyDeleted: histDeleted, khata: mergedKhata, khataDeleted }, remote.missing ? null : remote.sha);
+        if (put.conflict) { busy = false; queued = false; setTimeout(syncNow, 900 + Math.random()*900); return; }
+        lastSha = put.sha || null;
       } else {
         lastSha = remote.missing ? null : remote.sha;
       }
@@ -5529,33 +4578,14 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
       // 6. Apply merged result locally (UI + IndexedDB) and remember it as the new base
       const arr = Object.values(merged).sort((a,b) => (a._idx ?? 0) - (b._idx ?? 0) || String(a.name||'').localeCompare(String(b.name||'')));
       const newBase = {};
-      const newFieldBase = {};
-      Object.keys(merged).forEach(id => {
-        const m = merged[id];
-        newBase[id] = { h: productHash(m), t: m.updatedAt || now };
-        // record field hashes + times + qty so next sync knows what THIS device last saw
-        const fh = {}, fv = {};
-        MERGE_FIELDS.forEach(f => { let v = m[f]; if (f === 'photos') v = Array.isArray(m.photos) ? m.photos : []; fh[f] = fieldHash(v == null ? '' : v); fv[f] = (f === 'photos') ? (Array.isArray(m.photos) ? m.photos.length : 0) : v; });
-        newFieldBase[id] = { _h: fh, _t: { ...(m._fts || {}) }, _v: fv, qty: m.qty ?? 0 };
-      });
+      Object.keys(merged).forEach(id => { newBase[id] = { h: productHash(merged[id]), t: merged[id].updatedAt || now }; });
       setBaseHashes(newBase);
-      setFieldBase(newFieldBase);
-      __localDirty = false; // everything we had is now reflected in the cloud
-      // Explicit deletes are now reflected in the cloud tombstones → clear the local queue
-      try {
-        const pd = JSON.parse(localStorage.getItem('dealer-gh-pdel') || '{}');
-        Object.keys(pd).forEach(id => { if (deleted[id]) delete pd[id]; });
-        localStorage.setItem('dealer-gh-pdel', JSON.stringify(pd));
-      } catch(e){}
-      const stripVol = o => { const c = { ...o }; delete c._idx; delete c._h; delete c._fts; delete c.__fhashes; delete c.__baseQty; delete c.__changed; delete c.__prevValues; delete c.__locallyChanged; if (!Array.isArray(c.photos)) c.photos = []; return c; };
-      const cleaned = arr.map(stripVol);
-      // Compare on identical fields so a changed editor-name/time is detected and redrawn
-      const localClean = local.map(p => stripVol(localMap[p.id]));
+      const cleaned = arr.map(p => { const c = { ...p }; delete c._idx; if (!Array.isArray(c.photos)) c.photos = []; return c; });
+      // Only touch the UI if the merge actually changed something vs. what's on screen
+      const localClean = local.map((p, i) => { const c = { ...localMap[p.id] }; delete c._h; delete c._idx; return c; });
       if (JSON.stringify(cleaned) !== JSON.stringify(localClean)) {
         products = cleaned;
         try { await saveProductsToDB(products); } catch(e){ console.error(e); }
-        // If the product details popup is open for one of these, refresh its text too
-        if (typeof refreshOpenDetailModal === 'function') refreshOpenDetailModal();
         if (typeof refreshProductList === 'function') refreshProductList();
       }
 
@@ -5569,9 +4599,7 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
 
       // 6c. Apply merged KHATA locally if it changed
       const newKBase = {};
-      const newKTxnBase = {};
-      Object.keys(mergedKhata).forEach(id => { newKBase[id] = mergedKhata[id].updatedAt || now; newKTxnBase[id] = (mergedKhata[id].txns || []).map(t => t.id); });
-      try { localStorage.setItem('dealer-gh-ktxnbase', JSON.stringify(newKTxnBase)); } catch(e){}
+      Object.keys(mergedKhata).forEach(id => { newKBase[id] = mergedKhata[id].updatedAt || now; });
       if (JSON.stringify(Object.values(mergedKhata).map(c=>[c.id,c.updatedAt]).sort()) !== JSON.stringify(Object.values(localKhataMap).map(c=>[c.id,c.updatedAt]).sort())) {
         khataCustomers = Object.values(mergedKhata);
         try { await replaceKhataInDB(khataCustomers); } catch(e){ console.error(e); }
@@ -5583,61 +4611,39 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
       }
       try { localStorage.setItem('dealer-gh-kbase', JSON.stringify(newKBase)); } catch(e){}
 
-      // Stage 2: move the actual image files in the background
-      queueMissingPhotoDownloads();
-      setTimeout(runPhotoDownloads, 100);
-      setTimeout(runPhotoUploads, 300);
-      setTimeout(syncLogs, 500); // audit logs go to their own logs.json
-
       cloudActive = true;
-      lastSyncOK = Date.now();
       try { localStorage.setItem(AUTHED_KEY, '1'); } catch(e){}
-      if (!/too big/.test(document.getElementById('cloudError').textContent || '')) setCloudError('');
+      setCloudError('');
       setStatus('live', true);
       window.renderCloudSettings();
       cloudGateResolve(true);
-      busy = false;
-      if (queued) { queued = false; setTimeout(() => syncNow(0), 300); }
-      return true;
     } catch(e) {
       console.error('Sync failed:', e);
       cloudActive = false;
       setCloudError(String(e.message || e));
       setStatus(navigator.onLine === false ? 'offline' : 'error', false);
       window.renderCloudSettings();
-      busy = false;
-      if (queued) { queued = false; setTimeout(() => syncNow(0), 300); }
-      return false;
     }
+    busy = false;
+    if (queued) { queued = false; setTimeout(syncNow, 300); }
   }
 
   /* ---------- polling: pick up other devices' edits ---------- */
   function startPolling() {
     if (pollTimer) return;
-    // 8s base + up to 4s random jitter, so multiple phones naturally desync their
-    // polling and rarely hit GitHub at the exact same moment.
-    const pollEvery = 8000 + Math.floor(Math.random() * 4000);
     pollTimer = setInterval(() => {
-      if (document.visibilityState === 'visible' && navigator.onLine !== false) syncNow(0);
-    }, pollEvery);
+      if (document.visibilityState === 'visible' && navigator.onLine !== false) syncNow();
+    }, 25000);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('online', onVisible);
   }
   function onVisible() { if (document.visibilityState === 'visible' && getToken() && getRepoCfg()) syncNow(); }
 
   /* ---------- public hooks (same names the rest of the app already uses) ---------- */
-  let __localDirty = false;
-  // Public: force an immediate full sync (used by the header refresh button).
-  window.cloudForceSync = async function() {
-    if (!getRepoCfg() || !getToken()) return false;
-    __localDirty = true;            // ensure we do a real pull+merge, not a 304 short-circuit
-    return await syncNow(0);
-  };
   window.cloudPushDebounced = function() {
     if (!getRepoCfg() || !getToken()) return;
-    __localDirty = true;
     clearTimeout(pushTimer);
-    pushTimer = setTimeout(() => syncNow(0), 800);
+    pushTimer = setTimeout(syncNow, 800);
   };
 
   window.cloudInitIfConfigured = function() {
@@ -5746,19 +4752,7 @@ const EMBEDDED_CLOUD = { owner: "", repo: "", branch: "main", path: "products.js
     window.renderCloudSettings();
   };
 
-  document.getElementById('cloudPushBtn').onclick = async function() {
-    const btn = this;
-    btn.disabled = true; btn.textContent = '⏳ Syncing…';
-    const ok = await syncNow(0);
-    btn.disabled = false;
-    btn.textContent = ok ? '✅ Synced!' : '❌ Failed — see error above';
-    if (!ok) {
-      const err = document.getElementById('cloudError').textContent;
-      if (err) alert("Sync failed:\n\n" + err);
-    }
-    setTimeout(() => { btn.textContent = '🔄 Sync now'; }, 2500);
-    window.renderCloudSettings();
-  };
+  document.getElementById('cloudPushBtn').onclick = function() { syncNow(); };
 
   document.getElementById('cloudChangeConfigBtn').onclick = function() {
     if (isEmbeddedCfg()) { setCloudError("The repository is set by the owner inside the app file."); return; }
