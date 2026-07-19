@@ -1552,6 +1552,10 @@
 
   <input type="file" id="hiddenImport" accept="application/json" style="display:none">
 
+  <!-- FIX: PDF generation now happens fully in JS instead of relying on
+       window.print(), which is unreliable inside an installed/standalone
+       PWA on Android (no OS print pipeline available to the app's window). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
   /****************************************************************
@@ -4509,7 +4513,7 @@ async function saveProductsToDB(productsArray) {
             let html = `
                 <div class="print-product-page">
                     <div class="print-header">
-                        <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" class="print-logo" />
+                        <img src="https://github.com/ashardiyan/test/blob/main/Al%20Rahman%20Electronics-02.png?raw=true" class="print-logo" crossorigin="anonymous" />
                         <div class="print-title">Al Rehman Electronics</div>
                         <div style="font-size:14px;color:#555">Product Specification Sheet</div>
                         <div style="font-size:12px;color:#777">Generated: ${new Date().toLocaleDateString()}</div>
@@ -4531,18 +4535,37 @@ async function saveProductsToDB(productsArray) {
         });
         printableArea.innerHTML = fullHtml;
         shareModalBackdrop.classList.add('hide');
-        setTimeout(async () => {
-            // FIX: wait for the logo + product photos to actually finish
-            // loading before opening the print dialog — printing too early
-            // is what was producing the blank/white PDF page.
-            await waitForPrintImages(printableArea);
-            window.print();
-            productsToShareQueue = [];
-            // FIX: clear the hidden print area afterwards — it used to keep the
-            // whole generated document (incl. now-stale object URLs) in the DOM
-            // forever after every print.
-            setTimeout(() => { printableArea.innerHTML = ''; }, 1000);
-        }, 300);
+
+        // FIX: render #printableArea off-screen (not display:none — html2canvas
+        // can't rasterize an element with no layout box) so it can be captured
+        // without flashing on the user's screen.
+        printableArea.style.cssText = 'display:block; position:fixed; top:0; left:-99999px; width:800px; background:#fff; z-index:-1;';
+
+        // FIX: wait for the logo + product photos to actually finish loading
+        // before rasterizing — otherwise photos come out blank in the PDF.
+        await waitForPrintImages(printableArea);
+
+        const rawName = (productsToShareQueue.length === 1 && productsToShareQueue[0].name)
+            ? productsToShareQueue[0].name
+            : `products-${Date.now()}`;
+        const filename = `${rawName.replace(/[\\/:*?"<>|]/g, '').trim() || 'product'}.pdf`;
+
+        try {
+            await html2pdf().set({
+                margin: 0,
+                filename,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css'], after: '.print-product-page' }
+            }).from(printableArea).save();
+        } catch (err) {
+            alert('Could not generate the PDF: ' + err.message);
+        }
+
+        productsToShareQueue = [];
+        printableArea.style.cssText = '';
+        printableArea.innerHTML = '';
     };
 
     /****************************************************************
